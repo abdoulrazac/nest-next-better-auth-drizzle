@@ -20,6 +20,13 @@ const envSchema = z.object({
     .min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
   BETTER_AUTH_URL: z.string().url('BETTER_AUTH_URL must be a valid URL'),
 
+  // CORS — comma-separated list of allowed origins
+  // e.g. "http://localhost:3001,http://localhost:3002"
+  CORS_ORIGINS: z
+    .string()
+    .default('http://localhost:3001,http://localhost:3002')
+    .transform((val) => val.split(',').map((s) => s.trim())),
+
   // OAuth (optional)
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),

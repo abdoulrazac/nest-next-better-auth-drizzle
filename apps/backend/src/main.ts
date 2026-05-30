@@ -19,7 +19,7 @@ async function bootstrap() {
   app.enableVersioning({ type: VersioningType.URI });
 
   app.enableCors({
-    origin: env.BETTER_AUTH_URL,
+    origin: env.CORS_ORIGINS,
     credentials: true,
   });
 

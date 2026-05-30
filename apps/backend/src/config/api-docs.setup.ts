@@ -48,14 +48,14 @@ async function mergeAuthOpenAPISchema(
       ]),
     );
 
-    document.paths = { ...document.paths, ...paths };
+    document.paths = { ...document.paths, ...(paths as typeof document.paths) };
   }
 
   if (authSchema.components?.schemas) {
     document.components ??= {};
     document.components.schemas = {
       ...(document.components.schemas ?? {}),
-      ...authSchema.components.schemas,
+      ...(authSchema.components.schemas as typeof document.components.schemas),
     };
   }
 
@@ -74,7 +74,7 @@ export async function buildOpenAPIDocument(
 
   const appDocument = SwaggerModule.createDocument(app, config);
 
-  return mergeAuthOpenAPISchema(appDocument, auth, {
+  return mergeAuthOpenAPISchema(appDocument, {
     prefix: 'auth - ',
     pathPrefix: '/api/auth',
   });
