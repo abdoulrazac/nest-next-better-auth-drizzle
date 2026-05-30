@@ -16,21 +16,8 @@ import { user, role, userRole } from "./schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 
-const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@example.com";
-const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? "Admin1234!";
-const ADMIN_NAME = process.env.SEED_ADMIN_NAME ?? "Admin";
-
-async function hashPassword(password: string): Promise<string> {
-  // Better-Auth uses scrypt by default — we produce a compatible hash.
-  // For seeding, we use Node's built-in scrypt.
-  return new Promise((resolve, reject) => {
-    const salt = crypto.randomBytes(16).toString("hex");
-    crypto.scrypt(password, salt, 64, (err, derived) => {
-      if (err) reject(err);
-      else resolve(`${salt}:${derived.toString("hex")}`);
-    });
-  });
-}
+const ADMIN_EMAIL = process.env["SEED_ADMIN_EMAIL"] ?? "admin@example.com";
+const ADMIN_NAME = process.env["SEED_ADMIN_NAME"] ?? "Admin";
 
 const DEFAULT_ROLES = [
   {
@@ -72,7 +59,7 @@ const DEFAULT_ROLES = [
 ];
 
 async function seed() {
-  console.log("🌱 Seeding database...");
+  console.log("Seeding database...");
 
   // --- Roles ---
   console.log("  Creating default roles...");
@@ -87,13 +74,13 @@ async function seed() {
 
     if (existing.length > 0) {
       console.log(`    Role '${r.name}' already exists — skipping`);
-      createdRoles[r.name] = existing[0].id;
+      createdRoles[r.name] = existing[0]!.id;
     } else {
       const [created] = await db
         .insert(role)
         .values({ name: r.name, permissions: r.permissions })
         .returning({ id: role.id });
-      createdRoles[r.name] = created.id;
+      createdRoles[r.name] = created!.id;
       console.log(`    Created role '${r.name}'`);
     }
   }
@@ -110,7 +97,7 @@ async function seed() {
   let adminId: string;
 
   if (existingAdmin.length > 0) {
-    adminId = existingAdmin[0].id;
+    adminId = existingAdmin[0]!.id;
     console.log("    Admin user already exists — skipping");
   } else {
     // Note: Better-Auth manages its own password hashing via the `account` table.
@@ -126,7 +113,7 @@ async function seed() {
     });
     console.log(`    Created admin user: ${ADMIN_EMAIL}`);
     console.log(
-      "    ⚠️  Password not set — use Better-Auth signUp or reset flow to set a password.",
+      "    Password not set — use Better-Auth signUp or reset flow to set a password.",
     );
   }
 
@@ -145,11 +132,11 @@ async function seed() {
     console.log("    Assigned 'admin' role to admin user");
   }
 
-  console.log("✅ Seed complete.");
+  console.log("Seed complete.");
   process.exit(0);
 }
 
 seed().catch((err) => {
-  console.error("❌ Seed failed:", err);
+  console.error("Seed failed:", err);
   process.exit(1);
 });

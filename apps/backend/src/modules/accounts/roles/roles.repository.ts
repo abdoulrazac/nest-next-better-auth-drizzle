@@ -1,7 +1,7 @@
 // apps/backend/src/modules/accounts/roles/roles.repository.ts
 import { Injectable } from '@nestjs/common';
 import { db, role, userRole } from '@repo/db';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import type {
   CreateRoleInput,
   UpdateRoleInput,
@@ -55,7 +55,7 @@ export class RolesRepository {
   async removeFromUser(userId: string, roleId: string) {
     const [deleted] = await db
       .delete(userRole)
-      .where(eq(userRole.userId, userId))
+      .where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleId)))
       .returning();
     return deleted ?? null;
   }

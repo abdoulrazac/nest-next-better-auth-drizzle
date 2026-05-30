@@ -18,8 +18,6 @@ jobs:
           bun-version: latest
       - run: bun install --frozen-lockfile
       - run: bun lint
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/placeholder
 
   typecheck:
     name: Typecheck
@@ -34,8 +32,6 @@ jobs:
         run: |
           bun run --filter @repo/validators build
           bun run --filter @repo/db build
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/placeholder
       - run: bun check-types
 
   test-backend:
@@ -68,9 +64,10 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/enterprise_test
       - name: Run migrations
-        run: bun run --filter @repo/db db:migrate
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/enterprise_test
+        run: |
+          for f in packages/db/migrations/*.sql; do
+            psql postgresql://postgres:postgres@localhost:5432/enterprise_test -f "$f"
+          done
       - name: Run e2e tests
         run: bun run --filter backend test:e2e
         env:
@@ -101,7 +98,8 @@ jobs:
           bun run --filter @repo/db build
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/placeholder
-      - run: bun build
+      - name: Build all
+        run: bun run build
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/placeholder
           BETTER_AUTH_SECRET: build-placeholder-secret-32-chars-min!

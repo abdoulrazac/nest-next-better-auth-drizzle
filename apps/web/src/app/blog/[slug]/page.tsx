@@ -4,7 +4,7 @@ import { Footer } from "../../../components/footer";
 
 type SlugImport = {
   default: React.ComponentType;
-  frontmatter: { title?: string; date?: string; description?: string };
+  frontmatter: { title?: string; date?: string | Date; description?: string };
 };
 
 const slugMap: Record<string, () => Promise<SlugImport>> = {
@@ -31,7 +31,11 @@ export default async function BlogPostPage({
     <>
       <Nav />
       <main className="mx-auto max-w-2xl px-4 py-20">
-        <p className="text-sm text-muted-foreground mb-2">{frontmatter.date}</p>
+        <p className="text-sm text-muted-foreground mb-2">
+          {frontmatter.date instanceof Date
+            ? frontmatter.date.toISOString().slice(0, 10)
+            : frontmatter.date}
+        </p>
         <h1 className="text-4xl font-bold mb-8">{frontmatter.title}</h1>
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           <MDXContent />

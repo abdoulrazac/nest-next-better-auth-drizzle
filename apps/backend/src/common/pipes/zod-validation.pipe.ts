@@ -6,14 +6,21 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyZodSchema = { safeParse(value: unknown): any };
+type SafeParseSuccess = { success: true; data: unknown };
+type SafeParseFailure = {
+  success: false;
+  error: { issues: Array<{ path: (string | number)[]; message: string }> };
+};
+type AnyZodSchema = {
+  safeParse(value: unknown): SafeParseSuccess | SafeParseFailure;
+};
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
   constructor(private readonly schema: AnyZodSchema) {}
 
-  transform(value: unknown, _metadata: ArgumentMetadata) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  transform(value: unknown, _metadata: ArgumentMetadata): unknown {
     const result = this.schema.safeParse(value);
 
     if (!result.success) {
