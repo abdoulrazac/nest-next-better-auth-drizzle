@@ -325,10 +325,35 @@ REDIS_URL=redis://localhost:6379
 
 ---
 
-## 9. Ce qui est hors scope
+## 9. Tests Frontend (Playwright)
+
+```
+apps/frontend/
+└── e2e/
+    ├── auth/
+    │   ├── login.spec.ts
+    │   ├── register.spec.ts
+    │   └── reset-password.spec.ts
+    ├── dashboard/
+    │   ├── account/
+    │   │   ├── users.spec.ts
+    │   │   └── audit-logs.spec.ts
+    │   ├── files.spec.ts
+    │   └── settings.spec.ts
+    └── playwright.config.ts
+```
+
+**Points clés :**
+- Playwright configuré pour tester contre le frontend en dev (`http://localhost:3001`)
+- Base de données de test isolée via `docker-compose.test.yml`
+- Tests e2e couvrent les flows critiques : authentification, RBAC, upload fichiers
+- Intégré dans le CI (`ci.yml`) — lancé après le build frontend
+
+---
+
+## 10. Ce qui est hors scope
 
 - Déploiement (Railway, Vercel, Render) — un README dédié suffira
 - Changesets / versioning des packages
-- Tests frontend (Playwright, Vitest)
 - Internationalisation (i18n)
 - Multi-tenant actif (l'architecture est préparée, pas implémentée)
