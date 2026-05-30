@@ -17,6 +17,7 @@
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "drizzle-kit": "^0.31.0",
+    "eslint": "^9.39.1",
     "typescript": "5.9.2",
     "@types/node": "^22.0.0"
   },
