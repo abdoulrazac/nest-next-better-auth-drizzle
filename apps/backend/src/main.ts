@@ -9,6 +9,7 @@ import { VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { env } from './config/env';
 import { buildOpenAPIDocument, setupApiDocs } from './config/api-docs.setup';
+import { trustedOrigins } from './auth/auth';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -19,7 +20,7 @@ async function bootstrap() {
   app.enableVersioning({ type: VersioningType.URI });
 
   app.enableCors({
-    origin: env.CORS_ORIGINS,
+    origin: trustedOrigins,
     credentials: true,
   });
 
