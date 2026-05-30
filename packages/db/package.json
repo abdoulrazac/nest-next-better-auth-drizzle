@@ -22,7 +22,7 @@
     "@types/node": "^22.0.0"
   },
   "dependencies": {
-    "drizzle-orm": "^0.43.0",
+    "drizzle-orm": "^0.45.2",
     "postgres": "^3.4.5"
   }
 }
