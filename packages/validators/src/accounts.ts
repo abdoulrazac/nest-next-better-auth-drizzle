@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const createUserSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
+  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  email: z.string().email("Email invalide"),
   role: z.enum(["admin", "member", "viewer"]).default("member"),
 });
 
@@ -11,11 +11,19 @@ export const updateUserSchema = createUserSchema
   .omit({ email: true });
 
 export const createRoleSchema = z.object({
-  name: z.string().min(2).max(50),
-  permissions: z.array(z.string()).min(1),
+  name: z
+    .string()
+    .min(2, "Le nom doit contenir au moins 2 caractères")
+    .max(50, "Le nom ne peut pas dépasser 50 caractères"),
+  permissions: z.array(z.string()).min(1, "Au moins une permission requise"),
 });
 
-export const updateRoleSchema = createRoleSchema.partial();
+export const updateRoleSchema = createRoleSchema
+  .partial()
+  .refine((data) => !data.permissions || data.permissions.length > 0, {
+    message: "permissions ne peut pas être vide",
+    path: ["permissions"],
+  });
 
 export const auditLogQuerySchema = z.object({
   userId: z.string().uuid().optional(),
