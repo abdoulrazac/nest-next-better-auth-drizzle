@@ -1,0 +1,26 @@
+---
+title: Backend
+description: NestJS + Fastify + Drizzle + Better-Auth backend overview.
+---
+
+# Backend
+
+The backend runs on NestJS with the Fastify adapter.
+
+## Modules
+
+| Module | Path | Description |
+|--------|------|-------------|
+| Auth | `src/auth/` | Better-Auth integration, guard, RBAC |
+| Accounts | `src/modules/accounts/` | Users, roles, audit logs |
+| Files | `src/modules/files/` | S3 presigned upload flow |
+| Notifications | `src/modules/notifications/` | In-app notifications |
+| Settings | `src/modules/settings/` | App settings + user prefs |
+| Webhooks | `src/modules/webhooks/` | Outgoing webhooks |
+| Health | `src/modules/health/` | Health check endpoint |
+
+## Auth & RBAC
+
+- All routes protected by default via global guard
+- Use `@AllowAnonymous()` for public routes
+- Use `@UserHasPermission({ permission: { resource: ['action'] } })` for RBAC

@@ -1,0 +1,23 @@
+---
+title: Frontend
+description: Next.js + Shadcn + Zod frontend overview.
+---
+
+# Frontend
+
+The frontend is a Next.js 16 app using the App Router.
+
+## Route protection
+
+Handled by `src/proxy.ts` (Next.js 16). Checks the `better-auth.session_token` cookie.
+
+## Auth client
+
+```typescript
+import { authClient, signIn, signOut, useSession } from "@/lib/auth-client";
+```
+
+## Shared packages
+
+- `@repo/validators` — Zod schemas for forms
+- `@repo/ui` — Shadcn/ui components
