@@ -15,7 +15,7 @@ export const userPreference = pgTable("user_preference", {
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
   theme: text("theme").notNull().default("system"),
-  language: text("language").notNull().default("fr"),
-  timezone: text("timezone").notNull().default("Europe/Paris"),
+  language: text("language").notNull().default("en"),
+  timezone: text("timezone").notNull().default("UTC"),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
