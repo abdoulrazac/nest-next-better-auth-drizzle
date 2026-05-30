@@ -3,15 +3,51 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    ".": "./src/index.ts",
-    "./auth": "./src/auth.ts",
-    "./accounts": "./src/accounts.ts",
-    "./files": "./src/files.ts",
-    "./notifications": "./src/notifications.ts",
-    "./settings": "./src/settings.ts",
-    "./webhooks": "./src/webhooks.ts"
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./auth": {
+      "require": "./dist/auth.js",
+      "import": "./dist/auth.js",
+      "types": "./src/auth.ts",
+      "default": "./dist/auth.js"
+    },
+    "./accounts": {
+      "require": "./dist/accounts.js",
+      "import": "./dist/accounts.js",
+      "types": "./src/accounts.ts",
+      "default": "./dist/accounts.js"
+    },
+    "./files": {
+      "require": "./dist/files.js",
+      "import": "./dist/files.js",
+      "types": "./src/files.ts",
+      "default": "./dist/files.js"
+    },
+    "./notifications": {
+      "require": "./dist/notifications.js",
+      "import": "./dist/notifications.js",
+      "types": "./src/notifications.ts",
+      "default": "./dist/notifications.js"
+    },
+    "./settings": {
+      "require": "./dist/settings.js",
+      "import": "./dist/settings.js",
+      "types": "./src/settings.ts",
+      "default": "./dist/settings.js"
+    },
+    "./webhooks": {
+      "require": "./dist/webhooks.js",
+      "import": "./dist/webhooks.js",
+      "types": "./src/webhooks.ts",
+      "default": "./dist/webhooks.js"
+    }
   },
   "scripts": {
+    "build": "tsc --project tsconfig.json",
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0"
   },
