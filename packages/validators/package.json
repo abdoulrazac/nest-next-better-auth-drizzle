@@ -1,0 +1,26 @@
+{
+  "name": "@repo/validators",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/auth.ts",
+    "./accounts": "./src/accounts.ts",
+    "./files": "./src/files.ts",
+    "./notifications": "./src/notifications.ts",
+    "./settings": "./src/settings.ts",
+    "./webhooks": "./src/webhooks.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "zod": "^3.25.0"
+  }
+}
