@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
     "@nanostores/react": "^1.1.0",
+    "@repo/api-client": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/validators": "workspace:*",
     "better-auth": "^1.6.12",
