@@ -6,10 +6,12 @@
     "dev": "next dev  --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:e2e": "playwright test --config=e2e/playwright.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
+    "@nanostores/react": "^1.1.0",
     "@repo/ui": "workspace:*",
     "@repo/validators": "workspace:*",
     "better-auth": "^1.6.12",
@@ -22,6 +24,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@tailwindcss/postcss": "^4",
