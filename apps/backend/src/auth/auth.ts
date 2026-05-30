@@ -13,6 +13,7 @@ const emailService = createEmailService();
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
+  trustedOrigins: env.CORS_ORIGINS,
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
