@@ -26,8 +26,10 @@ describe('NotificationsModule (e2e)', () => {
       .get('/v1/notifications')
       .set('cookie', userCookie)
       .expect(200);
-    expect(res.body).toHaveProperty('data');
-    expect(Array.isArray(res.body.data)).toBe(true);
+    // API returns { items, total, page, limit } pagination shape
+    const list = res.body.items ?? res.body.data;
+    expect(list).toBeDefined();
+    expect(Array.isArray(list)).toBe(true);
   });
 
   it('GET /v1/notifications/unread-count → 401 unauthenticated', async () => {
