@@ -9,7 +9,7 @@ import {
 type SafeParseSuccess = { success: true; data: unknown };
 type SafeParseFailure = {
   success: false;
-  error: { issues: Array<{ path: (string | number)[]; message: string }> };
+  error: { issues: Array<{ path: PropertyKey[]; message: string }> };
 };
 type AnyZodSchema = {
   safeParse(value: unknown): SafeParseSuccess | SafeParseFailure;
@@ -35,10 +35,12 @@ export class ZodValidationPipe implements PipeTransform {
   }
 
   private formatErrors(error: {
-    issues: Array<{ path: (string | number)[]; message: string }>;
+    issues: Array<{ path: PropertyKey[]; message: string }>;
   }) {
     return error.issues.map((err) => ({
-      field: err.path.join('.'),
+      field: err.path
+        .filter((p): p is string | number => typeof p !== 'symbol')
+        .join('.'),
       message: err.message,
     }));
   }

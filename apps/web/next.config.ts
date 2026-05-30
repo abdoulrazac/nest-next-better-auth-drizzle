@@ -5,9 +5,14 @@ const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // The generated .source/ files from fumadocs-mdx trigger a TS 5.9
-  // "cannot be named" error that @ts-nocheck cannot suppress.
-  typescript: { ignoreBuildErrors: true },
+  turbopack: {
+    // Map the @fumadocs/server alias to the generated file at build time.
+    // TypeScript uses an ambient declaration (src/types/fumadocs.d.ts) for types,
+    // avoiding TS2742 "cannot be named" errors from the generated .source/ files.
+    resolveAlias: {
+      "@fumadocs/server": "./.source/server",
+    },
+  },
 };
 
 export default withMDX(nextConfig);
