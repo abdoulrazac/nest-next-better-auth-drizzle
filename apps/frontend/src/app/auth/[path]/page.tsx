@@ -21,7 +21,7 @@ export default async function AuthPage({ params }: AuthPageProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Auth path={`/auth/${path}`} />
+      <Auth path={path} />
     </div>
   );
 }
