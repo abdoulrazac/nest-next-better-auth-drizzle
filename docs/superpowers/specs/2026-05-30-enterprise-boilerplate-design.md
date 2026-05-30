@@ -256,7 +256,7 @@ Client Drizzle + schémas de tables + migrations. Importé uniquement par le bac
 
 ```
 packages/db/src/
-├── index.ts         # Export client (PostgreSQL prod, SQLite dev)
+├── index.ts         # Export client Drizzle (PostgreSQL)
 ├── schema/
 │   ├── auth.ts      # Tables Better-Auth
 │   ├── accounts.ts
@@ -268,7 +268,7 @@ packages/db/src/
 └── migrations/
 ```
 
-**Base de données :** PostgreSQL en production, SQLite pour le dev local (zéro infra pour démarrer). Le switch se fait en changeant le driver Drizzle dans `index.ts`.
+**Base de données :** PostgreSQL en dev et en production. Docker Compose fournit une instance PostgreSQL locale prête à l'emploi — pas besoin d'installer PostgreSQL sur la machine.
 
 ### `@repo/ui`
 Composants Shadcn/ui préconfigurés + hooks UI (`use-toast`, `use-mobile`) + helper `cn()`. Importé par frontend et web.
@@ -301,8 +301,7 @@ Un `.env.example` documenté à la racine. Chaque app valide ses variables via u
 
 ```
 # Database
-DATABASE_URL=postgresql://...
-DATABASE_URL_SQLITE=./dev.db   # Dev local uniquement
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app
 
 # Auth
 BETTER_AUTH_SECRET=
