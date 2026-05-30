@@ -1,0 +1,48 @@
+---
+title: Getting Started
+description: How to set up and run the Enterprise Boilerplate on your machine.
+date: 2026-01-01
+---
+
+# Getting Started
+
+Welcome to the Enterprise Boilerplate. This guide will walk you through setting up your development environment.
+
+## Prerequisites
+
+- [Bun](https://bun.sh) >= 1.0
+- [Docker](https://docker.com) (for PostgreSQL, Redis, MinIO)
+- Node.js 20+
+
+## Installation
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/your-org/enterprise-boilerplate
+cd enterprise-boilerplate
+bun install
+```
+
+## Start the infrastructure
+
+```bash
+docker compose up -d
+```
+
+## Run database migrations
+
+```bash
+cd packages/db && bun run db:migrate
+```
+
+## Start the apps
+
+```bash
+bun run dev
+```
+
+This will start:
+- **Backend** on `http://localhost:3000`
+- **Frontend** on `http://localhost:3001`
+- **Web** on `http://localhost:3002`
