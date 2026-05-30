@@ -11,7 +11,6 @@ export default defineConfig({
     include: ['test/e2e/**/*.e2e-spec.ts'],
     testTimeout: 30_000,
     hookTimeout: 30_000,
-    singleFork: true,
     setupFiles: ['test/helpers/setup.ts'],
   },
 });
