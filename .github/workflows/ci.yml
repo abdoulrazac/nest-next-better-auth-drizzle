@@ -18,6 +18,8 @@ jobs:
           bun-version: latest
       - run: bun install --frozen-lockfile
       - run: bun lint
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/placeholder
 
   typecheck:
     name: Typecheck
@@ -28,6 +30,12 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
+      - name: Build workspace packages
+        run: |
+          bun run --filter @repo/validators build
+          bun run --filter @repo/db build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/placeholder
       - run: bun check-types
 
   test-backend:
@@ -39,7 +47,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: app_test
+          POSTGRES_DB: enterprise_test
         ports:
           - 5432:5432
         options: >-
@@ -53,16 +61,30 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
+      - name: Build workspace packages
+        run: |
+          bun run --filter @repo/validators build
+          bun run --filter @repo/db build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/enterprise_test
       - name: Run migrations
-        run: bun db:migrate --filter @repo/db
+        run: bun run --filter @repo/db db:migrate
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
-      - name: Run unit tests
-        run: bun test --filter backend
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/enterprise_test
+      - name: Run e2e tests
+        run: bun run --filter backend test:e2e
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
-          BETTER_AUTH_SECRET: test-secret-32-characters-minimum
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/enterprise_test
+          BETTER_AUTH_SECRET: test-secret-minimum-32-characters-long!!
           BETTER_AUTH_URL: http://localhost:3000
+          S3_ENDPOINT: http://localhost:9000
+          S3_BUCKET: test-bucket
+          S3_ACCESS_KEY: minioadmin
+          S3_SECRET_KEY: minioadmin
+          S3_REGION: us-east-1
+          REDIS_URL: redis://localhost:6379
+          NODE_ENV: test
+          PORT: "0"
 
   build:
     name: Build
@@ -73,4 +95,20 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
+      - name: Build workspace packages
+        run: |
+          bun run --filter @repo/validators build
+          bun run --filter @repo/db build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/placeholder
       - run: bun build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/placeholder
+          BETTER_AUTH_SECRET: build-placeholder-secret-32-chars-min!
+          BETTER_AUTH_URL: http://localhost:3000
+          S3_ENDPOINT: http://localhost:9000
+          S3_BUCKET: uploads
+          S3_ACCESS_KEY: minioadmin
+          S3_SECRET_KEY: minioadmin
+          S3_REGION: us-east-1
+          REDIS_URL: redis://localhost:6379
