@@ -1,4 +1,3 @@
-import supertest from 'supertest';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 export interface TestCredentials {
@@ -11,31 +10,33 @@ export async function signUpAndLogin(
   app: NestFastifyApplication,
   credentials: TestCredentials,
 ): Promise<string> {
-  const server = app.getHttpServer();
-
-  const signUpRes = await supertest(server)
-    .post('/api/auth/sign-up/email')
-    .send({
+  const signUpRes = await app.inject({
+    method: 'POST',
+    url: '/api/auth/sign-up/email',
+    payload: {
       email: credentials.email,
       password: credentials.password,
       name: credentials.name,
-    });
+    },
+  });
 
-  const signUpCookies: string[] = signUpRes.headers['set-cookie'] ?? [];
-  if (signUpCookies.length > 0) {
+  const signUpCookies = signUpRes.headers['set-cookie'];
+  if (signUpCookies) {
     return Array.isArray(signUpCookies)
       ? signUpCookies.join('; ')
       : signUpCookies;
   }
 
-  const signInRes = await supertest(server)
-    .post('/api/auth/sign-in/email')
-    .send({ email: credentials.email, password: credentials.password });
+  const signInRes = await app.inject({
+    method: 'POST',
+    url: '/api/auth/sign-in/email',
+    payload: { email: credentials.email, password: credentials.password },
+  });
 
-  const signInCookies: string[] = signInRes.headers['set-cookie'] ?? [];
-  if (signInCookies.length === 0) {
+  const signInCookies = signInRes.headers['set-cookie'];
+  if (!signInCookies) {
     throw new Error(
-      `No session cookie received. Sign-up status: ${signUpRes.status}, Sign-in status: ${signInRes.status}`,
+      `No session cookie received. Sign-up status: ${signUpRes.statusCode}, Sign-in status: ${signInRes.statusCode}`,
     );
   }
 
