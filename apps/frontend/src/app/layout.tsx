@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
-import { ThemeProvider } from "../components/theme-provider";
+import { Providers } from "../components/providers";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -28,14 +28,7 @@ export default function RootLayout({
       className={cn("font-sans", inter.variable)}
     >
       <body className="min-h-screen bg-background font-sans antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
