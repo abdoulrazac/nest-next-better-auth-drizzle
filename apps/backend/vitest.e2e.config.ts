@@ -1,10 +1,8 @@
 import { defineConfig } from 'vitest/config';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  resolve: {
-    // @ts-ignore - vitest 4 native tsconfig paths support
-    tsconfigPaths: true,
-  },
+  plugins: [tsconfigPaths()],
   test: {
     globals: true,
     environment: 'node',
