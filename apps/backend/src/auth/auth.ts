@@ -2,47 +2,13 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin } from 'better-auth/plugins/admin';
-import { createAccessControl } from 'better-auth/plugins/access';
+import { openAPI, twoFactor } from 'better-auth/plugins';
 import { db, schema } from '@repo/db';
 import { env } from '../config/env';
+import { ac, roles } from './permission';
+import { createEmailService } from '@repo/emails';
 
-// Define permissions per resource
-const statement = {
-  users: ['read', 'write', 'delete'],
-  roles: ['read', 'write', 'delete'],
-  'audit-logs': ['read'],
-  files: ['upload', 'read', 'delete'],
-  settings: ['read', 'manage'],
-  notifications: ['read', 'manage'],
-  webhooks: ['read', 'write', 'delete'],
-} as const;
-
-const ac = createAccessControl(statement);
-
-// Define system roles
-const adminRole = ac.newRole({
-  users: ['read', 'write', 'delete'],
-  roles: ['read', 'write', 'delete'],
-  'audit-logs': ['read'],
-  files: ['upload', 'read', 'delete'],
-  settings: ['read', 'manage'],
-  notifications: ['read', 'manage'],
-  webhooks: ['read', 'write', 'delete'],
-});
-
-const memberRole = ac.newRole({
-  users: ['read'],
-  files: ['upload', 'read'],
-  notifications: ['read'],
-  settings: ['read'],
-});
-
-const viewerRole = ac.newRole({
-  users: ['read'],
-  files: ['read'],
-  notifications: ['read'],
-  settings: ['read'],
-});
+const emailService = createEmailService();
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -59,16 +25,23 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
+    sendChangeEmailVerification: emailService.helpers.changeEmail,
   },
   plugins: [
+    emailService,
+    openAPI({ disableDefaultReference: true }),
     admin({
       ac,
-      roles: {
-        admin: adminRole,
-        member: memberRole,
-        viewer: viewerRole,
-      },
+      roles,
       defaultRole: 'member',
+    }),
+    twoFactor({
+      issuer: env.APP_NAME,
+      skipVerificationOnEnable: true, // Permet d'activer sans vérifier immédiatement
+      otpOptions: {
+        sendOTP: emailService.helpers.twoFactor,
+        period: 300, // 5 minutes d'expiration
+      },
     }),
   ],
 });

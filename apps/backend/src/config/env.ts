@@ -8,6 +8,9 @@ const envSchema = z.object({
     .enum(['development', 'production', 'test'])
     .default('development'),
 
+  // App
+  APP_NAME: z.string().default('My App'),
+
   // Database
   DATABASE_URL: z.string().url('DATABASE_URL must be a valid URL'),
 
@@ -22,6 +25,16 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
+
+  // SMTP
+  SMTP_HOST: z.string().min(1),
+  SMTP_PORT: z.coerce.number().int().positive(),
+  SMTP_SECURE: z
+    .enum(['true', 'false', '1', '0'])
+    .transform((value) => value === 'true' || value === '1'),
+  SMTP_USER: z.string().min(1),
+  SMTP_PASS: z.string().min(1),
+  SMTP_FROM: z.string().email('SMTP_FROM must be a valid email address'),
 
   // S3 / MinIO
   S3_ENDPOINT: z.string().url('S3_ENDPOINT must be a valid URL'),

@@ -34,6 +34,7 @@
     "@types/node": "^22.0.0"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "postgres": "^3.4.5"
   }
