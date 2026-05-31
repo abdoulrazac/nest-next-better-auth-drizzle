@@ -14,6 +14,7 @@ import {
   getEmailRuntimeConfig,
   type EmailRuntimeConfig,
 } from "./config";
+import { getAppName } from "./runtime";
 import DeleteAccountVerificationEmail from "./template/delete-account-verification";
 import OrganizationInvitationEmail from "./template/organization-invitation";
 import ResetPasswordEmail from "./template/reset-password";
@@ -33,6 +34,7 @@ function getOrganizationInvitationAppUrl(config: EmailRuntimeConfig): string {
 export function createEmailService(
   config: EmailRuntimeConfig = getEmailRuntimeConfig(),
 ) {
+  const appName = getAppName();
   const renderer = new ReactEmailRenderer({
     render,
     createElement,
@@ -51,16 +53,12 @@ export function createEmailService(
       "delete-account-verification": DeleteAccountVerificationEmail,
     },
     subjects: {
-      "verification-email": "Vérifiez votre adresse e-mail – E-SFE Finance",
-      "reset-password":
-        "Réinitialisation de votre mot de passe – E-SFE Finance",
-      "two-factor-otp": "Votre code de vérification – E-SFE Finance",
-      "organization-invitation":
-        "Invitation à rejoindre une organisation – E-SFE Finance",
-      "change-email-verification":
-        "Confirmez votre nouvelle adresse e-mail – E-SFE Finance",
-      "delete-account-verification":
-        "Confirmation de suppression de compte – E-SFE Finance",
+      "verification-email": `Vérifiez votre adresse e-mail – ${appName}`,
+      "reset-password": `Réinitialisation de votre mot de passe – ${appName}`,
+      "two-factor-otp": `Votre code de vérification – ${appName}`,
+      "organization-invitation": `Invitation à rejoindre une organisation – ${appName}`,
+      "change-email-verification": `Confirmez votre nouvelle adresse e-mail – ${appName}`,
+      "delete-account-verification": `Confirmation de suppression de compte – ${appName}`,
     },
     fallback: new DefaultTemplateRenderer(),
   });
@@ -87,6 +85,7 @@ export {
   getEmailRuntimeConfig,
   type EmailRuntimeConfig,
 } from "./config";
+export { getAppName, type EnvSource } from "./runtime";
 
 export { EmailLayout } from "./template/_layout";
 export { emailStyles } from "./template/email-theme";

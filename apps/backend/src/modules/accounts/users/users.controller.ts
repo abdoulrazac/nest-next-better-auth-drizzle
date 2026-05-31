@@ -8,17 +8,20 @@ import {
   Body,
   Query,
   ParseUUIDPipe,
-  UsePipes,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { UsersService } from './users.service';
-import { ZodValidationPipe } from '../../../common/pipes/zod-validation.pipe';
-import { AuditLogInterceptor } from '../../../common/interceptors/audit-log.interceptor';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { AuditLogInterceptor } from '@/common/interceptors/audit-log.interceptor';
 import {
+  paginationQuerySchema,
   updateUserSchema,
+  banUserSchema,
+  type PaginationQuery,
   type UpdateUserInput,
+  type BanUserInput,
 } from '@repo/validators/accounts';
 
 @ApiTags('accounts/users')
@@ -32,11 +35,9 @@ export class UsersController {
   @ApiOperation({ summary: 'List all users' })
   @UserHasPermission({ permission: { users: ['read'] } })
   findAll(
-    @Query('page') page = 1,
-    @Query('limit') limit = 20,
-    @Query('search') search?: string,
+    @Query(new ZodValidationPipe(paginationQuerySchema)) query: PaginationQuery,
   ) {
-    return this.usersService.findAll(Number(page), Number(limit), search);
+    return this.usersService.findAll(query.page, query.limit, query.search);
   }
 
   @Get(':id')
@@ -49,10 +50,9 @@ export class UsersController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update user' })
   @UserHasPermission({ permission: { users: ['write'] } })
-  @UsePipes(new ZodValidationPipe(updateUserSchema))
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() body: UpdateUserInput,
+    @Body(new ZodValidationPipe(updateUserSchema)) body: UpdateUserInput,
   ) {
     return this.usersService.update(id, body);
   }
@@ -62,7 +62,7 @@ export class UsersController {
   @UserHasPermission({ permission: { users: ['delete'] } })
   ban(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() body: { reason?: string },
+    @Body(new ZodValidationPipe(banUserSchema)) body: BanUserInput,
   ) {
     return this.usersService.ban(id, body.reason);
   }

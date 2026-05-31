@@ -1,5 +1,6 @@
 import type { EmailProps } from "@nuntly/better-email";
 import { Button, Text } from "@react-email/components";
+import { getAppName } from "../runtime";
 import { EmailLayout } from "./_layout";
 import { emailStyles } from "./email-theme";
 
@@ -8,6 +9,7 @@ export default function ChangeEmailVerificationEmail({
   newEmail,
   url,
 }: EmailProps<"change-email-verification">) {
+  const appName = getAppName();
   return (
     <EmailLayout
       preview={`Confirmez votre nouvelle adresse e-mail : ${newEmail}`}
@@ -20,7 +22,7 @@ export default function ChangeEmailVerificationEmail({
         <br />
         <br />
         Nous avons reçu une demande de changement d&apos;adresse e-mail pour
-        votre compte E-SFE Finance. Votre nouvelle adresse sera :{" "}
+        votre compte {appName}. Votre nouvelle adresse sera :{" "}
         <strong>{newEmail}</strong>.<br />
         <br />
         Cliquez sur le bouton ci-dessous pour confirmer ce changement.

@@ -21,5 +21,19 @@ export const fileQuerySchema = z.object({
   mimeType: z.string().optional(),
 });
 
+export const presignedUrlRequestSchema = z.object({
+  originalName: z.string().min(1),
+  mimeType: z.string().min(1),
+});
+
+export const confirmUploadSchema = z.object({
+  key: z.string().min(1),
+  originalName: z.string().min(1),
+  mimeType: z.string().min(1),
+  size: z.number().int().positive(),
+});
+
 export type UploadFileInput = z.infer<typeof uploadFileSchema>;
 export type FileQuery = z.infer<typeof fileQuerySchema>;
+export type PresignedUrlRequest = z.infer<typeof presignedUrlRequestSchema>;
+export type ConfirmUploadInput = z.infer<typeof confirmUploadSchema>;

@@ -13,26 +13,17 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { FilesService } from './files.service';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { AuditLogInterceptor } from '../../common/interceptors/audit-log.interceptor';
-import { fileQuerySchema, type FileQuery } from '@repo/validators/files';
-import { z } from 'zod';
-
-const presignedUrlRequestSchema = z.object({
-  originalName: z.string().min(1),
-  mimeType: z.string().min(1),
-});
-
-const confirmUploadSchema = z.object({
-  key: z.string().min(1),
-  originalName: z.string().min(1),
-  mimeType: z.string().min(1),
-  size: z.number().int().positive(),
-});
-
-type PresignedUrlRequest = z.infer<typeof presignedUrlRequestSchema>;
-type ConfirmUploadInput = z.infer<typeof confirmUploadSchema>;
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { AuditLogInterceptor } from '@/common/interceptors/audit-log.interceptor';
+import {
+  fileQuerySchema,
+  presignedUrlRequestSchema,
+  confirmUploadSchema,
+  type FileQuery,
+  type PresignedUrlRequest,
+  type ConfirmUploadInput,
+} from '@repo/validators/files';
 
 @ApiTags('files')
 @ApiBearerAuth()

@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export const paginationQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(20),
+  search: z.string().optional(),
+});
+
 export const createUserSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   email: z.string().email("Email invalide"),
@@ -9,6 +15,10 @@ export const createUserSchema = z.object({
 export const updateUserSchema = createUserSchema
   .partial()
   .omit({ email: true });
+
+export const banUserSchema = z.object({
+  reason: z.string().min(1).max(500).optional(),
+});
 
 export const createRoleSchema = z.object({
   name: z
@@ -34,8 +44,10 @@ export const auditLogQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).default(20),
 });
 
+export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+export type BanUserInput = z.infer<typeof banUserSchema>;
 export type CreateRoleInput = z.infer<typeof createRoleSchema>;
 export type UpdateRoleInput = z.infer<typeof updateRoleSchema>;
 export type AuditLogQuery = z.infer<typeof auditLogQuerySchema>;

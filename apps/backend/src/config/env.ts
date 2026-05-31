@@ -9,7 +9,7 @@ const envSchema = z.object({
     .default('development'),
 
   // App
-  APP_NAME: z.string().default('My App'),
+  APP_NAME: z.string().default('My APP'),
 
   // Database
   DATABASE_URL: z.string().url('DATABASE_URL must be a valid URL'),

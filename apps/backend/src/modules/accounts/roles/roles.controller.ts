@@ -13,8 +13,8 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { RolesService } from './roles.service';
-import { ZodValidationPipe } from '../../../common/pipes/zod-validation.pipe';
-import { AuditLogInterceptor } from '../../../common/interceptors/audit-log.interceptor';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { AuditLogInterceptor } from '@/common/interceptors/audit-log.interceptor';
 import {
   createRoleSchema,
   updateRoleSchema,

@@ -8,6 +8,7 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import { getAppName } from "../runtime";
 import { emailStyles } from "./email-theme";
 
 interface EmailLayoutProps {
@@ -16,7 +17,7 @@ interface EmailLayoutProps {
 }
 
 export function EmailLayout({ preview, children }: EmailLayoutProps) {
-  const appName = process.env.APP_NAME ?? "My APP";
+  const appName = getAppName();
   return (
     <Html>
       <Head />

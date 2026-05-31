@@ -14,15 +14,19 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { WebhooksService } from './webhooks.service';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { AuditLogInterceptor } from '../../common/interceptors/audit-log.interceptor';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { AuditLogInterceptor } from '@/common/interceptors/audit-log.interceptor';
 import {
   createWebhookSchema,
   updateWebhookSchema,
   type CreateWebhookInput,
   type UpdateWebhookInput,
 } from '@repo/validators/webhooks';
+import {
+  paginationQuerySchema,
+  type PaginationQuery,
+} from '@repo/validators/accounts';
 
 @ApiTags('webhooks')
 @ApiBearerAuth()
@@ -34,8 +38,10 @@ export class WebhooksController {
   @Get()
   @ApiOperation({ summary: 'List webhooks' })
   @UserHasPermission({ permission: { webhooks: ['read'] } })
-  findAll(@Query('page') page = 1, @Query('limit') limit = 20) {
-    return this.webhooksService.findAll(Number(page), Number(limit));
+  findAll(
+    @Query(new ZodValidationPipe(paginationQuerySchema)) query: PaginationQuery,
+  ) {
+    return this.webhooksService.findAll(query.page, query.limit);
   }
 
   @Get(':id')
@@ -50,10 +56,9 @@ export class WebhooksController {
   @UserHasPermission({ permission: { webhooks: ['read'] } })
   getDeliveries(
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('page') page = 1,
-    @Query('limit') limit = 20,
+    @Query(new ZodValidationPipe(paginationQuerySchema)) query: PaginationQuery,
   ) {
-    return this.webhooksService.getDeliveries(id, Number(page), Number(limit));
+    return this.webhooksService.getDeliveries(id, query.page, query.limit);
   }
 
   @Post()

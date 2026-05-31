@@ -3,7 +3,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { AuditLogsService } from './audit-logs.service';
-import { ZodValidationPipe } from '../../../common/pipes/zod-validation.pipe';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 import {
   auditLogQuerySchema,
   type AuditLogQuery,

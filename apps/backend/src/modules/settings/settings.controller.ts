@@ -3,14 +3,14 @@ import { Controller, Get, Patch, Body, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { SettingsService } from './settings.service';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { AuditLogInterceptor } from '../../common/interceptors/audit-log.interceptor';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { AuditLogInterceptor } from '@/common/interceptors/audit-log.interceptor';
 import {
-  appSettingsSchema,
-  userPreferencesSchema,
-  type AppSettings,
-  type UserPreferences,
+  updateAppSettingsSchema,
+  updateUserPreferencesSchema,
+  type UpdateAppSettings,
+  type UpdateUserPreferences,
 } from '@repo/validators/settings';
 
 @ApiTags('settings')
@@ -31,8 +31,8 @@ export class SettingsController {
   @ApiOperation({ summary: 'Update app settings (admin only)' })
   @UserHasPermission({ permission: { settings: ['manage'] } })
   updateAppSettings(
-    @Body(new ZodValidationPipe(appSettingsSchema.partial()))
-    body: Partial<AppSettings>,
+    @Body(new ZodValidationPipe(updateAppSettingsSchema))
+    body: UpdateAppSettings,
   ) {
     return this.settingsService.updateAppSettings(body);
   }
@@ -46,15 +46,12 @@ export class SettingsController {
 
   @Patch('preferences')
   @ApiOperation({ summary: 'Update my preferences' })
-  @UserHasPermission({ permission: { settings: ['read'] } })
+  @UserHasPermission({ permission: { settings: ['write'] } })
   updatePreferences(
     @CurrentUser() user: { id: string },
-    @Body(new ZodValidationPipe(userPreferencesSchema.partial()))
-    body: Partial<UserPreferences>,
+    @Body(new ZodValidationPipe(updateUserPreferencesSchema))
+    body: UpdateUserPreferences,
   ) {
-    return this.settingsService.updateUserPreferences(
-      user.id,
-      body as UserPreferences,
-    );
+    return this.settingsService.updateUserPreferences(user.id, body);
   }
 }

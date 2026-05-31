@@ -1,7 +1,5 @@
 // packages/api-client/src/index.ts
 export * from "./generated/index";
-export { createClient, createConfig } from "@hey-api/client-fetch";
-
 import { createClient, createConfig } from "@hey-api/client-fetch";
 
 export const apiClient = createClient(

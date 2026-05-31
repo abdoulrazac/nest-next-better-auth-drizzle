@@ -1,5 +1,6 @@
 import type { EmailProps } from "@nuntly/better-email";
 import { Button, Text } from "@react-email/components";
+import { getAppName } from "../runtime";
 import { EmailLayout } from "./_layout";
 import { emailStyles } from "./email-theme";
 
@@ -16,6 +17,7 @@ export default function OrganizationInvitationEmail({
 }: OrganizationInvitationEmailProps) {
   const acceptUrl = new URL("/auth/accept-invitation", appUrl);
   acceptUrl.searchParams.set("invitationId", invitation.id);
+  const appName = getAppName();
 
   return (
     <EmailLayout
@@ -29,8 +31,8 @@ export default function OrganizationInvitationEmail({
         <br />
         <br />
         <strong>{inviter.user.name ?? inviter.user.email}</strong> vous invite à
-        rejoindre l&apos;organisation <strong>{organization.name}</strong> sur
-        E-SFE Finance en tant que <strong>{role}</strong>.
+        rejoindre l&apos;organisation <strong>{organization.name}</strong> sur{" "}
+        {appName} en tant que <strong>{role}</strong>.
       </Text>
 
       <Text style={emailStyles.badge}>Organisation : {organization.name}</Text>

@@ -1,7 +1,12 @@
 // apps/backend/src/modules/settings/settings.service.ts
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { SettingsRepository } from './settings.repository';
-import type { AppSettings, UserPreferences } from '@repo/validators/settings';
+import type {
+  AppSettings,
+  UpdateAppSettings,
+  UserPreferences,
+  UpdateUserPreferences,
+} from '@repo/validators/settings';
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
   appName: 'Enterprise App',
@@ -39,7 +44,7 @@ export class SettingsService implements OnApplicationBootstrap {
     return raw as AppSettings;
   }
 
-  async updateAppSettings(data: Partial<AppSettings>) {
+  async updateAppSettings(data: UpdateAppSettings) {
     for (const [key, value] of Object.entries(data)) {
       await this.settingsRepository.upsertAppSetting(
         key,
@@ -60,7 +65,7 @@ export class SettingsService implements OnApplicationBootstrap {
     );
   }
 
-  async updateUserPreferences(userId: string, data: UserPreferences) {
+  async updateUserPreferences(userId: string, data: UpdateUserPreferences) {
     return this.settingsRepository.upsertUserPreference(userId, data);
   }
 }

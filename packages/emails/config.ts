@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
-
-type EnvSource = NodeJS.ProcessEnv | Record<string, string | undefined>;
+import type { EnvSource } from "./runtime";
 
 export interface EmailRuntimeConfig {
   appUrl?: string;
@@ -49,7 +48,7 @@ function parseBoolean(value: string, key: string): boolean {
 }
 
 export function getEmailRuntimeConfig(
-  env: EnvSource = process.env,
+  env: EnvSource = typeof process !== "undefined" ? process.env : {},
 ): EmailRuntimeConfig {
   return {
     appUrl: env.APP_URL ?? env.NEXT_PUBLIC_APP_URL ?? env.BETTER_AUTH_URL,

@@ -1,7 +1,7 @@
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
 import scalarFastifyApiReference from '@scalar/fastify-api-reference';
-import { auth } from '../auth/auth';
+import { auth } from '@/auth/auth';
 
 const SCALAR_CUSTOM_CSS = `
   /* Powered by Scalar */

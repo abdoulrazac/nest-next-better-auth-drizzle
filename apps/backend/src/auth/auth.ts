@@ -4,8 +4,8 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin } from 'better-auth/plugins/admin';
 import { openAPI, twoFactor } from 'better-auth/plugins';
 import { db, schema } from '@repo/db';
-import { env } from '../config/env';
-import { ac, roles } from './permission';
+import { env } from '@/config/env';
+import { ac, roles, defaultRole } from './permission';
 import { createEmailService } from '@repo/emails';
 
 const emailService = createEmailService();
@@ -36,7 +36,7 @@ export const auth = betterAuth({
     admin({
       ac,
       roles,
-      defaultRole: 'member',
+      defaultRole,
     }),
     twoFactor({
       issuer: env.APP_NAME,

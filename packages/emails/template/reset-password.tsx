@@ -1,5 +1,6 @@
 import type { EmailProps } from "@nuntly/better-email";
 import { Button, Text } from "@react-email/components";
+import { getAppName } from "../runtime";
 import { EmailLayout } from "./_layout";
 import { emailStyles } from "./email-theme";
 
@@ -7,8 +8,9 @@ export default function ResetPasswordEmail({
   user,
   url,
 }: EmailProps<"reset-password">) {
+  const appName = getAppName();
   return (
-    <EmailLayout preview="Réinitialisez votre mot de passe E-SFE Finance.">
+    <EmailLayout preview={`Réinitialisez votre mot de passe ${appName}.`}>
       <Text style={emailStyles.heading}>Réinitialisation de mot de passe</Text>
       <Text style={emailStyles.body}>
         Bonjour {user.name ?? user.email},
