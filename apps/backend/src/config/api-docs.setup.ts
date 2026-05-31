@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
+// Better-Auth's generateOpenAPISchema() returns loosely-typed objects that
+// don't perfectly match @nestjs/swagger's strict OpenAPI types — casts are intentional.
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
 import scalarFastifyApiReference from '@scalar/fastify-api-reference';
@@ -33,12 +36,10 @@ async function mergeAuthOpenAPISchema(
               Object.entries(item as Record<string, any>).map(
                 ([method, op]) => [
                   method,
-                  op && Array.isArray((op as any).tags)
+                  op && Array.isArray(op.tags)
                     ? {
-                        ...(op as any),
-                        tags: (op as any).tags.map(
-                          (t: string) => `${prefix}${t}`,
-                        ),
+                        ...op,
+                        tags: op.tags.map((t: string) => `${prefix}${t}`),
                       }
                     : op,
                 ],

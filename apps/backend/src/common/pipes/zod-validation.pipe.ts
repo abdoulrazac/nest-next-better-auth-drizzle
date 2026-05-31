@@ -1,4 +1,6 @@
 // apps/backend/src/common/pipes/zod-validation.pipe.ts
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
   PipeTransform,
   Injectable,
@@ -11,16 +13,17 @@ type SafeParseFailure = {
   success: false;
   error: { issues: Array<{ path: PropertyKey[]; message: string }> };
 };
+// Duck-typed to avoid importing zod directly in the pipe
 type AnyZodSchema = {
-  safeParse(value: unknown): SafeParseSuccess | SafeParseFailure;
+  safeParse(value: any): SafeParseSuccess | SafeParseFailure;
 };
 
 @Injectable()
-export class ZodValidationPipe implements PipeTransform {
+export class ZodValidationPipe implements PipeTransform<any, any> {
   constructor(private readonly schema: AnyZodSchema) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transform(value: unknown, _metadata: ArgumentMetadata): unknown {
+  // ArgumentMetadata is required by the interface but not used here
+  transform(value: any, _metadata: ArgumentMetadata): any {
     const result = this.schema.safeParse(value);
 
     if (!result.success) {

@@ -4,7 +4,6 @@ import { SettingsRepository } from './settings.repository';
 import type {
   AppSettings,
   UpdateAppSettings,
-  UserPreferences,
   UpdateUserPreferences,
 } from '@repo/validators/settings';
 
