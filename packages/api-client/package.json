@@ -6,6 +6,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "build": "tsc --project tsconfig.json",
     "generate": "openapi-ts",
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0"
