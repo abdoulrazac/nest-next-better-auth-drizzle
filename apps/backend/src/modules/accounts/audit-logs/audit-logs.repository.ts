@@ -1,17 +1,17 @@
 // apps/backend/src/modules/accounts/audit-logs/audit-logs.repository.ts
-import { Injectable, Inject } from '@nestjs/common';
 import { DATABASE_TOKEN } from '@/database/database.module';
+import { Inject, Injectable } from '@nestjs/common';
 import type { db as DbType } from '@repo/db';
 import { auditLog } from '@repo/db';
-import { eq, and, gte, lte, count, type SQL } from 'drizzle-orm';
-import {
-  auditLogsPaginatedResponseSchema,
-  type AuditLogsPaginatedResponse,
-} from '@repo/validators/accounts';
 import type {
   AuditLogQuery,
   CreateAuditLogInput,
 } from '@repo/validators/accounts';
+import {
+  auditLogsPaginatedResponseSchema,
+  type AuditLogsPaginatedResponse,
+} from '@repo/validators/accounts';
+import { and, count, eq, gte, lte, type SQL } from 'drizzle-orm';
 
 type DB = typeof DbType;
 

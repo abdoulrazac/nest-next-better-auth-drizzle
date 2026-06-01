@@ -1,22 +1,20 @@
 // apps/backend/src/modules/accounts/roles/roles.controller.ts
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  ParseUUIDPipe,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { Permissions } from '@/auth/permission';
-import { ZodBody } from '@/common/decorators/zod.decorators';
 import {
   ApiZodCreatedResponse,
   ApiZodOkResponse,
 } from '@/common/decorators/zod-response.decorators';
-import { RolesService } from './roles.service';
+import { ZodBody } from '@/common/decorators/zod.decorators';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   createRoleSchema,
   roleResponseSchema,
@@ -27,6 +25,8 @@ import {
   type UpdateRoleInput,
   type UserRoleResponse,
 } from '@repo/validators/accounts';
+import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { RolesService } from './roles.service';
 
 @ApiTags('accounts/roles')
 @ApiBearerAuth()

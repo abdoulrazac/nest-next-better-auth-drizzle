@@ -1,17 +1,17 @@
 // apps/backend/src/modules/accounts/audit-logs/audit-logs.controller.ts
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { Permissions } from '@/auth/permission';
-import { ZodQuery } from '@/common/decorators/zod.decorators';
 import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
-import { AuditLogsService } from './audit-logs.service';
+import { ZodQuery } from '@/common/decorators/zod.decorators';
+import { Controller, Get } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
-  auditLogsPaginatedResponseSchema,
   auditLogQuerySchema,
+  auditLogsPaginatedResponseSchema,
   type AuditLogQuery,
   type AuditLogsPaginatedResponse,
 } from '@repo/validators/accounts';
+import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { AuditLogsService } from './audit-logs.service';
 
 @ApiTags('accounts/audit-logs')
 @ApiBearerAuth()

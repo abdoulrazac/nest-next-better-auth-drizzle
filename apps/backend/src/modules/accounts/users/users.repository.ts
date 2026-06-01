@@ -1,15 +1,15 @@
 // apps/backend/src/modules/accounts/users/users.repository.ts
-import { Injectable, Inject } from '@nestjs/common';
 import { DATABASE_TOKEN } from '@/database/database.module';
+import { Inject, Injectable } from '@nestjs/common';
 import type { db as DbType } from '@repo/db';
 import { user } from '@repo/db';
-import { eq, ilike, count, and, type SQL } from 'drizzle-orm';
 import {
   userResponseSchema,
   usersPaginatedResponseSchema,
   type UserResponse,
   type UsersPaginatedResponse,
 } from '@repo/validators/accounts';
+import { and, count, eq, ilike, type SQL } from 'drizzle-orm';
 
 type DB = typeof DbType;
 

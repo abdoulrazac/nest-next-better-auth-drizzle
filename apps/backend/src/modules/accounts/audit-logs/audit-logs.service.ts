@@ -1,14 +1,14 @@
 // apps/backend/src/modules/accounts/audit-logs/audit-logs.service.ts
 import { Injectable, Logger } from '@nestjs/common';
-import { AuditLogsRepository } from './audit-logs.repository';
-import {
-  auditLogsPaginatedResponseSchema,
-  type AuditLogsPaginatedResponse,
-} from '@repo/validators/accounts';
 import type {
   AuditLogQuery,
   CreateAuditLogInput,
 } from '@repo/validators/accounts';
+import {
+  auditLogsPaginatedResponseSchema,
+  type AuditLogsPaginatedResponse,
+} from '@repo/validators/accounts';
+import { AuditLogsRepository } from './audit-logs.repository';
 
 @Injectable()
 export class AuditLogsService {

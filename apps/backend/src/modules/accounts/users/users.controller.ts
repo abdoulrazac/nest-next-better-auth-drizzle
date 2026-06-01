@@ -1,30 +1,30 @@
 // apps/backend/src/modules/accounts/users/users.controller.ts
+import { Permissions } from '@/auth/permission';
+import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
+import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
 import {
   Controller,
   Get,
-  Patch,
-  Post,
   Param,
   ParseUUIDPipe,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UserHasPermission } from '@thallesp/nestjs-better-auth';
-import { Permissions } from '@/auth/permission';
-import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
-import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
-import { UsersService } from './users.service';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
-  userResponseSchema,
-  usersPaginatedResponseSchema,
+  banUserSchema,
   paginationQuerySchema,
   updateUserSchema,
-  banUserSchema,
+  userResponseSchema,
+  usersPaginatedResponseSchema,
+  type BanUserInput,
   type PaginationQuery,
   type UpdateUserInput,
-  type BanUserInput,
   type UserResponse,
   type UsersPaginatedResponse,
 } from '@repo/validators/accounts';
+import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { UsersService } from './users.service';
 
 @ApiTags('accounts/users')
 @ApiBearerAuth()

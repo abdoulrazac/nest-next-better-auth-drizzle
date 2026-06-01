@@ -1,19 +1,19 @@
 // apps/backend/src/modules/accounts/roles/roles.repository.ts
-import { Injectable, Inject } from '@nestjs/common';
 import { DATABASE_TOKEN } from '@/database/database.module';
+import { Inject, Injectable } from '@nestjs/common';
 import type { db as DbType } from '@repo/db';
 import { role, userRole } from '@repo/db';
-import { eq, and } from 'drizzle-orm';
+import type {
+  CreateRoleInput,
+  RoleResponse,
+  UpdateRoleInput,
+  UserRoleResponse,
+} from '@repo/validators/accounts';
 import {
   roleResponseSchema,
   userRoleResponseSchema,
 } from '@repo/validators/accounts';
-import type {
-  CreateRoleInput,
-  UpdateRoleInput,
-  RoleResponse,
-  UserRoleResponse,
-} from '@repo/validators/accounts';
+import { and, eq } from 'drizzle-orm';
 
 type DB = typeof DbType;
 

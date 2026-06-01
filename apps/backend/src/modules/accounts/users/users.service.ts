@@ -1,6 +1,5 @@
 // apps/backend/src/modules/accounts/users/users.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
 import {
   userResponseSchema,
   usersPaginatedResponseSchema,
@@ -8,6 +7,7 @@ import {
   type UserResponse,
   type UsersPaginatedResponse,
 } from '@repo/validators/accounts';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {

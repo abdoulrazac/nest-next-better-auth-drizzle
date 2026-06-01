@@ -1,16 +1,16 @@
 // apps/backend/src/modules/accounts/roles/roles.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RolesRepository } from './roles.repository';
-import {
-  roleResponseSchema,
-  userRoleResponseSchema,
-} from '@repo/validators/accounts';
 import type {
   CreateRoleInput,
   RoleResponse,
   UpdateRoleInput,
   UserRoleResponse,
 } from '@repo/validators/accounts';
+import {
+  roleResponseSchema,
+  userRoleResponseSchema,
+} from '@repo/validators/accounts';
+import { RolesRepository } from './roles.repository';
 
 @Injectable()
 export class RolesService {
