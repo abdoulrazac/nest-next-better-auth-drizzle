@@ -7,6 +7,47 @@ import {
   uuidSchema,
 } from "./shared.schema";
 
+// ── Upload constraints ────────────────────────────────────────────────────────
+
+export const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+
+/**
+ * Allowed MIME types for upload.
+ * SVG is intentionally excluded — it can contain JavaScript and is a XSS vector.
+ * Extend this list as your application requires.
+ */
+export const ALLOWED_MIME_TYPES = [
+  // Images
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  // Documents
+  "application/pdf",
+  "text/plain",
+  "text/csv",
+  // Office (Open XML)
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  // Office (legacy)
+  "application/msword",
+  "application/vnd.ms-excel",
+  "application/vnd.ms-powerpoint",
+] as const;
+
+export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];
+
+const allowedMimeTypeSchema = z
+  .string()
+  .refine(
+    (val): val is AllowedMimeType =>
+      (ALLOWED_MIME_TYPES as readonly string[]).includes(val),
+    { message: "File type is not allowed" },
+  );
+
+// ── Schemas ───────────────────────────────────────────────────────────────────
+
 /**
  * Validates file metadata sent as JSON payload before/after upload.
  * For NestJS multipart uploads, use @UploadedFile() with custom pipe that maps
@@ -14,12 +55,12 @@ import {
  */
 export const uploadFileSchema = z.object({
   filename: z.string().min(1, "Le nom du fichier est requis"),
-  mimeType: z.string().min(1, "Le type MIME est requis"),
+  mimeType: allowedMimeTypeSchema,
   size: z
     .number()
     .int()
     .positive()
-    .max(100 * 1024 * 1024, "Le fichier ne peut pas dépasser 100 Mo"),
+    .max(MAX_FILE_SIZE, "Le fichier ne peut pas dépasser 100 Mo"),
 });
 
 export const fileQuerySchema = z.object({
@@ -30,14 +71,20 @@ export const fileQuerySchema = z.object({
 
 export const presignedUrlRequestSchema = z.object({
   originalName: nonEmptyStringSchema,
-  mimeType: nonEmptyStringSchema,
+  mimeType: allowedMimeTypeSchema,
+  /** Client-declared file size in bytes. Used to enforce the 100 MB cap before upload. */
+  size: z
+    .number()
+    .int()
+    .positive()
+    .max(MAX_FILE_SIZE, "Le fichier ne peut pas dépasser 100 Mo"),
 });
 
 export const confirmUploadSchema = z.object({
   key: nonEmptyStringSchema,
   originalName: nonEmptyStringSchema,
-  mimeType: nonEmptyStringSchema,
-  size: z.number().int().positive(),
+  mimeType: allowedMimeTypeSchema,
+  size: z.number().int().positive().max(MAX_FILE_SIZE),
 });
 
 export const fileResponseSchema = z.object({

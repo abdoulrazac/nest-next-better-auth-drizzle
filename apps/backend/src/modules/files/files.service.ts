@@ -1,14 +1,14 @@
 // apps/backend/src/modules/files/files.service.ts
+import type { Env } from '@/config/env.schema';
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { randomUUID } from 'crypto';
-import { S3Service } from './s3.service';
-import { FilesRepository } from './files.repository';
 import {
+  ALLOWED_MIME_TYPES,
+  MAX_FILE_SIZE,
   fileResponseSchema,
   filesPaginatedResponseSchema,
   presignedUrlResponseSchema,
@@ -17,7 +17,9 @@ import {
   type FilesPaginatedResponse,
   type PresignedUrlResponse,
 } from '@repo/validators/files';
-import type { Env } from '@/config/env.schema';
+import { randomUUID } from 'crypto';
+import { FilesRepository } from './files.repository';
+import { S3Service } from './s3.service';
 
 @Injectable()
 export class FilesService {
@@ -46,10 +48,36 @@ export class FilesService {
       size: number;
     },
   ): Promise<FileResponse> {
-    const exists = await this.s3Service.objectExists(data.key);
-    if (!exists) {
+    // Verify the object was actually uploaded
+    const metadata = await this.s3Service
+      .getObjectMetadata(data.key)
+      .catch(() => null);
+    if (!metadata) {
       throw new BadRequestException(
         `File not found in storage. Upload to the presigned URL first.`,
+      );
+    }
+
+    // Use S3-reported values instead of trusting the client
+    const actualMimeType =
+      (metadata.contentType ?? data.mimeType).split(';')[0]?.trim() ??
+      data.mimeType;
+    const actualSize = metadata.contentLength ?? data.size;
+
+    // Enforce MIME type allow-list against the real S3 Content-Type
+    if (!(ALLOWED_MIME_TYPES as readonly string[]).includes(actualMimeType)) {
+      // Delete the disallowed object so storage isn't polluted
+      await this.s3Service.deleteObject(data.key).catch(() => undefined);
+      throw new BadRequestException(
+        `File type '${actualMimeType}' is not allowed.`,
+      );
+    }
+
+    // Enforce max size against the real S3 Content-Length
+    if (actualSize > MAX_FILE_SIZE) {
+      await this.s3Service.deleteObject(data.key).catch(() => undefined);
+      throw new BadRequestException(
+        `File exceeds maximum allowed size of ${MAX_FILE_SIZE / (1024 * 1024)} MB.`,
       );
     }
 
@@ -59,8 +87,8 @@ export class FilesService {
     const file = await this.filesRepository.create({
       filename,
       originalName: data.originalName,
-      mimeType: data.mimeType,
-      size: data.size,
+      mimeType: actualMimeType,
+      size: actualSize,
       bucket: this.config.get('S3_BUCKET', { infer: true }),
       key: data.key,
       url,

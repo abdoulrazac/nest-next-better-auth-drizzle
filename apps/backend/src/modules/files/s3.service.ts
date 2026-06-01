@@ -1,27 +1,36 @@
 // apps/backend/src/modules/files/s3.service.ts
-import { Injectable } from '@nestjs/common';
+import type { Env } from '@/config/env.schema';
 import {
-  S3Client,
   DeleteObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
+  S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { env } from '../../config/env';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+export interface S3ObjectMetadata {
+  contentType?: string;
+  contentLength?: number;
+}
 
 @Injectable()
 export class S3Service {
   private readonly client: S3Client;
   private readonly bucket: string;
 
-  constructor() {
-    this.bucket = env.S3_BUCKET;
+  private readonly endpoint: string;
+
+  constructor(private readonly config: ConfigService<Env, true>) {
+    this.bucket = this.config.get('S3_BUCKET', { infer: true });
+    this.endpoint = this.config.get('S3_ENDPOINT', { infer: true });
     this.client = new S3Client({
-      endpoint: env.S3_ENDPOINT,
-      region: env.S3_REGION,
+      endpoint: this.endpoint,
+      region: this.config.get('S3_REGION', { infer: true }),
       credentials: {
-        accessKeyId: env.S3_ACCESS_KEY,
-        secretAccessKey: env.S3_SECRET_KEY,
+        accessKeyId: this.config.get('S3_ACCESS_KEY', { infer: true }),
+        secretAccessKey: this.config.get('S3_SECRET_KEY', { infer: true }),
       },
       forcePathStyle: true,
     });
@@ -37,7 +46,7 @@ export class S3Service {
   }
 
   getPublicUrl(key: string): string {
-    return `${env.S3_ENDPOINT}/${this.bucket}/${key}`;
+    return `${this.endpoint}/${this.bucket}/${key}`;
   }
 
   async deleteObject(key: string): Promise<void> {
@@ -55,5 +64,20 @@ export class S3Service {
     } catch {
       return false;
     }
+  }
+
+  /**
+   * Returns the actual ContentType and ContentLength stored on the S3 object.
+   * Used by confirmUpload to verify the real file type and size instead of
+   * trusting the client-supplied values.
+   */
+  async getObjectMetadata(key: string): Promise<S3ObjectMetadata> {
+    const result = await this.client.send(
+      new HeadObjectCommand({ Bucket: this.bucket, Key: key }),
+    );
+    return {
+      contentType: result.ContentType,
+      contentLength: result.ContentLength,
+    };
   }
 }

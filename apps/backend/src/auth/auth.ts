@@ -1,12 +1,12 @@
 // apps/backend/src/auth/auth.ts
+import { env } from '@/config/env';
+import { db, schema } from '@repo/db';
+import { createEmailService } from '@repo/emails';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { admin } from 'better-auth/plugins/admin';
 import { openAPI, twoFactor } from 'better-auth/plugins';
-import { db, schema } from '@repo/db';
-import { env } from '@/config/env';
-import { ac, roles, defaultRole } from './permission';
-import { createEmailService } from '@repo/emails';
+import { admin } from 'better-auth/plugins/admin';
+import { ac, defaultRole, roles } from './permission';
 
 const emailService = createEmailService();
 
@@ -28,7 +28,25 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
+    // autoSignIn: false activates OWASP email-enumeration protection:
+    // sign-up returns HTTP 200 even when the email is already registered.
+    autoSignIn: false,
+    minPasswordLength: 8,
     sendChangeEmailVerification: emailService.helpers.changeEmail,
+  },
+  // Explicit session config (same as library defaults — kept for visibility)
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // extend expiry after 1 day of activity
+  },
+  advanced: {
+    // If the app runs behind a reverse proxy / CDN, override the IP header so
+    // better-auth's rate limiter cannot be bypassed by spoofing X-Forwarded-For.
+    // Examples:
+    //   Cloudflare  → 'cf-connecting-ip'
+    //   AWS ALB     → 'x-forwarded-for'  (already the default)
+    //   Nginx       → 'x-real-ip'
+    // ipAddress: { ipAddressHeaders: ['cf-connecting-ip'] },
   },
   plugins: [
     emailService,
