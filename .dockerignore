@@ -1,0 +1,31 @@
+.git
+.github
+.husky
+.turbo
+
+# Dependencies (will be reinstalled inside Docker)
+node_modules
+apps/*/node_modules
+packages/*/node_modules
+
+# Build outputs (will be rebuilt inside Docker)
+dist
+apps/*/dist
+packages/*/dist
+apps/frontend/.next
+apps/web/.next
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# Test artefacts
+coverage
+*.test.ts
+*.spec.ts
+vitest*.config.ts
+
+# Editor / OS
+.DS_Store
+*.log
