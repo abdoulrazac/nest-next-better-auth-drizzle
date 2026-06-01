@@ -1,14 +1,13 @@
 // apps/backend/src/common/interceptors/audit-log.interceptor.ts
+import { AuditLogsService } from '@/modules/accounts/audit-logs/audit-logs.service';
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
-import { db } from '@repo/db';
-import { auditLog } from '@repo/db/schema';
 import type { FastifyRequest } from 'fastify';
+import { Observable, tap } from 'rxjs';
 
 interface AuthenticatedRequest extends FastifyRequest {
   user?: { id: string };
@@ -18,6 +17,8 @@ const MUTATION_METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
 
 @Injectable()
 export class AuditLogInterceptor implements NestInterceptor {
+  constructor(private readonly auditLogService: AuditLogsService) {}
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const { method, url, user, ip, headers } = request;
@@ -41,7 +42,7 @@ export class AuditLogInterceptor implements NestInterceptor {
         const resourceId = segments[segments.length - 1];
         const isUuid = /^[0-9a-f-]{36}$/.test(resourceId ?? '');
 
-        await db.insert(auditLog).values({
+        await this.auditLogService.create({
           userId: user.id,
           action: method.toLowerCase(),
           resource,

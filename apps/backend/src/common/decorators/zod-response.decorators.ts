@@ -1,6 +1,6 @@
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { generateSchema } from '@anatine/zod-openapi';
 import type { OpenApiZodAny } from '@anatine/zod-openapi';
+import { generateSchema } from '@anatine/zod-openapi';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 
 interface ApiZodResponseOptions {
   description?: string;
@@ -30,7 +30,7 @@ export const ApiZodOkResponse = (
 ) =>
   ApiOkResponse({
     description: options.description,
-    schema: toOpenApiSchema(schema, options.isArray) as never,
+    schema: toOpenApiSchema(schema, options.isArray),
   });
 
 export const ApiZodCreatedResponse = (
@@ -39,5 +39,5 @@ export const ApiZodCreatedResponse = (
 ) =>
   ApiCreatedResponse({
     description: options.description,
-    schema: toOpenApiSchema(schema, options.isArray) as never,
+    schema: toOpenApiSchema(schema, options.isArray),
   });
