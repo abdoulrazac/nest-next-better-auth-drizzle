@@ -133,7 +133,7 @@ export class MessagesService {
       conversationId,
       senderId,
       senderName,
-      conversationType: (conversation?.type ?? 'direct') as 'direct' | 'group',
+      conversationType: conversation?.type ?? 'direct',
       conversationName: conversation?.name ?? null,
       recipientIds,
       preview,
@@ -265,9 +265,7 @@ export class MessagesService {
       conversationId: input.targetConversationId,
       senderId: userId,
       senderName,
-      conversationType: (targetConversation?.type ?? 'direct') as
-        | 'direct'
-        | 'group',
+      conversationType: targetConversation?.type ?? 'direct',
       conversationName: targetConversation?.name ?? null,
       recipientIds: targetParticipants
         .map((p) => p.userId)

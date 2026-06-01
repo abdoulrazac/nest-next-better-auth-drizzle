@@ -161,7 +161,7 @@ export class MessagesRepository {
         body,
         editedAt: new Date(),
         updatedAt: new Date(),
-      } as unknown as MessageInsert)
+      })
       .where(
         and(
           eq(message.id, id),
