@@ -1,6 +1,8 @@
 // apps/backend/src/modules/webhooks/webhook-delivery.service.ts
-import { Injectable, Logger } from '@nestjs/common';
+import { DomainEvent, type WebhookDispatchEvent } from '@/events/domain-events';
 import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { firstValueFrom } from 'rxjs';
 import { WebhooksRepository } from './webhooks.repository';
 
@@ -13,7 +15,11 @@ export class WebhookDeliveryService {
     private readonly httpService: HttpService,
   ) {}
 
-  async dispatch(event: string, payload: unknown): Promise<void> {
+  @OnEvent(DomainEvent.WEBHOOK_DISPATCH)
+  async onWebhookDispatch({
+    event,
+    payload,
+  }: WebhookDispatchEvent): Promise<void> {
     const hooks = await this.webhooksRepository.findActiveByEvent(event);
     await Promise.allSettled(
       hooks.map((hook) => this.deliverOne(hook, event, payload)),

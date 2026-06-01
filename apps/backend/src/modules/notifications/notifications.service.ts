@@ -1,8 +1,7 @@
 // apps/backend/src/modules/notifications/notifications.service.ts
+import { DomainEvent, type MessageNewEvent } from '@/events/domain-events';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { NotificationsRepository } from './notifications.repository';
-import { DomainEvent, type MessageNewEvent } from '@/events/domain-events';
 import {
   notificationResponseSchema,
   notificationsPaginatedResponseSchema,
@@ -12,6 +11,7 @@ import {
   type NotificationsPaginatedResponse,
   type NotificationUnreadCountResponse,
 } from '@repo/validators/notifications';
+import { NotificationsRepository } from './notifications.repository';
 
 @Injectable()
 export class NotificationsService {

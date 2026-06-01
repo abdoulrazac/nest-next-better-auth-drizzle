@@ -1,13 +1,13 @@
 // apps/backend/src/modules/settings/settings.repository.ts
-import { Injectable, Inject } from '@nestjs/common';
 import { DATABASE_TOKEN } from '@/database/database.module';
+import { Inject, Injectable } from '@nestjs/common';
 import type { db as DbType } from '@repo/db';
 import { appSetting, userPreference } from '@repo/db';
-import { eq } from 'drizzle-orm';
 import {
   userPreferencesResponseSchema,
   type UserPreferencesResponse,
 } from '@repo/validators/settings';
+import { eq } from 'drizzle-orm';
 
 type DB = typeof DbType;
 

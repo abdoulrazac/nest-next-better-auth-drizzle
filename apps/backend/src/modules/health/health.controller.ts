@@ -1,15 +1,17 @@
 // apps/backend/src/modules/health/health.controller.ts
-import { Controller, Get, VERSION_NEUTRAL, Res } from '@nestjs/common';
-import { HealthCheckService } from '@nestjs/terminus';
-import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { DbHealthIndicator } from './db-health.indicator';
-import type { FastifyReply } from 'fastify';
 import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
+import { Controller, Get, Res, VERSION_NEUTRAL } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { HealthCheckService } from '@nestjs/terminus';
 import {
   healthCheckResponseSchema,
   type HealthCheckResponse,
 } from '@repo/validators/health';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
+import type { FastifyReply } from 'fastify';
+import { DbHealthIndicator } from './indicators/db-health.indicator';
+import { RedisHealthIndicator } from './indicators/redis-health.indicator';
+import { S3HealthIndicator } from './indicators/s3-health.indicator';
 
 @ApiTags('health')
 @Controller({ path: 'health', version: VERSION_NEUTRAL })
@@ -17,6 +19,8 @@ export class HealthController {
   constructor(
     private readonly health: HealthCheckService,
     private readonly db: DbHealthIndicator,
+    private readonly redis: RedisHealthIndicator,
+    private readonly s3: S3HealthIndicator,
   ) {}
 
   @Get()
@@ -31,6 +35,8 @@ export class HealthController {
     res.header('Expires', '0');
     const health = await this.health.check([
       () => this.db.isHealthy('database'),
+      () => this.redis.isHealthy('redis'),
+      () => this.s3.isHealthy('s3'),
     ]);
     return healthCheckResponseSchema.parse(health);
   }

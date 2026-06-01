@@ -1,9 +1,8 @@
 // apps/backend/src/modules/notifications/notifications.repository.ts
-import { Injectable, Inject } from '@nestjs/common';
 import { DATABASE_TOKEN } from '@/database/database.module';
+import { Inject, Injectable } from '@nestjs/common';
 import type { db as DbType } from '@repo/db';
 import { notification } from '@repo/db';
-import { eq, and, count, inArray } from 'drizzle-orm';
 import {
   notificationResponseSchema,
   notificationsPaginatedResponseSchema,
@@ -12,6 +11,7 @@ import {
   type NotificationsPaginatedResponse,
   type NotificationUnreadCountResponse,
 } from '@repo/validators/notifications';
+import { and, count, eq, inArray } from 'drizzle-orm';
 
 type DB = typeof DbType;
 

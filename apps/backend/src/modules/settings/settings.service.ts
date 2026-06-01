@@ -1,7 +1,5 @@
 // apps/backend/src/modules/settings/settings.service.ts
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { SettingsRepository } from './settings.repository';
-import { SETTINGS_SCHEMA, SETTING_KEYS } from './settings-schema';
 import {
   appSettingsResponseSchema,
   userPreferencesResponseSchema,
@@ -10,6 +8,8 @@ import {
   type UpdateUserPreferences,
   type UserPreferencesResponse,
 } from '@repo/validators/settings';
+import { SETTINGS_SCHEMA, SETTING_KEYS } from './settings-schema';
+import { SettingsRepository } from './settings.repository';
 @Injectable()
 export class SettingsService implements OnApplicationBootstrap {
   constructor(private readonly settingsRepository: SettingsRepository) {}

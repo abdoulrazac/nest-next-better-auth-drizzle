@@ -1,12 +1,10 @@
 // apps/backend/src/modules/settings/settings.controller.ts
-import { Controller, Get, Patch } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { Permissions } from '@/auth/permission';
-import { ZodBody } from '@/common/decorators/zod.decorators';
-import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
-import { SettingsService } from './settings.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
+import { ZodBody } from '@/common/decorators/zod.decorators';
+import { Controller, Get, Patch } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   appSettingsResponseSchema,
   updateAppSettingsSchema,
@@ -14,9 +12,11 @@ import {
   userPreferencesResponseSchema,
   type AppSettingsResponse,
   type UpdateAppSettings,
-  type UserPreferencesResponse,
   type UpdateUserPreferences,
+  type UserPreferencesResponse,
 } from '@repo/validators/settings';
+import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { SettingsService } from './settings.service';
 
 @ApiTags('settings')
 @ApiBearerAuth()

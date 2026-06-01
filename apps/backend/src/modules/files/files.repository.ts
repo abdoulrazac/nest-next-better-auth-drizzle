@@ -1,9 +1,8 @@
 // apps/backend/src/modules/files/files.repository.ts
-import { Injectable, Inject } from '@nestjs/common';
 import { DATABASE_TOKEN } from '@/database/database.module';
+import { Inject, Injectable } from '@nestjs/common';
 import type { db as DbType } from '@repo/db';
 import { file } from '@repo/db';
-import { eq, ilike, count, and, type SQL } from 'drizzle-orm';
 import {
   fileResponseSchema,
   filesPaginatedResponseSchema,
@@ -11,6 +10,7 @@ import {
   type FileResponse,
   type FilesPaginatedResponse,
 } from '@repo/validators/files';
+import { and, count, eq, ilike, type SQL } from 'drizzle-orm';
 
 type DB = typeof DbType;
 

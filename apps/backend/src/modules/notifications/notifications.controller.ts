@@ -1,20 +1,18 @@
 // apps/backend/src/modules/notifications/notifications.controller.ts
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Param,
-  Query,
-  ParseUUIDPipe,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { Permissions } from '@/auth/permission';
-import { ZodBody } from '@/common/decorators/zod.decorators';
-import { NotificationsService } from './notifications.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
+import { ZodBody } from '@/common/decorators/zod.decorators';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   markAsReadSchema,
   notificationResponseSchema,
@@ -25,6 +23,8 @@ import {
   type NotificationsPaginatedResponse,
   type NotificationUnreadCountResponse,
 } from '@repo/validators/notifications';
+import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { NotificationsService } from './notifications.service';
 
 @ApiTags('notifications')
 @ApiBearerAuth()

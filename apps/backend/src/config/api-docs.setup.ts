@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
-// Better-Auth's generateOpenAPISchema() returns loosely-typed objects that
-// don't perfectly match @nestjs/swagger's strict OpenAPI types — casts are intentional.
-import { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
-import scalarFastifyApiReference from '@scalar/fastify-api-reference';
 import { auth } from '@/auth/auth';
+import { NestFastifyApplication } from '@nestjs/platform-fastify';
+import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import scalarFastifyApiReference from '@scalar/fastify-api-reference';
 
 const SCALAR_CUSTOM_CSS = `
   /* Powered by Scalar */

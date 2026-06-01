@@ -1,15 +1,8 @@
 // apps/backend/src/modules/webhooks/webhooks.repository.ts
-import { Injectable, Inject } from '@nestjs/common';
 import { DATABASE_TOKEN } from '@/database/database.module';
+import { Inject, Injectable } from '@nestjs/common';
 import type { db as DbType } from '@repo/db';
 import { webhook, webhookDelivery } from '@repo/db';
-import { eq, count, sql } from 'drizzle-orm';
-import {
-  webhookDeliveriesPaginatedResponseSchema,
-  webhookDeliveryResponseSchema,
-  webhookResponseSchema,
-  webhooksPaginatedResponseSchema,
-} from '@repo/validators/webhooks';
 import type {
   CreateWebhookInput,
   UpdateWebhookInput,
@@ -18,6 +11,13 @@ import type {
   WebhookResponse,
   WebhooksPaginatedResponse,
 } from '@repo/validators/webhooks';
+import {
+  webhookDeliveriesPaginatedResponseSchema,
+  webhookDeliveryResponseSchema,
+  webhookResponseSchema,
+  webhooksPaginatedResponseSchema,
+} from '@repo/validators/webhooks';
+import { count, eq, sql } from 'drizzle-orm';
 
 type DB = typeof DbType;
 

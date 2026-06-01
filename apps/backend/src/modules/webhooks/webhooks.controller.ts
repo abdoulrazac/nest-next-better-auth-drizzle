@@ -1,23 +1,25 @@
 // apps/backend/src/modules/webhooks/webhooks.controller.ts
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  ParseUUIDPipe,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { Permissions } from '@/auth/permission';
-import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
-import { WebhooksService } from './webhooks.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import {
   ApiZodCreatedResponse,
   ApiZodOkResponse,
 } from '@/common/decorators/zod-response.decorators';
+import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  paginationQuerySchema,
+  type PaginationQuery,
+} from '@repo/validators/accounts';
 import {
   createWebhookSchema,
   updateWebhookSchema,
@@ -30,10 +32,8 @@ import {
   type WebhookResponse,
   type WebhooksPaginatedResponse,
 } from '@repo/validators/webhooks';
-import {
-  paginationQuerySchema,
-  type PaginationQuery,
-} from '@repo/validators/accounts';
+import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { WebhooksService } from './webhooks.service';
 
 @ApiTags('webhooks')
 @ApiBearerAuth()

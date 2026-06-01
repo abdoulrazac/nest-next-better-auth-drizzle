@@ -1,36 +1,36 @@
 // apps/backend/src/modules/files/files.controller.ts
-import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Param,
-  ParseUUIDPipe,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { Permissions } from '@/auth/permission';
-import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
-import { FilesService } from './files.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import {
   ApiZodCreatedResponse,
   ApiZodOkResponse,
 } from '@/common/decorators/zod-response.decorators';
+import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
 import {
-  fileResponseSchema,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  confirmUploadSchema,
   fileQuerySchema,
+  fileResponseSchema,
   filesPaginatedResponseSchema,
   presignedUrlRequestSchema,
   presignedUrlResponseSchema,
-  confirmUploadSchema,
+  type ConfirmUploadInput,
   type FileQuery,
   type FileResponse,
   type FilesPaginatedResponse,
   type PresignedUrlRequest,
   type PresignedUrlResponse,
-  type ConfirmUploadInput,
 } from '@repo/validators/files';
+import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { FilesService } from './files.service';
 
 @ApiTags('files')
 @ApiBearerAuth()
