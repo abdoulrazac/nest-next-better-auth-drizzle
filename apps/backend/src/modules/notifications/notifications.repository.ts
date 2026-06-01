@@ -1,61 +1,114 @@
 // apps/backend/src/modules/notifications/notifications.repository.ts
-import { Injectable } from '@nestjs/common';
-import { db, notification } from '@repo/db';
+import { Injectable, Inject } from '@nestjs/common';
+import { DATABASE_TOKEN } from '@/database/database.module';
+import type { db as DbType } from '@repo/db';
+import { notification } from '@repo/db';
 import { eq, and, count, inArray } from 'drizzle-orm';
+import {
+  notificationResponseSchema,
+  notificationsPaginatedResponseSchema,
+  unreadCountResponseSchema,
+  type NotificationResponse,
+  type NotificationsPaginatedResponse,
+  type NotificationUnreadCountResponse,
+} from '@repo/validators/notifications';
+
+type DB = typeof DbType;
 
 @Injectable()
 export class NotificationsRepository {
-  async findAllForUser(userId: string, page: number, limit: number) {
+  constructor(@Inject(DATABASE_TOKEN) private readonly db: DB) {}
+
+  private readonly notificationArraySchema = notificationResponseSchema.array();
+
+  async findAllForUser(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<NotificationsPaginatedResponse> {
     const offset = (page - 1) * limit;
     const where = eq(notification.userId, userId);
 
     const [items, [{ total }]] = await Promise.all([
-      db
+      this.db
         .select()
         .from(notification)
         .where(where)
         .limit(limit)
         .offset(offset)
         .orderBy(notification.createdAt),
-      db.select({ total: count() }).from(notification).where(where),
+      this.db.select({ total: count() }).from(notification).where(where),
     ]);
 
-    return { items, total, page, limit };
+    return notificationsPaginatedResponseSchema.parse({
+      items,
+      total,
+      page,
+      limit,
+    });
   }
 
-  async markAsRead(userId: string, ids: string[]) {
-    return db
+  async markAsRead(
+    userId: string,
+    ids: string[],
+  ): Promise<NotificationResponse[]> {
+    const rows = await this.db
       .update(notification)
       .set({ read: true, readAt: new Date() })
       .where(
         and(eq(notification.userId, userId), inArray(notification.id, ids)),
       )
       .returning();
+
+    return this.notificationArraySchema.parse(rows);
   }
 
-  async markAllAsRead(userId: string) {
-    return db
+  async markAllAsRead(userId: string): Promise<NotificationResponse[]> {
+    const rows = await this.db
       .update(notification)
       .set({ read: true, readAt: new Date() })
       .where(and(eq(notification.userId, userId), eq(notification.read, false)))
       .returning();
+
+    return this.notificationArraySchema.parse(rows);
   }
 
-  async delete(userId: string, id: string) {
-    const [deleted] = await db
+  async delete(
+    userId: string,
+    id: string,
+  ): Promise<NotificationResponse | null> {
+    const [deleted] = await this.db
       .delete(notification)
       .where(and(eq(notification.id, id), eq(notification.userId, userId)))
       .returning();
-    return deleted ?? null;
+
+    if (!deleted) return null;
+    return notificationResponseSchema.parse(deleted);
   }
 
-  async countUnread(userId: string) {
-    const [{ total }] = await db
+  async countUnread(userId: string): Promise<NotificationUnreadCountResponse> {
+    const [{ total }] = await this.db
       .select({ total: count() })
       .from(notification)
       .where(
         and(eq(notification.userId, userId), eq(notification.read, false)),
       );
-    return total;
+
+    return unreadCountResponseSchema.parse({ total });
+  }
+
+  async create(data: {
+    userId: string;
+    type: string;
+    title: string;
+    body: string;
+    data?: Record<string, unknown> | null;
+  }): Promise<NotificationResponse> {
+    const [created] = await this.db
+      .insert(notification)
+      .values(data)
+      .returning();
+
+    return notificationResponseSchema.parse(created);
   }
 }

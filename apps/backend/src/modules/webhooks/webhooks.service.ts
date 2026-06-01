@@ -1,41 +1,76 @@
 // apps/backend/src/modules/webhooks/webhooks.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { WebhooksRepository } from './webhooks.repository';
+import {
+  webhookDeliveriesPaginatedResponseSchema,
+  webhookResponseSchema,
+  webhooksPaginatedResponseSchema,
+} from '@repo/validators/webhooks';
 import type {
   CreateWebhookInput,
   UpdateWebhookInput,
+  WebhookDeliveriesPaginatedResponse,
+  WebhookResponse,
+  WebhooksPaginatedResponse,
 } from '@repo/validators/webhooks';
 
 @Injectable()
 export class WebhooksService {
   constructor(private readonly webhooksRepository: WebhooksRepository) {}
 
-  findAll(page: number, limit: number) {
-    return this.webhooksRepository.findAll(page, limit);
+  async findAll(
+    page: number,
+    limit: number,
+  ): Promise<WebhooksPaginatedResponse> {
+    const webhooks = await this.webhooksRepository.findAll(page, limit);
+    return webhooksPaginatedResponseSchema.parse(webhooks);
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<WebhookResponse> {
     const found = await this.webhooksRepository.findById(id);
     if (!found) throw new NotFoundException(`Webhook ${id} not found`);
-    return found;
+    return webhookResponseSchema.parse(found);
   }
 
-  create(data: CreateWebhookInput, userId?: string) {
-    return this.webhooksRepository.create({ ...data, createdBy: userId });
+  async create(
+    data: CreateWebhookInput,
+    userId?: string,
+  ): Promise<WebhookResponse> {
+    const created = await this.webhooksRepository.create({
+      ...data,
+      createdBy: userId,
+    });
+    return webhookResponseSchema.parse(created);
   }
 
-  async update(id: string, data: UpdateWebhookInput) {
+  async update(
+    id: string,
+    data: UpdateWebhookInput,
+  ): Promise<WebhookResponse | null> {
     await this.findById(id);
-    return this.webhooksRepository.update(id, data);
+    const updated = await this.webhooksRepository.update(id, data);
+    if (!updated) return null;
+    return webhookResponseSchema.parse(updated);
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<WebhookResponse | null> {
     await this.findById(id);
-    return this.webhooksRepository.delete(id);
+    const deleted = await this.webhooksRepository.delete(id);
+    if (!deleted) return null;
+    return webhookResponseSchema.parse(deleted);
   }
 
-  async getDeliveries(id: string, page: number, limit: number) {
+  async getDeliveries(
+    id: string,
+    page: number,
+    limit: number,
+  ): Promise<WebhookDeliveriesPaginatedResponse> {
     await this.findById(id);
-    return this.webhooksRepository.findDeliveriesByWebhook(id, page, limit);
+    const deliveries = await this.webhooksRepository.findDeliveriesByWebhook(
+      id,
+      page,
+      limit,
+    );
+    return webhookDeliveriesPaginatedResponseSchema.parse(deliveries);
   }
 }

@@ -1,12 +1,24 @@
 // apps/backend/src/modules/files/files.repository.ts
-import { Injectable } from '@nestjs/common';
-import { db, file } from '@repo/db';
+import { Injectable, Inject } from '@nestjs/common';
+import { DATABASE_TOKEN } from '@/database/database.module';
+import type { db as DbType } from '@repo/db';
+import { file } from '@repo/db';
 import { eq, ilike, count, and, type SQL } from 'drizzle-orm';
-import type { FileQuery } from '@repo/validators/files';
+import {
+  fileResponseSchema,
+  filesPaginatedResponseSchema,
+  type FileQuery,
+  type FileResponse,
+  type FilesPaginatedResponse,
+} from '@repo/validators/files';
+
+type DB = typeof DbType;
 
 @Injectable()
 export class FilesRepository {
-  async findAll(query: FileQuery) {
+  constructor(@Inject(DATABASE_TOKEN) private readonly db: DB) {}
+
+  async findAll(query: FileQuery): Promise<FilesPaginatedResponse> {
     const { page, limit, mimeType } = query;
     const offset = (page - 1) * limit;
 
@@ -16,22 +28,23 @@ export class FilesRepository {
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
     const [items, [{ total }]] = await Promise.all([
-      db
+      this.db
         .select()
         .from(file)
         .where(where)
         .limit(limit)
         .offset(offset)
         .orderBy(file.createdAt),
-      db.select({ total: count() }).from(file).where(where),
+      this.db.select({ total: count() }).from(file).where(where),
     ]);
 
-    return { items, total, page, limit };
+    return filesPaginatedResponseSchema.parse({ items, total, page, limit });
   }
 
-  async findById(id: string) {
-    const [found] = await db.select().from(file).where(eq(file.id, id));
-    return found ?? null;
+  async findById(id: string): Promise<FileResponse | null> {
+    const [found] = await this.db.select().from(file).where(eq(file.id, id));
+    if (!found) return null;
+    return fileResponseSchema.parse(found);
   }
 
   async create(data: {
@@ -43,13 +56,17 @@ export class FilesRepository {
     key: string;
     url: string;
     uploadedBy?: string | null;
-  }) {
-    const [created] = await db.insert(file).values(data).returning();
-    return created;
+  }): Promise<FileResponse> {
+    const [created] = await this.db.insert(file).values(data).returning();
+    return fileResponseSchema.parse(created);
   }
 
-  async delete(id: string) {
-    const [deleted] = await db.delete(file).where(eq(file.id, id)).returning();
-    return deleted ?? null;
+  async delete(id: string): Promise<FileResponse | null> {
+    const [deleted] = await this.db
+      .delete(file)
+      .where(eq(file.id, id))
+      .returning();
+    if (!deleted) return null;
+    return fileResponseSchema.parse(deleted);
   }
 }

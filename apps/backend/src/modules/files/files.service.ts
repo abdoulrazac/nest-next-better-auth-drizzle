@@ -4,27 +4,37 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { S3Service } from './s3.service';
 import { FilesRepository } from './files.repository';
-import type { FileQuery } from '@repo/validators/files';
-import { env } from '../../config/env';
+import {
+  fileResponseSchema,
+  filesPaginatedResponseSchema,
+  presignedUrlResponseSchema,
+  type FileQuery,
+  type FileResponse,
+  type FilesPaginatedResponse,
+  type PresignedUrlResponse,
+} from '@repo/validators/files';
+import type { Env } from '@/config/env.schema';
 
 @Injectable()
 export class FilesService {
   constructor(
     private readonly s3Service: S3Service,
     private readonly filesRepository: FilesRepository,
+    private readonly config: ConfigService<Env, true>,
   ) {}
 
   async getPresignedUploadUrl(
     originalName: string,
     mimeType: string,
-  ): Promise<{ uploadUrl: string; key: string }> {
+  ): Promise<PresignedUrlResponse> {
     const ext = originalName.split('.').pop() ?? 'bin';
     const key = `uploads/${randomUUID()}.${ext}`;
     const uploadUrl = await this.s3Service.getPresignedUploadUrl(key, mimeType);
-    return { uploadUrl, key };
+    return presignedUrlResponseSchema.parse({ uploadUrl, key });
   }
 
   async confirmUpload(
@@ -35,7 +45,7 @@ export class FilesService {
       mimeType: string;
       size: number;
     },
-  ) {
+  ): Promise<FileResponse> {
     const exists = await this.s3Service.objectExists(data.key);
     if (!exists) {
       throw new BadRequestException(
@@ -46,31 +56,36 @@ export class FilesService {
     const url = this.s3Service.getPublicUrl(data.key);
     const filename = data.key.split('/').pop() ?? data.key;
 
-    return this.filesRepository.create({
+    const file = await this.filesRepository.create({
       filename,
       originalName: data.originalName,
       mimeType: data.mimeType,
       size: data.size,
-      bucket: env.S3_BUCKET,
+      bucket: this.config.get('S3_BUCKET', { infer: true }),
       key: data.key,
       url,
       uploadedBy: userId,
     });
+
+    return fileResponseSchema.parse(file);
   }
 
-  findAll(query: FileQuery) {
-    return this.filesRepository.findAll(query);
+  async findAll(query: FileQuery): Promise<FilesPaginatedResponse> {
+    const files = await this.filesRepository.findAll(query);
+    return filesPaginatedResponseSchema.parse(files);
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<FileResponse> {
     const found = await this.filesRepository.findById(id);
     if (!found) throw new NotFoundException(`File ${id} not found`);
-    return found;
+    return fileResponseSchema.parse(found);
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<FileResponse | null> {
     const found = await this.findById(id);
     await this.s3Service.deleteObject(found.key);
-    return this.filesRepository.delete(id);
+    const deleted = await this.filesRepository.delete(id);
+    if (!deleted) return null;
+    return fileResponseSchema.parse(deleted);
   }
 }

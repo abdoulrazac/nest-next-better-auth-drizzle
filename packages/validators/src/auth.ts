@@ -1,21 +1,21 @@
 import { z } from "zod";
+import {
+  emailSchema,
+  nameMin2Schema,
+  passwordComplexSchema,
+  passwordMin8Schema,
+} from "./shared.schema";
 
 export const loginSchema = z.object({
-  email: z.string().email("Email invalide"),
-  password: z
-    .string()
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+  email: emailSchema,
+  password: passwordMin8Schema,
 });
 
 export const registerSchema = z
   .object({
-    name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-    email: z.string().email("Email invalide"),
-    password: z
-      .string()
-      .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-      .regex(/[A-Z]/, "Le mot de passe doit contenir une majuscule")
-      .regex(/[0-9]/, "Le mot de passe doit contenir un chiffre"),
+    name: nameMin2Schema,
+    email: emailSchema,
+    password: passwordComplexSchema,
     confirmPassword: z.string(),
   })
   .superRefine((data, ctx) => {
@@ -29,17 +29,13 @@ export const registerSchema = z
   });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email("Email invalide"),
+  email: emailSchema,
 });
 
 export const resetPasswordSchema = z
   .object({
     token: z.string().min(1, "Token requis"),
-    password: z
-      .string()
-      .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-      .regex(/[A-Z]/, "Le mot de passe doit contenir une majuscule")
-      .regex(/[0-9]/, "Le mot de passe doit contenir un chiffre"),
+    password: passwordComplexSchema,
     confirmPassword: z.string(),
   })
   .superRefine((data, ctx) => {

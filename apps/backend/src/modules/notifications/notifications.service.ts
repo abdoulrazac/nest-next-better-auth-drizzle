@@ -1,7 +1,17 @@
 // apps/backend/src/modules/notifications/notifications.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { NotificationsRepository } from './notifications.repository';
-import type { MarkAsReadInput } from '@repo/validators/notifications';
+import { DomainEvent, type MessageNewEvent } from '@/events/domain-events';
+import {
+  notificationResponseSchema,
+  notificationsPaginatedResponseSchema,
+  unreadCountResponseSchema,
+  type MarkAsReadInput,
+  type NotificationResponse,
+  type NotificationsPaginatedResponse,
+  type NotificationUnreadCountResponse,
+} from '@repo/validators/notifications';
 
 @Injectable()
 export class NotificationsService {
@@ -9,25 +19,67 @@ export class NotificationsService {
     private readonly notificationsRepository: NotificationsRepository,
   ) {}
 
-  findAll(userId: string, page: number, limit: number) {
-    return this.notificationsRepository.findAllForUser(userId, page, limit);
+  async findAll(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<NotificationsPaginatedResponse> {
+    const notifications = await this.notificationsRepository.findAllForUser(
+      userId,
+      page,
+      limit,
+    );
+    return notificationsPaginatedResponseSchema.parse(notifications);
   }
 
-  countUnread(userId: string) {
-    return this.notificationsRepository.countUnread(userId);
+  async countUnread(userId: string): Promise<NotificationUnreadCountResponse> {
+    const unread = await this.notificationsRepository.countUnread(userId);
+    return unreadCountResponseSchema.parse(unread);
   }
 
-  markAsRead(userId: string, input: MarkAsReadInput) {
-    return this.notificationsRepository.markAsRead(userId, input.ids);
+  async markAsRead(
+    userId: string,
+    input: MarkAsReadInput,
+  ): Promise<NotificationResponse[]> {
+    const updated = await this.notificationsRepository.markAsRead(
+      userId,
+      input.ids,
+    );
+    return notificationResponseSchema.array().parse(updated);
   }
 
-  markAllAsRead(userId: string) {
-    return this.notificationsRepository.markAllAsRead(userId);
+  async markAllAsRead(userId: string): Promise<NotificationResponse[]> {
+    const updated = await this.notificationsRepository.markAllAsRead(userId);
+    return notificationResponseSchema.array().parse(updated);
   }
 
-  async delete(userId: string, id: string) {
+  async delete(userId: string, id: string): Promise<NotificationResponse> {
     const deleted = await this.notificationsRepository.delete(userId, id);
     if (!deleted) throw new NotFoundException(`Notification ${id} not found`);
-    return deleted;
+    return notificationResponseSchema.parse(deleted);
+  }
+
+  @OnEvent(DomainEvent.MESSAGE_NEW)
+  async handleNewMessage(event: MessageNewEvent): Promise<void> {
+    const title =
+      event.conversationType === 'group'
+        ? `${event.senderName} dans ${event.conversationName ?? 'le groupe'}`
+        : event.senderName;
+
+    await Promise.all(
+      event.recipientIds.map((userId) =>
+        this.notificationsRepository.create({
+          userId,
+          type: 'new_message',
+          title,
+          body: event.preview,
+          data: {
+            conversationId: event.conversationId,
+            messageId: event.messageId,
+            senderId: event.senderId,
+          },
+        }),
+      ),
+    );
   }
 }

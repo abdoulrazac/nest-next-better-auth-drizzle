@@ -6,22 +6,29 @@ import {
   Patch,
   Delete,
   Param,
-  Body,
-  Query,
   ParseUUIDPipe,
-  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { Permissions } from '@/auth/permission';
+import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
 import { WebhooksService } from './webhooks.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
-import { AuditLogInterceptor } from '@/common/interceptors/audit-log.interceptor';
+import {
+  ApiZodCreatedResponse,
+  ApiZodOkResponse,
+} from '@/common/decorators/zod-response.decorators';
 import {
   createWebhookSchema,
   updateWebhookSchema,
+  webhookDeliveriesPaginatedResponseSchema,
+  webhookResponseSchema,
+  webhooksPaginatedResponseSchema,
   type CreateWebhookInput,
   type UpdateWebhookInput,
+  type WebhookDeliveriesPaginatedResponse,
+  type WebhookResponse,
+  type WebhooksPaginatedResponse,
 } from '@repo/validators/webhooks';
 import {
   paginationQuerySchema,
@@ -30,61 +37,68 @@ import {
 
 @ApiTags('webhooks')
 @ApiBearerAuth()
-@UseInterceptors(AuditLogInterceptor)
 @Controller({ path: 'webhooks', version: '1' })
 export class WebhooksController {
   constructor(private readonly webhooksService: WebhooksService) {}
 
   @Get()
   @ApiOperation({ summary: 'List webhooks' })
-  @UserHasPermission({ permission: { webhooks: ['read'] } })
+  @ApiZodOkResponse(webhooksPaginatedResponseSchema)
+  @UserHasPermission({ permission: Permissions.webhooks.read })
   findAll(
-    @Query(new ZodValidationPipe(paginationQuerySchema)) query: PaginationQuery,
-  ) {
+    @ZodQuery(paginationQuerySchema) query: PaginationQuery,
+  ): Promise<WebhooksPaginatedResponse> {
     return this.webhooksService.findAll(query.page, query.limit);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get webhook by id' })
-  @UserHasPermission({ permission: { webhooks: ['read'] } })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiZodOkResponse(webhookResponseSchema)
+  @UserHasPermission({ permission: Permissions.webhooks.read })
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<WebhookResponse> {
     return this.webhooksService.findById(id);
   }
 
   @Get(':id/deliveries')
   @ApiOperation({ summary: 'Get webhook delivery history' })
-  @UserHasPermission({ permission: { webhooks: ['read'] } })
+  @ApiZodOkResponse(webhookDeliveriesPaginatedResponseSchema)
+  @UserHasPermission({ permission: Permissions.webhooks.read })
   getDeliveries(
     @Param('id', ParseUUIDPipe) id: string,
-    @Query(new ZodValidationPipe(paginationQuerySchema)) query: PaginationQuery,
-  ) {
+    @ZodQuery(paginationQuerySchema) query: PaginationQuery,
+  ): Promise<WebhookDeliveriesPaginatedResponse> {
     return this.webhooksService.getDeliveries(id, query.page, query.limit);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create webhook' })
-  @UserHasPermission({ permission: { webhooks: ['write'] } })
+  @ApiZodCreatedResponse(webhookResponseSchema)
+  @UserHasPermission({ permission: Permissions.webhooks.write })
   create(
     @CurrentUser() user: { id: string },
-    @Body(new ZodValidationPipe(createWebhookSchema)) body: CreateWebhookInput,
-  ) {
+    @ZodBody(createWebhookSchema) body: CreateWebhookInput,
+  ): Promise<WebhookResponse> {
     return this.webhooksService.create(body, user.id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update webhook' })
-  @UserHasPermission({ permission: { webhooks: ['write'] } })
+  @ApiZodOkResponse(webhookResponseSchema)
+  @UserHasPermission({ permission: Permissions.webhooks.write })
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ZodValidationPipe(updateWebhookSchema)) body: UpdateWebhookInput,
-  ) {
+    @ZodBody(updateWebhookSchema) body: UpdateWebhookInput,
+  ): Promise<WebhookResponse | null> {
     return this.webhooksService.update(id, body);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete webhook' })
-  @UserHasPermission({ permission: { webhooks: ['delete'] } })
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiZodOkResponse(webhookResponseSchema)
+  @UserHasPermission({ permission: Permissions.webhooks.delete })
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<WebhookResponse | null> {
     return this.webhooksService.delete(id);
   }
 }

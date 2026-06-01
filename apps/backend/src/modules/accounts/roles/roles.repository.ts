@@ -1,62 +1,104 @@
 // apps/backend/src/modules/accounts/roles/roles.repository.ts
-import { Injectable } from '@nestjs/common';
-import { db, role, userRole } from '@repo/db';
+import { Injectable, Inject } from '@nestjs/common';
+import { DATABASE_TOKEN } from '@/database/database.module';
+import type { db as DbType } from '@repo/db';
+import { role, userRole } from '@repo/db';
 import { eq, and } from 'drizzle-orm';
+import {
+  roleResponseSchema,
+  userRoleResponseSchema,
+} from '@repo/validators/accounts';
 import type {
   CreateRoleInput,
   UpdateRoleInput,
+  RoleResponse,
+  UserRoleResponse,
 } from '@repo/validators/accounts';
+
+type DB = typeof DbType;
 
 @Injectable()
 export class RolesRepository {
-  async findAll() {
-    return db.select().from(role).orderBy(role.name);
+  constructor(@Inject(DATABASE_TOKEN) private readonly db: DB) {}
+
+  private readonly roleArraySchema = roleResponseSchema.array();
+
+  async findAll(): Promise<RoleResponse[]> {
+    const rows = await this.db.select().from(role).orderBy(role.name);
+    return this.roleArraySchema.parse(rows);
   }
 
-  async findById(id: string) {
-    const [found] = await db.select().from(role).where(eq(role.id, id));
-    return found ?? null;
+  async findById(id: string): Promise<RoleResponse | null> {
+    const [found] = await this.db.select().from(role).where(eq(role.id, id));
+    if (!found) return null;
+    return roleResponseSchema.parse(found);
   }
 
-  async create(data: CreateRoleInput) {
-    const [created] = await db
+  async create(data: CreateRoleInput): Promise<RoleResponse> {
+    const [created] = await this.db
       .insert(role)
       .values({
         name: data.name,
         permissions: data.permissions,
       })
       .returning();
-    return created;
+    return roleResponseSchema.parse(created);
   }
 
-  async update(id: string, data: UpdateRoleInput) {
-    const [updated] = await db
+  async update(
+    id: string,
+    data: UpdateRoleInput,
+  ): Promise<RoleResponse | null> {
+    const [updated] = await this.db
       .update(role)
       .set({ ...data, updatedAt: new Date() })
       .where(eq(role.id, id))
       .returning();
-    return updated ?? null;
+    if (!updated) return null;
+    return roleResponseSchema.parse(updated);
   }
 
-  async delete(id: string) {
-    const [deleted] = await db.delete(role).where(eq(role.id, id)).returning();
-    return deleted ?? null;
+  async delete(id: string): Promise<RoleResponse | null> {
+    const [deleted] = await this.db
+      .delete(role)
+      .where(eq(role.id, id))
+      .returning();
+    if (!deleted) return null;
+    return roleResponseSchema.parse(deleted);
   }
 
-  async assignToUser(userId: string, roleId: string) {
-    const [created] = await db
+  async assignToUser(
+    userId: string,
+    roleId: string,
+  ): Promise<UserRoleResponse> {
+    const [created] = await this.db
       .insert(userRole)
       .values({ userId, roleId })
       .onConflictDoNothing()
       .returning();
-    return created;
+
+    if (created) {
+      return userRoleResponseSchema.parse(created);
+    }
+
+    const [existing] = await this.db
+      .select()
+      .from(userRole)
+      .where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleId)))
+      .limit(1);
+
+    return userRoleResponseSchema.parse(existing);
   }
 
-  async removeFromUser(userId: string, roleId: string) {
-    const [deleted] = await db
+  async removeFromUser(
+    userId: string,
+    roleId: string,
+  ): Promise<UserRoleResponse | null> {
+    const [deleted] = await this.db
       .delete(userRole)
       .where(and(eq(userRole.userId, userId), eq(userRole.roleId, roleId)))
       .returning();
-    return deleted ?? null;
+    if (!deleted) return null;
+    return userRoleResponseSchema.parse(deleted);
   }
 }

@@ -44,6 +44,18 @@
       "import": "./dist/webhooks.js",
       "types": "./src/webhooks.ts",
       "default": "./dist/webhooks.js"
+    },
+    "./messages": {
+      "require": "./dist/messages.js",
+      "import": "./dist/messages.js",
+      "types": "./src/messages.ts",
+      "default": "./dist/messages.js"
+    },
+    "./health": {
+      "require": "./dist/health.js",
+      "import": "./dist/health.js",
+      "types": "./src/health.ts",
+      "default": "./dist/health.js"
     }
   },
   "scripts": {

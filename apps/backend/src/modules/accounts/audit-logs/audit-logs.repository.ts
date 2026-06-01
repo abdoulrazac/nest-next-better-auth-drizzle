@@ -1,12 +1,25 @@
 // apps/backend/src/modules/accounts/audit-logs/audit-logs.repository.ts
-import { Injectable } from '@nestjs/common';
-import { db, auditLog } from '@repo/db';
+import { Injectable, Inject } from '@nestjs/common';
+import { DATABASE_TOKEN } from '@/database/database.module';
+import type { db as DbType } from '@repo/db';
+import { auditLog } from '@repo/db';
 import { eq, and, gte, lte, count, type SQL } from 'drizzle-orm';
-import type { AuditLogQuery } from '@repo/validators/accounts';
+import {
+  auditLogsPaginatedResponseSchema,
+  type AuditLogsPaginatedResponse,
+} from '@repo/validators/accounts';
+import type {
+  AuditLogQuery,
+  CreateAuditLogInput,
+} from '@repo/validators/accounts';
+
+type DB = typeof DbType;
 
 @Injectable()
 export class AuditLogsRepository {
-  async findAll(query: AuditLogQuery) {
+  constructor(@Inject(DATABASE_TOKEN) private readonly db: DB) {}
+
+  async findAll(query: AuditLogQuery): Promise<AuditLogsPaginatedResponse> {
     const { page, limit, userId, action, from, to } = query;
     const offset = (page - 1) * limit;
 
@@ -19,16 +32,33 @@ export class AuditLogsRepository {
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
     const [items, [{ total }]] = await Promise.all([
-      db
+      this.db
         .select()
         .from(auditLog)
         .where(where)
         .limit(limit)
         .offset(offset)
         .orderBy(auditLog.createdAt),
-      db.select({ total: count() }).from(auditLog).where(where),
+      this.db.select({ total: count() }).from(auditLog).where(where),
     ]);
 
-    return { items, total, page, limit };
+    return auditLogsPaginatedResponseSchema.parse({
+      items,
+      total,
+      page,
+      limit,
+    });
+  }
+
+  async create(data: CreateAuditLogInput): Promise<void> {
+    await this.db.insert(auditLog).values({
+      userId: data.userId,
+      action: data.action,
+      resource: data.resource,
+      resourceId: data.resourceId ?? null,
+      metadata: data.metadata ?? {},
+      ipAddress: data.ipAddress,
+      userAgent: data.userAgent,
+    });
   }
 }

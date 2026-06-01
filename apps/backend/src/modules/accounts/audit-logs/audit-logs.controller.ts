@@ -1,12 +1,16 @@
 // apps/backend/src/modules/accounts/audit-logs/audit-logs.controller.ts
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { Permissions } from '@/auth/permission';
+import { ZodQuery } from '@/common/decorators/zod.decorators';
+import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
 import { AuditLogsService } from './audit-logs.service';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 import {
+  auditLogsPaginatedResponseSchema,
   auditLogQuerySchema,
   type AuditLogQuery,
+  type AuditLogsPaginatedResponse,
 } from '@repo/validators/accounts';
 
 @ApiTags('accounts/audit-logs')
@@ -17,10 +21,11 @@ export class AuditLogsController {
 
   @Get()
   @ApiOperation({ summary: 'List audit logs' })
-  @UserHasPermission({ permission: { 'audit-logs': ['read'] } })
+  @ApiZodOkResponse(auditLogsPaginatedResponseSchema)
+  @UserHasPermission({ permission: Permissions.auditLogs.read })
   findAll(
-    @Query(new ZodValidationPipe(auditLogQuerySchema)) query: AuditLogQuery,
-  ) {
+    @ZodQuery(auditLogQuerySchema) query: AuditLogQuery,
+  ): Promise<AuditLogsPaginatedResponse> {
     return this.auditLogsService.findAll(query);
   }
 }

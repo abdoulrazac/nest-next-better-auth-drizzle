@@ -1,16 +1,26 @@
 // apps/backend/src/modules/settings/settings.repository.ts
-import { Injectable } from '@nestjs/common';
-import { db, appSetting, userPreference } from '@repo/db';
+import { Injectable, Inject } from '@nestjs/common';
+import { DATABASE_TOKEN } from '@/database/database.module';
+import type { db as DbType } from '@repo/db';
+import { appSetting, userPreference } from '@repo/db';
 import { eq } from 'drizzle-orm';
+import {
+  userPreferencesResponseSchema,
+  type UserPreferencesResponse,
+} from '@repo/validators/settings';
+
+type DB = typeof DbType;
 
 @Injectable()
 export class SettingsRepository {
+  constructor(@Inject(DATABASE_TOKEN) private readonly db: DB) {}
+
   async findAllAppSettings() {
-    return db.select().from(appSetting).orderBy(appSetting.key);
+    return this.db.select().from(appSetting).orderBy(appSetting.key);
   }
 
   async findAppSetting(key: string) {
-    const [found] = await db
+    const [found] = await this.db
       .select()
       .from(appSetting)
       .where(eq(appSetting.key, key));
@@ -18,7 +28,7 @@ export class SettingsRepository {
   }
 
   async upsertAppSetting(key: string, value: string) {
-    const [result] = await db
+    const [result] = await this.db
       .insert(appSetting)
       .values({ key, value })
       .onConflictDoUpdate({
@@ -29,19 +39,23 @@ export class SettingsRepository {
     return result;
   }
 
-  async findUserPreference(userId: string) {
-    const [found] = await db
+  async findUserPreference(
+    userId: string,
+  ): Promise<UserPreferencesResponse | null> {
+    const [found] = await this.db
       .select()
       .from(userPreference)
       .where(eq(userPreference.userId, userId));
-    return found ?? null;
+
+    if (!found) return null;
+    return userPreferencesResponseSchema.parse(found);
   }
 
   async upsertUserPreference(
     userId: string,
     data: { theme?: string; language?: string; timezone?: string },
-  ) {
-    const [result] = await db
+  ): Promise<UserPreferencesResponse> {
+    const [result] = await this.db
       .insert(userPreference)
       .values({ userId, ...data })
       .onConflictDoUpdate({
@@ -49,6 +63,7 @@ export class SettingsRepository {
         set: { ...data, updatedAt: new Date() },
       })
       .returning();
-    return result;
+
+    return userPreferencesResponseSchema.parse(result);
   }
 }

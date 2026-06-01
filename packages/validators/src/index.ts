@@ -4,3 +4,6 @@ export * from "./files";
 export * from "./notifications";
 export * from "./settings";
 export * from "./webhooks";
+export * from "./messages";
+export * from "./shared.schema";
+export * from "./health";

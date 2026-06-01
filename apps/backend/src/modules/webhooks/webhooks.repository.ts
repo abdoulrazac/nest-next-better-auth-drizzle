@@ -1,43 +1,71 @@
 // apps/backend/src/modules/webhooks/webhooks.repository.ts
-import { Injectable } from '@nestjs/common';
-import { db, webhook, webhookDelivery } from '@repo/db';
-import { eq, count } from 'drizzle-orm';
+import { Injectable, Inject } from '@nestjs/common';
+import { DATABASE_TOKEN } from '@/database/database.module';
+import type { db as DbType } from '@repo/db';
+import { webhook, webhookDelivery } from '@repo/db';
+import { eq, count, sql } from 'drizzle-orm';
+import {
+  webhookDeliveriesPaginatedResponseSchema,
+  webhookDeliveryResponseSchema,
+  webhookResponseSchema,
+  webhooksPaginatedResponseSchema,
+} from '@repo/validators/webhooks';
 import type {
   CreateWebhookInput,
   UpdateWebhookInput,
+  WebhookDeliveriesPaginatedResponse,
+  WebhookDeliveryResponse,
+  WebhookResponse,
+  WebhooksPaginatedResponse,
 } from '@repo/validators/webhooks';
+
+type DB = typeof DbType;
 
 @Injectable()
 export class WebhooksRepository {
-  async findAll(page: number, limit: number) {
+  constructor(@Inject(DATABASE_TOKEN) private readonly db: DB) {}
+
+  async findAll(
+    page: number,
+    limit: number,
+  ): Promise<WebhooksPaginatedResponse> {
     const offset = (page - 1) * limit;
     const [items, [{ total }]] = await Promise.all([
-      db
+      this.db
         .select()
         .from(webhook)
         .limit(limit)
         .offset(offset)
         .orderBy(webhook.createdAt),
-      db.select({ total: count() }).from(webhook),
+      this.db.select({ total: count() }).from(webhook),
     ]);
-    return { items, total, page, limit };
+    return webhooksPaginatedResponseSchema.parse({ items, total, page, limit });
   }
 
-  async findById(id: string) {
-    const [found] = await db.select().from(webhook).where(eq(webhook.id, id));
-    return found ?? null;
-  }
-
-  async findActiveByEvent(event: string) {
-    const rows = await db
+  async findById(id: string): Promise<WebhookResponse | null> {
+    const [found] = await this.db
       .select()
       .from(webhook)
-      .where(eq(webhook.active, true));
-    return rows.filter((w) => w.events.includes(event));
+      .where(eq(webhook.id, id));
+    if (!found) return null;
+    return webhookResponseSchema.parse(found);
   }
 
-  async create(data: CreateWebhookInput & { createdBy?: string }) {
-    const [created] = await db
+  async findActiveByEvent(event: string): Promise<WebhookResponse[]> {
+    const rows = await this.db
+      .select()
+      .from(webhook)
+      .where(
+        sql`${webhook.active} = true AND ${webhook.events} @> ARRAY[${event}]::text[]`,
+      );
+
+    return webhookResponseSchema.array().parse(rows);
+  }
+
+  async create(
+    data: CreateWebhookInput & { createdBy?: string },
+  ): Promise<WebhookResponse> {
+    const [created] = await this.db
       .insert(webhook)
       .values({
         name: data.name,
@@ -47,24 +75,29 @@ export class WebhooksRepository {
         createdBy: data.createdBy,
       })
       .returning();
-    return created;
+    return webhookResponseSchema.parse(created);
   }
 
-  async update(id: string, data: UpdateWebhookInput) {
-    const [updated] = await db
+  async update(
+    id: string,
+    data: UpdateWebhookInput,
+  ): Promise<WebhookResponse | null> {
+    const [updated] = await this.db
       .update(webhook)
       .set({ ...data, updatedAt: new Date() })
       .where(eq(webhook.id, id))
       .returning();
-    return updated ?? null;
+    if (!updated) return null;
+    return webhookResponseSchema.parse(updated);
   }
 
-  async delete(id: string) {
-    const [deleted] = await db
+  async delete(id: string): Promise<WebhookResponse | null> {
+    const [deleted] = await this.db
       .delete(webhook)
       .where(eq(webhook.id, id))
       .returning();
-    return deleted ?? null;
+    if (!deleted) return null;
+    return webhookResponseSchema.parse(deleted);
   }
 
   async createDelivery(data: {
@@ -74,8 +107,8 @@ export class WebhooksRepository {
     statusCode: number | null;
     response: string | null;
     success: boolean;
-  }) {
-    const [created] = await db
+  }): Promise<WebhookDeliveryResponse> {
+    const [created] = await this.db
       .insert(webhookDelivery)
       .values({
         webhookId: data.webhookId,
@@ -86,26 +119,31 @@ export class WebhooksRepository {
         success: data.success,
       })
       .returning();
-    return created;
+    return webhookDeliveryResponseSchema.parse(created);
   }
 
   async findDeliveriesByWebhook(
     webhookId: string,
     page: number,
     limit: number,
-  ) {
+  ): Promise<WebhookDeliveriesPaginatedResponse> {
     const offset = (page - 1) * limit;
     const where = eq(webhookDelivery.webhookId, webhookId);
     const [items, [{ total }]] = await Promise.all([
-      db
+      this.db
         .select()
         .from(webhookDelivery)
         .where(where)
         .limit(limit)
         .offset(offset)
         .orderBy(webhookDelivery.createdAt),
-      db.select({ total: count() }).from(webhookDelivery).where(where),
+      this.db.select({ total: count() }).from(webhookDelivery).where(where),
     ]);
-    return { items, total, page, limit };
+    return webhookDeliveriesPaginatedResponseSchema.parse({
+      items,
+      total,
+      page,
+      limit,
+    });
   }
 }

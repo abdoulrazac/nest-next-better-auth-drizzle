@@ -1,41 +1,60 @@
 // apps/backend/src/modules/accounts/roles/roles.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { RolesRepository } from './roles.repository';
+import {
+  roleResponseSchema,
+  userRoleResponseSchema,
+} from '@repo/validators/accounts';
 import type {
   CreateRoleInput,
+  RoleResponse,
   UpdateRoleInput,
+  UserRoleResponse,
 } from '@repo/validators/accounts';
 
 @Injectable()
 export class RolesService {
   constructor(private readonly rolesRepository: RolesRepository) {}
 
-  findAll() {
-    return this.rolesRepository.findAll();
+  async findAll(): Promise<RoleResponse[]> {
+    const roles = await this.rolesRepository.findAll();
+    return roleResponseSchema.array().parse(roles);
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<RoleResponse> {
     const found = await this.rolesRepository.findById(id);
     if (!found) throw new NotFoundException(`Role ${id} not found`);
-    return found;
+    return roleResponseSchema.parse(found);
   }
 
-  async create(data: CreateRoleInput) {
-    return this.rolesRepository.create(data);
+  async create(data: CreateRoleInput): Promise<RoleResponse> {
+    const created = await this.rolesRepository.create(data);
+    return roleResponseSchema.parse(created);
   }
 
-  async update(id: string, data: UpdateRoleInput) {
+  async update(
+    id: string,
+    data: UpdateRoleInput,
+  ): Promise<RoleResponse | null> {
     await this.findById(id);
-    return this.rolesRepository.update(id, data);
+    const updated = await this.rolesRepository.update(id, data);
+    if (!updated) return null;
+    return roleResponseSchema.parse(updated);
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<RoleResponse | null> {
     await this.findById(id);
-    return this.rolesRepository.delete(id);
+    const deleted = await this.rolesRepository.delete(id);
+    if (!deleted) return null;
+    return roleResponseSchema.parse(deleted);
   }
 
-  async assignToUser(userId: string, roleId: string) {
+  async assignToUser(
+    userId: string,
+    roleId: string,
+  ): Promise<UserRoleResponse> {
     await this.findById(roleId);
-    return this.rolesRepository.assignToUser(userId, roleId);
+    const assigned = await this.rolesRepository.assignToUser(userId, roleId);
+    return userRoleResponseSchema.parse(assigned);
   }
 }

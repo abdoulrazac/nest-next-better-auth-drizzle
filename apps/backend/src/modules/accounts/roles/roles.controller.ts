@@ -6,74 +6,87 @@ import {
   Patch,
   Delete,
   Param,
-  Body,
   ParseUUIDPipe,
-  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
+import { Permissions } from '@/auth/permission';
+import { ZodBody } from '@/common/decorators/zod.decorators';
+import {
+  ApiZodCreatedResponse,
+  ApiZodOkResponse,
+} from '@/common/decorators/zod-response.decorators';
 import { RolesService } from './roles.service';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
-import { AuditLogInterceptor } from '@/common/interceptors/audit-log.interceptor';
 import {
   createRoleSchema,
+  roleResponseSchema,
   updateRoleSchema,
+  userRoleResponseSchema,
   type CreateRoleInput,
+  type RoleResponse,
   type UpdateRoleInput,
+  type UserRoleResponse,
 } from '@repo/validators/accounts';
 
 @ApiTags('accounts/roles')
 @ApiBearerAuth()
-@UseInterceptors(AuditLogInterceptor)
 @Controller({ path: 'accounts/roles', version: '1' })
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Get()
   @ApiOperation({ summary: 'List all roles' })
-  @UserHasPermission({ permission: { roles: ['read'] } })
-  findAll() {
+  @ApiZodOkResponse(roleResponseSchema, { isArray: true })
+  @UserHasPermission({ permission: Permissions.roles.read })
+  findAll(): Promise<RoleResponse[]> {
     return this.rolesService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get role by id' })
-  @UserHasPermission({ permission: { roles: ['read'] } })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiZodOkResponse(roleResponseSchema)
+  @UserHasPermission({ permission: Permissions.roles.read })
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<RoleResponse> {
     return this.rolesService.findById(id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create role' })
-  @UserHasPermission({ permission: { roles: ['write'] } })
-  create(@Body(new ZodValidationPipe(createRoleSchema)) body: CreateRoleInput) {
+  @ApiZodCreatedResponse(roleResponseSchema)
+  @UserHasPermission({ permission: Permissions.roles.write })
+  create(
+    @ZodBody(createRoleSchema) body: CreateRoleInput,
+  ): Promise<RoleResponse> {
     return this.rolesService.create(body);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update role' })
-  @UserHasPermission({ permission: { roles: ['write'] } })
+  @ApiZodOkResponse(roleResponseSchema)
+  @UserHasPermission({ permission: Permissions.roles.write })
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ZodValidationPipe(updateRoleSchema)) body: UpdateRoleInput,
-  ) {
+    @ZodBody(updateRoleSchema) body: UpdateRoleInput,
+  ): Promise<RoleResponse | null> {
     return this.rolesService.update(id, body);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete role' })
-  @UserHasPermission({ permission: { roles: ['delete'] } })
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiZodOkResponse(roleResponseSchema)
+  @UserHasPermission({ permission: Permissions.roles.delete })
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<RoleResponse | null> {
     return this.rolesService.delete(id);
   }
 
   @Post(':id/assign/:userId')
   @ApiOperation({ summary: 'Assign role to user' })
-  @UserHasPermission({ permission: { roles: ['write'] } })
+  @ApiZodCreatedResponse(userRoleResponseSchema)
+  @UserHasPermission({ permission: Permissions.roles.write })
   assignToUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('userId', ParseUUIDPipe) userId: string,
-  ) {
+  ): Promise<UserRoleResponse> {
     return this.rolesService.assignToUser(userId, id);
   }
 }
