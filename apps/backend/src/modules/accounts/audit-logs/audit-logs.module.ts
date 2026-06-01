@@ -1,0 +1,12 @@
+// apps/backend/src/modules/accounts/audit-logs/audit-logs.module.ts
+import { Module } from '@nestjs/common';
+import { AuditLogsController } from './audit-logs.controller';
+import { AuditLogsRepository } from './audit-logs.repository';
+import { AuditLogsService } from './audit-logs.service';
+
+@Module({
+  controllers: [AuditLogsController],
+  providers: [AuditLogsService, AuditLogsRepository],
+  exports: [AuditLogsService],
+})
+export class AuditLogsModule {}
