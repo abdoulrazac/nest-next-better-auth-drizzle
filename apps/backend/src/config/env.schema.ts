@@ -22,10 +22,10 @@ export const envSchema = z.object({
   BETTER_AUTH_URL: z.string().url('BETTER_AUTH_URL must be a valid URL'),
 
   // CORS — comma-separated list of allowed origins
-  // e.g. "http://localhost:3001,http://localhost:3002"
+  // e.g. "http://localhost:3002,http://localhost:3003"
   CORS_ORIGINS: z
     .string()
-    .default('http://localhost:3001,http://localhost:3002')
+    .default('http://localhost:3002,http://localhost:3003')
     .transform((val) => val.split(',').map((s) => s.trim())),
 
   // OAuth (optional)

@@ -23,8 +23,8 @@ Production-ready fullstack monorepo starter. NestJS + Fastify + Drizzle + Better
 ```
 apps/
   backend/     NestJS API — port 3000
-  frontend/    Dashboard — port 3001
-  web/         Marketing site + docs — port 3002
+  frontend/    Dashboard — port 3002
+  web/         Marketing site + docs — port 3003
 packages/
   ui/          Shadcn/ui components (shared)
   validators/  Zod schemas (shared between backend and frontend)
@@ -87,8 +87,8 @@ bun run dev
 | -------------- | ------------------------------ |
 | Backend API    | http://localhost:3000          |
 | Swagger docs   | http://localhost:3000/api/docs |
-| Dashboard      | http://localhost:3001          |
-| Marketing site | http://localhost:3002          |
+| Dashboard      | http://localhost:3002          |
+| Marketing site | http://localhost:3003          |
 
 ---
 

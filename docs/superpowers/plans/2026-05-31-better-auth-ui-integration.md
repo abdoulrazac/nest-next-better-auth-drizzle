@@ -371,12 +371,12 @@ npm run dev
 
 | URL                                          | Expected                     |
 | -------------------------------------------- | ---------------------------- |
-| `http://localhost:3001/auth/sign-in`         | Sign-in form renders         |
-| `http://localhost:3001/auth/sign-up`         | Sign-up form renders         |
-| `http://localhost:3001/auth/forgot-password` | Forgot password form renders |
-| `http://localhost:3001/auth/reset-password`  | Reset password form renders  |
-| `http://localhost:3001/auth/sign-out`        | Sign-out screen / redirect   |
-| `http://localhost:3001/auth/login`           | Redirects to `/auth/sign-in` |
+| `http://localhost:3002/auth/sign-in`         | Sign-in form renders         |
+| `http://localhost:3002/auth/sign-up`         | Sign-up form renders         |
+| `http://localhost:3002/auth/forgot-password` | Forgot password form renders |
+| `http://localhost:3002/auth/reset-password`  | Reset password form renders  |
+| `http://localhost:3002/auth/sign-out`        | Sign-out screen / redirect   |
+| `http://localhost:3002/auth/login`           | Redirects to `/auth/sign-in` |
 
 - [ ] **Step 3: Test sign-in and sign-up flows end-to-end manually**
 

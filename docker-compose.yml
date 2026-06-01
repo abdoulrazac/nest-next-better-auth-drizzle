@@ -60,7 +60,7 @@ services:
         # Baked at build time — set to the publicly accessible backend URL
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
     ports:
-      - "3001:3000"
+      - "3002:3000"
     environment:
       PORT: 3000
       NODE_ENV: production
@@ -73,7 +73,7 @@ services:
       context: .
       target: runner-web
     ports:
-      - "3002:3000"
+      - "3003:3000"
     environment:
       PORT: 3000
       NODE_ENV: production

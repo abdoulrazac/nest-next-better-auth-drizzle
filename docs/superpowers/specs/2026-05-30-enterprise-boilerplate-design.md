@@ -43,6 +43,7 @@ nest-next-better-auth-drizzle/
 ```
 
 **Règles de dépendances entre packages :**
+
 - `@repo/validators` → importé par backend ET frontend
 - `@repo/db` → importé uniquement par le backend
 - `@repo/ui` → importé par frontend ET web
@@ -239,6 +240,7 @@ apps/web/src/
 ## 6. Packages Partagés
 
 ### `@repo/validators`
+
 Schémas Zod organisés par domaine. Source de vérité unique pour la validation backend (pipes NestJS) et frontend (formulaires react-hook-form).
 
 ```
@@ -252,6 +254,7 @@ packages/validators/src/
 ```
 
 ### `@repo/db`
+
 Client Drizzle + schémas de tables + migrations. Importé uniquement par le backend.
 
 ```
@@ -271,6 +274,7 @@ packages/db/src/
 **Base de données :** PostgreSQL en dev et en production. Docker Compose fournit une instance PostgreSQL locale prête à l'emploi — pas besoin d'installer PostgreSQL sur la machine.
 
 ### `@repo/ui`
+
 Composants Shadcn/ui préconfigurés + hooks UI (`use-toast`, `use-mobile`) + helper `cn()`. Importé par frontend et web.
 
 ---
@@ -278,16 +282,19 @@ Composants Shadcn/ui préconfigurés + hooks UI (`use-toast`, `use-mobile`) + he
 ## 7. DevOps & Qualité
 
 ### Docker Compose (dev)
+
 - **PostgreSQL** — port `5432`
 - **MinIO** — port `9000` (API S3), port `9001` (console web)
 - **Redis** — port `6379` (sessions Better-Auth, cache)
 
 ### CI GitHub Actions
+
 - `ci.yml` — déclenché sur chaque PR : lint, typecheck, tests unitaires, tests e2e, build
 - `release.yml` — build de vérification sur `main`
 - Tests e2e utilisent `docker-compose.test.yml` avec une PostgreSQL isolée
 
 ### Qualité locale
+
 - **Husky** — pre-commit hooks
 - **lint-staged** — ESLint + Prettier sur les fichiers modifiés uniquement
 - **commitlint** — enforce conventional commits (`feat:`, `fix:`, `chore:`...)
@@ -344,7 +351,8 @@ apps/frontend/
 ```
 
 **Points clés :**
-- Playwright configuré pour tester contre le frontend en dev (`http://localhost:3001`)
+
+- Playwright configuré pour tester contre le frontend en dev (`http://localhost:3002`)
 - Base de données de test isolée via `docker-compose.test.yml`
 - Tests e2e couvrent les flows critiques : authentification, RBAC, upload fichiers
 - Intégré dans le CI (`ci.yml`) — lancé après le build frontend

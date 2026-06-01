@@ -473,7 +473,7 @@ pnpm --filter backend start:dev
 pnpm --filter frontend dev
 ```
 
-- [ ] Visit `http://localhost:3001/api-test` in a browser.
+- [ ] Visit `http://localhost:3002/api-test` in a browser.
 
 Expected: page renders with `Backend health: ok` and `apiClient is configured: yes`.
 
