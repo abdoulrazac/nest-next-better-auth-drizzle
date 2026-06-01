@@ -1,7 +1,9 @@
-import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
+import { getDatabaseUrl } from "./runtime";
 
-if (!process.env.DATABASE_URL) {
+const databaseUrl = getDatabaseUrl();
+
+if (!databaseUrl) {
   throw new Error("DATABASE_URL is required");
 }
 
@@ -10,7 +12,7 @@ export default defineConfig({
   out: "./migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    url: databaseUrl,
   },
   verbose: true,
   strict: true,
