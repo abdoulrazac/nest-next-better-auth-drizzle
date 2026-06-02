@@ -11,6 +11,7 @@
       "dependsOn": ["^lint"],
       "env": [
         "DATABASE_URL",
+        "DATABASE_SSL",
         "SEED_ADMIN_EMAIL",
         "SEED_ADMIN_NAME",
         "NEXT_PUBLIC_API_URL"

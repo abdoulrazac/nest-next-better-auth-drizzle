@@ -11,10 +11,10 @@
  *   bun run db:seed
  */
 
-import { db } from "./index";
-import { user, role, userRole } from "./schema";
-import { eq } from "drizzle-orm";
 import crypto from "crypto";
+import { eq } from "drizzle-orm";
+import { db } from "./index";
+import { role, user, userRole } from "./schema";
 
 const ADMIN_EMAIL = process.env["SEED_ADMIN_EMAIL"] ?? "admin@example.com";
 const ADMIN_NAME = process.env["SEED_ADMIN_NAME"] ?? "Admin";

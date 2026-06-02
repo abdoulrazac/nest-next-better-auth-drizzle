@@ -1,18 +1,18 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { getDatabaseSsl, getDatabaseUrl } from "../runtime";
 import * as schema from "./schema";
 
-const databaseUrl = getDatabaseUrl();
+const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_SSL = process.env.DATABASE_SSL || "false";
 
-if (!databaseUrl) {
+if (!DATABASE_URL) {
   throw new Error("DATABASE_URL is required");
 }
 
-const client = postgres(databaseUrl, {
+const client = postgres(DATABASE_URL, {
   // Enforce TLS when DATABASE_SSL=true (recommended in production).
   // The URL-embedded sslmode parameter also works if you prefer it there.
-  ssl: getDatabaseSsl() === "true" ? "require" : false,
+  ssl: DATABASE_SSL === "true" ? "require" : false,
 });
 
 export const db = drizzle(client, { schema });

@@ -94,4 +94,3 @@ USER appuser
 
 EXPOSE 3000
 CMD ["bun", "run", "apps/web/server.js"]
-
