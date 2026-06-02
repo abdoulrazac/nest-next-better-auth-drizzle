@@ -46,16 +46,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Allows Next.js to trace workspace packages (monorepo)
+  outputFileTracingRoot: path.join(__dirname, "../../"),
   typescript: {
     // Type checking runs in CI; skip during Docker build to avoid OOM
     ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  experimental: {
-    // Allows Next.js to trace workspace packages (monorepo)
-    outputFileTracingRoot: path.join(__dirname, "../../"),
   },
   async rewrites() {
     // Proxy auth requests through Next.js so the browser always calls 'self'.

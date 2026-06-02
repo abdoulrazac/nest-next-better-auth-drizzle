@@ -21,8 +21,27 @@ RUN bun install --frozen-lockfile --ignore-scripts
 FROM installer AS builder
 ARG NEXT_PUBLIC_API_URL=http://localhost:3000
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# INTERNAL_API_URL must also be baked at build time: Next.js evaluates
+# rewrites() during `next build` and serialises the result into
+# routes-manifest.json — it does NOT re-evaluate at container startup.
+# In Docker Compose this is set to http://app:3000 (the backend service).
+ARG INTERNAL_API_URL=http://localhost:3000
+ENV INTERNAL_API_URL=$INTERNAL_API_URL
 COPY . .
 RUN bunx turbo run build
+
+# ── runner-db-tools: migrate + seed ───────────────────────────────────────
+FROM base AS runner-db-tools
+WORKDIR /app/packages/db
+
+# Root node_modules needed — bun hoists some deps (e.g. drizzle-kit) there
+COPY --from=builder /app/node_modules                   /app/node_modules
+COPY --from=builder /app/packages/db/src                ./src
+COPY --from=builder /app/packages/db/migrations         ./migrations
+COPY --from=builder /app/packages/db/node_modules       ./node_modules
+COPY --from=builder /app/packages/db/package.json       ./package.json
+COPY --from=builder /app/packages/db/drizzle.config.ts  ./drizzle.config.ts
+COPY --from=builder /app/packages/db/tsconfig.json      ./tsconfig.json
 
 # ── runner-backend ─────────────────────────────────────────────────────────
 FROM oven/bun:1.3.14-alpine AS runner-backend
