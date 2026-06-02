@@ -1,7 +1,11 @@
 // apps/backend/src/modules/messaging/messages/messages.controller.ts
 import { Permissions } from '@/auth/permission';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { ZodBody } from '@/common/decorators/zod.decorators';
+import {
+  ApiZodCreatedResponse,
+  ApiZodOkResponse,
+} from '@/common/decorators/zod-response.decorators';
+import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
 import {
   Controller,
   Delete,
@@ -10,23 +14,32 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import {
   attachmentPresignedUrlSchema,
+  attachmentUrlResponseSchema,
   editMessageSchema,
   forwardMessageSchema,
+  messageListQuerySchema,
+  messageResponseSchema,
+  messageSearchQuerySchema,
   sendMessageSchema,
   type AttachmentPresignedUrlInput,
   type AttachmentUrlResponse,
   type EditMessageInput,
   type ForwardMessageInput,
+  type MessageListQuery,
   type MessageResponse,
+  type MessageSearchQuery,
   type SendMessageInput,
 } from '@repo/validators/messages';
+import {
+  successResponseSchema,
+  type SuccessResponse,
+} from '@repo/validators/shared';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { MessagingGateway } from '../messaging.gateway';
 import { MessagesService } from './messages.service';
@@ -44,33 +57,39 @@ export class MessagesController {
 
   @Get('conversations/:id/messages')
   @ApiOperation({ summary: 'List messages in a conversation' })
+  @ApiZodOkResponse(messageResponseSchema, { isArray: true })
   @UserHasPermission({ permission: Permissions.messages.read })
   findAll(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('limit') limit = 50,
-    @Query('before') before?: string,
+    @ZodQuery(messageListQuerySchema) query: MessageListQuery,
   ): Promise<MessageResponse[]> {
-    return this.messagesService.findAll(id, user.id, Number(limit), before);
+    return this.messagesService.findAll(id, user.id, query.limit, query.before);
   }
 
   @Get('conversations/:id/messages/search')
   @ApiOperation({ summary: 'Full-text search messages in a conversation' })
+  @ApiZodOkResponse(messageResponseSchema, { isArray: true })
   @UserHasPermission({ permission: Permissions.messages.read })
   search(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('q') q: string,
-    @Query('limit') limit = 50,
-    @Query('before') before?: string,
+    @ZodQuery(messageSearchQuerySchema) query: MessageSearchQuery,
   ): Promise<MessageResponse[]> {
-    return this.messagesService.findAll(id, user.id, Number(limit), before, q);
+    return this.messagesService.findAll(
+      id,
+      user.id,
+      query.limit,
+      query.before,
+      query.q,
+    );
   }
 
   // ─── Send ───────────────────────────────────────────────────────────────────
 
   @Post('conversations/:id/messages')
   @ApiOperation({ summary: 'Send a message' })
+  @ApiZodCreatedResponse(messageResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { ttl: 60000, limit: 30 } })
@@ -93,6 +112,7 @@ export class MessagesController {
 
   @Patch('conversations/:id/messages/:msgId')
   @ApiOperation({ summary: 'Edit a message' })
+  @ApiZodOkResponse(messageResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
   async edit(
     @CurrentUser() user: { id: string },
@@ -109,12 +129,13 @@ export class MessagesController {
 
   @Delete('conversations/:id/messages/:msgId')
   @ApiOperation({ summary: 'Delete a message' })
+  @ApiZodOkResponse(successResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.delete })
   async remove(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
     @Param('msgId', ParseUUIDPipe) msgId: string,
-  ) {
+  ): Promise<SuccessResponse> {
     await this.messagesService.delete(id, msgId, user.id);
     this.gateway.emitToConversation(id, 'message:deleted', {
       messageId: msgId,
@@ -126,6 +147,7 @@ export class MessagesController {
 
   @Post('conversations/:id/messages/attachment-url')
   @ApiOperation({ summary: 'Get a presigned URL for a message attachment' })
+  @ApiZodCreatedResponse(attachmentUrlResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
   getAttachmentUrl(
     @CurrentUser() user: { id: string },
@@ -139,6 +161,7 @@ export class MessagesController {
 
   @Post('conversations/:id/messages/:msgId/forward')
   @ApiOperation({ summary: 'Forward a message to another conversation' })
+  @ApiZodCreatedResponse(messageResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
   async forward(
     @CurrentUser() user: { id: string; name: string },
@@ -165,11 +188,13 @@ export class MessagesController {
 
   @Post('conversations/:id/read')
   @ApiOperation({ summary: 'Mark conversation as read' })
+  @ApiZodOkResponse(successResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
-  markAsRead(
+  async markAsRead(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
-  ) {
-    return this.messagesService.markAsRead(id, user.id);
+  ): Promise<SuccessResponse> {
+    await this.messagesService.markAsRead(id, user.id);
+    return { success: true };
   }
 }

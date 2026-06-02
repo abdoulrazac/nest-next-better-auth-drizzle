@@ -1,8 +1,10 @@
 import { z } from "zod";
 import {
   fileAttachmentTypeSchema,
-  paginatedResponseSchema,
   nonEmptyStringSchema,
+  paginatedResponseSchema,
+  paginationLimitSchema,
+  paginationPageSchema,
   uuidSchema,
 } from "./shared.schema";
 
@@ -185,6 +187,26 @@ export const attachmentUrlResponseSchema = z.object({
   key: nonEmptyStringSchema,
 });
 
+export const conversationQuerySchema = z.object({
+  page: paginationPageSchema,
+  limit: paginationLimitSchema,
+});
+
+export const messageListQuerySchema = z.object({
+  limit: paginationLimitSchema,
+  before: uuidSchema.optional(),
+});
+
+export const messageSearchQuerySchema = z.object({
+  q: z.string().min(1),
+  limit: paginationLimitSchema,
+  before: uuidSchema.optional(),
+});
+
+export const conversationsPaginatedResponseSchema = paginatedResponseSchema(
+  conversationResponseSchema,
+);
+
 export type AttachmentResponse = z.infer<typeof attachmentResponseSchema>;
 export type MessageResponse = z.infer<typeof messageResponseSchema>;
 export type ParticipantResponse = z.infer<typeof participantResponseSchema>;
@@ -192,12 +214,12 @@ export type ConversationResponse = z.infer<typeof conversationResponseSchema>;
 export type ConversationWithParticipants = z.infer<
   typeof conversationWithParticipantsSchema
 >;
-export type PaginatedResponse<TItem> = {
-  items: TItem[];
-  total: number;
-  page: number;
-  limit: number;
-};
+export type ConversationsPaginatedResponse = z.infer<
+  typeof conversationsPaginatedResponseSchema
+>;
+export type ConversationQuery = z.infer<typeof conversationQuerySchema>;
+export type MessageListQuery = z.infer<typeof messageListQuerySchema>;
+export type MessageSearchQuery = z.infer<typeof messageSearchQuerySchema>;
 export type ReactionSummary = z.infer<typeof reactionSummarySchema>;
 export type ToggleReactionResponse = z.infer<
   typeof toggleReactionResponseSchema

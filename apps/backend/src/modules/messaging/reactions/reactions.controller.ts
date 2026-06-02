@@ -1,9 +1,13 @@
 // apps/backend/src/modules/messaging/reactions/reactions.controller.ts
 import { Permissions } from '@/auth/permission';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
 import { Controller, Delete, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { type ToggleReactionResponse } from '@repo/validators/messages';
+import {
+  toggleReactionResponseSchema,
+  type ToggleReactionResponse,
+} from '@repo/validators/messages';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { MessagingGateway } from '../messaging.gateway';
 import { ReactionsService } from './reactions.service';
@@ -19,6 +23,7 @@ export class ReactionsController {
 
   @Post('conversations/:id/messages/:msgId/reactions/:emoji')
   @ApiOperation({ summary: 'Toggle a reaction on a message' })
+  @ApiZodOkResponse(toggleReactionResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
   async toggleReaction(
     @CurrentUser() user: { id: string },
@@ -43,6 +48,7 @@ export class ReactionsController {
 
   @Delete('conversations/:id/messages/:msgId/reactions/:emoji')
   @ApiOperation({ summary: 'Remove a reaction from a message' })
+  @ApiZodOkResponse(toggleReactionResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
   async removeReaction(
     @CurrentUser() user: { id: string },

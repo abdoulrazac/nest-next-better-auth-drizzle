@@ -56,6 +56,12 @@
       "import": "./dist/health.js",
       "types": "./src/health.ts",
       "default": "./dist/health.js"
+    },
+    "./shared": {
+      "require": "./dist/shared.schema.js",
+      "import": "./dist/shared.schema.js",
+      "types": "./src/shared.schema.ts",
+      "default": "./dist/shared.schema.js"
     }
   },
   "scripts": {

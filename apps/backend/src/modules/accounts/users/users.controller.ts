@@ -13,12 +13,12 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   banUserSchema,
-  paginationQuerySchema,
+  userSearchPaginationQuerySchema,
   updateUserSchema,
   userResponseSchema,
   usersPaginatedResponseSchema,
   type BanUserInput,
-  type PaginationQuery,
+  type UserSearchPaginationQuery,
   type UpdateUserInput,
   type UserResponse,
   type UsersPaginatedResponse,
@@ -37,7 +37,7 @@ export class UsersController {
   @ApiZodOkResponse(usersPaginatedResponseSchema)
   @UserHasPermission({ permission: Permissions.users.read })
   findAll(
-    @ZodQuery(paginationQuerySchema) query: PaginationQuery,
+    @ZodQuery(userSearchPaginationQuerySchema) query: UserSearchPaginationQuery,
   ): Promise<UsersPaginatedResponse> {
     return this.usersService.findAll(query.page, query.limit, query.search);
   }

@@ -2,14 +2,13 @@ import { z } from "zod";
 import {
   emailSchema,
   nameMin2Schema,
-  nonNegativeIntSchema,
   paginatedResponseSchema,
   paginationLimitSchema,
   paginationPageSchema,
   uuidSchema,
 } from "./shared.schema";
 
-export const paginationQuerySchema = z.object({
+export const userSearchPaginationQuerySchema = z.object({
   page: paginationPageSchema,
   limit: paginationLimitSchema,
   search: z.string().optional(),
@@ -111,7 +110,9 @@ export type CreateAuditLogInput = {
   userAgent?: string;
 };
 
-export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
+export type UserSearchPaginationQuery = z.infer<
+  typeof userSearchPaginationQuerySchema
+>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type BanUserInput = z.infer<typeof banUserSchema>;

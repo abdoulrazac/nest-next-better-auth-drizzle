@@ -2,8 +2,15 @@ import { z } from "zod";
 import {
   nonNegativeIntSchema,
   paginatedResponseSchema,
+  paginationLimitSchema,
+  paginationPageSchema,
   uuidSchema,
 } from "./shared.schema";
+
+export const notificationQuerySchema = z.object({
+  page: paginationPageSchema,
+  limit: paginationLimitSchema,
+});
 
 export const notificationPreferencesSchema = z.object({
   email: z.boolean().default(true),
@@ -34,6 +41,7 @@ export const unreadCountResponseSchema = z.object({
   total: nonNegativeIntSchema,
 });
 
+export type NotificationQuery = z.infer<typeof notificationQuerySchema>;
 export type NotificationPreferences = z.infer<
   typeof notificationPreferencesSchema
 >;

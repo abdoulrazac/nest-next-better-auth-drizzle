@@ -30,6 +30,13 @@ export const paginationLimitSchema = z.coerce
   .max(100)
   .default(20);
 
+export const paginationQuerySchema = z.object({
+  page: paginationPageSchema,
+  limit: paginationLimitSchema,
+  sortBy: z.string().optional(),
+  sortOrder: z.enum(["asc", "desc"]).optional(),
+});
+
 export const nonNegativeIntSchema = z.number().int().nonnegative();
 
 export const paginatedResponseSchema = <TSchema extends z.ZodTypeAny>(
@@ -45,3 +52,10 @@ export const paginatedResponseSchema = <TSchema extends z.ZodTypeAny>(
 export const fileAttachmentTypeSchema = z
   .enum(["file", "image", "voice"])
   .default("file");
+
+export const successResponseSchema = z.object({
+  success: z.literal(true),
+});
+
+export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
+export type SuccessResponse = z.infer<typeof successResponseSchema>;

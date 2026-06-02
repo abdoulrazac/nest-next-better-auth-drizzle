@@ -2,7 +2,7 @@
 import { Permissions } from '@/auth/permission';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { ApiZodOkResponse } from '@/common/decorators/zod-response.decorators';
-import { ZodBody } from '@/common/decorators/zod.decorators';
+import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
 import {
   Controller,
   Delete,
@@ -10,15 +10,16 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   markAsReadSchema,
+  notificationQuerySchema,
   notificationResponseSchema,
   notificationsPaginatedResponseSchema,
   unreadCountResponseSchema,
   type MarkAsReadInput,
+  type NotificationQuery,
   type NotificationResponse,
   type NotificationsPaginatedResponse,
   type NotificationUnreadCountResponse,
@@ -38,14 +39,9 @@ export class NotificationsController {
   @UserHasPermission({ permission: Permissions.notifications.read })
   findAll(
     @CurrentUser() user: { id: string },
-    @Query('page') page = 1,
-    @Query('limit') limit = 20,
+    @ZodQuery(notificationQuerySchema) query: NotificationQuery,
   ): Promise<NotificationsPaginatedResponse> {
-    return this.notificationsService.findAll(
-      user.id,
-      Number(page),
-      Number(limit),
-    );
+    return this.notificationsService.findAll(user.id, query.page, query.limit);
   }
 
   @Get('unread-count')

@@ -1,7 +1,11 @@
 // apps/backend/src/modules/messaging/conversations/conversations.controller.ts
 import { Permissions } from '@/auth/permission';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { ZodBody } from '@/common/decorators/zod.decorators';
+import {
+  ApiZodCreatedResponse,
+  ApiZodOkResponse,
+} from '@/common/decorators/zod-response.decorators';
+import { ZodBody, ZodQuery } from '@/common/decorators/zod.decorators';
 import {
   Controller,
   Delete,
@@ -10,22 +14,28 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   addParticipantSchema,
+  conversationQuerySchema,
   conversationResponseSchema,
+  conversationWithParticipantsSchema,
+  conversationsPaginatedResponseSchema,
   createConversationSchema,
-  paginatedResponseSchema,
   renameConversationSchema,
   type AddParticipantInput,
+  type ConversationQuery,
   type ConversationResponse,
   type ConversationWithParticipants,
+  type ConversationsPaginatedResponse,
   type CreateConversationInput,
-  type PaginatedResponse,
   type RenameConversationInput,
 } from '@repo/validators/messages';
+import {
+  successResponseSchema,
+  type SuccessResponse,
+} from '@repo/validators/shared';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
 import { ConversationsService } from './conversations.service';
 
@@ -35,27 +45,20 @@ import { ConversationsService } from './conversations.service';
 export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
-  private readonly paginatedConversationSchema = paginatedResponseSchema(
-    conversationResponseSchema,
-  );
-
   @Get('conversations')
   @ApiOperation({ summary: 'List conversations for current user' })
+  @ApiZodOkResponse(conversationsPaginatedResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.read })
-  async findAll(
+  findAll(
     @CurrentUser() user: { id: string },
-    @Query('page') page = 1,
-    @Query('limit') limit = 20,
-  ): Promise<PaginatedResponse<ConversationResponse>> {
-    return this.conversationsService.findAll(
-      user.id,
-      Number(page),
-      Number(limit),
-    );
+    @ZodQuery(conversationQuerySchema) query: ConversationQuery,
+  ): Promise<ConversationsPaginatedResponse> {
+    return this.conversationsService.findAll(user.id, query.page, query.limit);
   }
 
   @Post('conversations')
   @ApiOperation({ summary: 'Create a conversation' })
+  @ApiZodCreatedResponse(conversationResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
   create(
     @CurrentUser() user: { id: string },
@@ -66,6 +69,7 @@ export class ConversationsController {
 
   @Get('conversations/:id')
   @ApiOperation({ summary: 'Get a conversation by id' })
+  @ApiZodOkResponse(conversationWithParticipantsSchema)
   @UserHasPermission({ permission: Permissions.messages.read })
   findOne(
     @CurrentUser() user: { id: string },
@@ -76,56 +80,66 @@ export class ConversationsController {
 
   @Patch('conversations/:id')
   @ApiOperation({ summary: 'Rename a conversation (admin only)' })
+  @ApiZodOkResponse(successResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
-  rename(
+  async rename(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
     @ZodBody(renameConversationSchema) body: RenameConversationInput,
-  ): Promise<void> {
-    return this.conversationsService.rename(id, user.id, body);
+  ): Promise<SuccessResponse> {
+    await this.conversationsService.rename(id, user.id, body);
+    return { success: true };
   }
 
   @Post('conversations/:id/participants')
   @ApiOperation({ summary: 'Add a participant to a conversation (admin only)' })
+  @ApiZodOkResponse(successResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
-  addParticipant(
+  async addParticipant(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
     @ZodBody(addParticipantSchema) body: AddParticipantInput,
-  ): Promise<void> {
-    return this.conversationsService.addParticipant(id, user.id, body.userId);
+  ): Promise<SuccessResponse> {
+    await this.conversationsService.addParticipant(id, user.id, body.userId);
+    return { success: true };
   }
 
   @Delete('conversations/:id/participants/:userId')
   @ApiOperation({
     summary: 'Remove a participant from a conversation (admin only)',
   })
+  @ApiZodOkResponse(successResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.delete })
-  removeParticipant(
+  async removeParticipant(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
     @Param('userId') userId: string,
-  ): Promise<void> {
-    return this.conversationsService.removeParticipant(id, user.id, userId);
+  ): Promise<SuccessResponse> {
+    await this.conversationsService.removeParticipant(id, user.id, userId);
+    return { success: true };
   }
 
   @Post('conversations/:id/leave')
   @ApiOperation({ summary: 'Leave a conversation' })
+  @ApiZodOkResponse(successResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
-  leave(
+  async leave(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<void> {
-    return this.conversationsService.leave(id, user.id);
+  ): Promise<SuccessResponse> {
+    await this.conversationsService.leave(id, user.id);
+    return { success: true };
   }
 
   @Post('conversations/:id/archive')
   @ApiOperation({ summary: 'Archive a conversation' })
+  @ApiZodOkResponse(successResponseSchema)
   @UserHasPermission({ permission: Permissions.messages.write })
-  archive(
+  async archive(
     @CurrentUser() user: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<void> {
-    return this.conversationsService.archive(id, user.id);
+  ): Promise<SuccessResponse> {
+    await this.conversationsService.archive(id, user.id);
+    return { success: true };
   }
 }

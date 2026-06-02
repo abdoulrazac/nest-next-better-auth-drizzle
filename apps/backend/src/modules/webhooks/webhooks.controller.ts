@@ -19,7 +19,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   paginationQuerySchema,
   type PaginationQuery,
-} from '@repo/validators/accounts';
+} from '@repo/validators/shared';
 import {
   createWebhookSchema,
   updateWebhookSchema,
