@@ -1,5 +1,13 @@
-import path from "path";
 import type { NextConfig } from "next";
+import path from "path";
+
+// INTERNAL_API_URL is for server-side rewrites (e.g. http://app:3000 in Docker).
+// NEXT_PUBLIC_API_URL is the public URL baked into the browser bundle.
+// In local dev without Docker both fall back to http://localhost:3000.
+const apiUrl =
+  process.env["INTERNAL_API_URL"] ??
+  process.env["NEXT_PUBLIC_API_URL"] ??
+  "http://localhost:3000";
 
 const securityHeaders = [
   // Block rendering in <iframe> / <frame> / <object> — prevents clickjacking
@@ -25,7 +33,12 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self'",
-      "connect-src 'self' https: wss:",
+      // Allow both http/https and ws/wss so the app works in every environment:
+      // - dev:  backend on http://localhost:3000, WebSocket on ws://localhost:*
+      // - prod: everything is HTTPS/WSS (http: and ws: are no-ops in practice
+      //   because the browser upgrade-insecure-requests and the server only
+      //   accepts HTTPS — keep them to avoid breaking staging/preview envs)
+      "connect-src 'self' http: https: ws: wss:",
       "frame-ancestors 'none'",
     ].join("; "),
   },
@@ -43,6 +56,16 @@ const nextConfig: NextConfig = {
   experimental: {
     // Allows Next.js to trace workspace packages (monorepo)
     outputFileTracingRoot: path.join(__dirname, "../../"),
+  },
+  async rewrites() {
+    // Proxy auth requests through Next.js so the browser always calls 'self'.
+    // This avoids CSP connect-src issues in every environment.
+    return [
+      {
+        source: "/api/auth/:path*",
+        destination: `${apiUrl}/api/auth/:path*`,
+      },
+    ];
   },
   async headers() {
     return [

@@ -22,7 +22,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https:",
+      "connect-src 'self' http: https: ws: wss:",
       "frame-ancestors 'none'",
     ].join("; "),
   },
