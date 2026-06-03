@@ -26,10 +26,7 @@ import {
 } from "@/components/ui/table";
 import { TabsContent } from "@/components/ui/tabs";
 import { Icon } from "@/components/ui/icon";
-import {
-  confirmDialogPresets,
-  useConfirmDialog,
-} from "@/components/hooks/use-confirm-dialog";
+import { useConfirmDialog } from "@/components/hooks/use-confirm-dialog";
 import { EditIcon, PlusIcon, TrashIcon, WebhookIcon } from "@/lib/icons";
 import {
   useListWebhooks,
@@ -206,9 +203,10 @@ export function WebhooksTab() {
 
   const handleDelete = async (webhook: WebhookResponse) => {
     const ok = await confirm({
-      ...confirmDialogPresets.delete,
       title: "Supprimer le webhook",
       description: `Voulez-vous vraiment supprimer "${webhook.name}" ? Cette action est irréversible.`,
+      confirmLabel: "Supprimer",
+      variant: "destructive",
     });
     if (ok) deleteWebhook.mutate(webhook.id);
   };
@@ -340,7 +338,7 @@ export function WebhooksTab() {
         webhook={editTarget}
       />
 
-      <ConfirmDialogComponent />
+      {ConfirmDialogComponent}
     </TabsContent>
   );
 }

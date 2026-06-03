@@ -28,10 +28,7 @@ import {
 import { TabsContent } from "@/components/ui/tabs";
 import { Icon } from "@/components/ui/icon";
 import SingleSelect from "@/components/single-select";
-import {
-  confirmDialogPresets,
-  useConfirmDialog,
-} from "@/components/hooks/use-confirm-dialog";
+import { useConfirmDialog } from "@/components/hooks/use-confirm-dialog";
 import {
   AlertCircleIcon,
   CopyIcon,
@@ -40,7 +37,8 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@/lib/icons";
-import { authClient, useSession } from "@/lib/auth-client";
+import { useStore } from "@nanostores/react";
+import { authClient } from "@/lib/auth-client";
 import { env } from "@/env";
 
 const EXPIRY_OPTIONS = [
@@ -51,7 +49,8 @@ const EXPIRY_OPTIONS = [
 ];
 
 export function ApiKeysTab() {
-  const { data: session } = useSession();
+  const session = useStore(authClient.useSession);
+  const activeOrgId = session?.data?.session?.activeOrganizationId;
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [revealDialog, setRevealDialog] = useState<{
     key: string;
@@ -64,31 +63,31 @@ export function ApiKeysTab() {
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["api-keys"],
     queryFn: async () => {
-      const result = await authClient.apiKey.list({
+      const result = await (authClient as any).apiKey.list({
         query: {
-          organizationId: session?.session?.activeOrganizationId!,
+          organizationId: activeOrgId!,
           limit: 10,
         },
       });
       if (result.error) throw new Error(result.error.message);
       return result.data;
     },
-    enabled: !!session?.session?.activeOrganizationId,
+    enabled: !!activeOrgId,
   });
 
   const apiKeys = data?.apiKeys ?? [];
 
   const createMutation = useMutation({
     mutationFn: async (params: { name: string; expiresIn?: number }) => {
-      const result = await authClient.apiKey.create({
+      const result = await (authClient as any).apiKey.create({
         name: params.name,
         expiresIn: params.expiresIn,
-        organizationId: session?.session?.activeOrganizationId!,
+        organizationId: activeOrgId!,
         metadata: {
-          organizationId: session?.session?.activeOrganizationId!,
-          userId: session?.session?.userId!,
-          email: session?.user?.email ?? undefined,
-          name: session?.user?.name ?? undefined,
+          organizationId: activeOrgId!,
+          userId: session?.data?.session?.userId!,
+          email: session?.data?.user?.email ?? undefined,
+          name: session?.data?.user?.name ?? undefined,
         },
       });
       if (result.error) throw new Error(result.error.message);
@@ -109,7 +108,7 @@ export function ApiKeysTab() {
 
   const deleteMutation = useMutation({
     mutationFn: async (keyId: string) => {
-      const result = await authClient.apiKey.delete({ keyId });
+      const result = await (authClient as any).apiKey.delete({ keyId });
       if (result.error) throw new Error(result.error.message);
       return result.data;
     },
@@ -134,9 +133,10 @@ export function ApiKeysTab() {
 
   const handleDelete = async (keyId: string, keyName: string) => {
     const ok = await confirm({
-      ...confirmDialogPresets.delete,
       title: "Supprimer la clé API",
       description: `Voulez-vous vraiment supprimer la clé "${keyName}" ? Cette action est irréversible.`,
+      confirmLabel: "Supprimer",
+      variant: "destructive",
     });
     if (ok) deleteMutation.mutate(keyId);
   };
@@ -394,7 +394,7 @@ export function ApiKeysTab() {
         </DialogContent>
       </Dialog>
 
-      <ConfirmDialogComponent />
+      {ConfirmDialogComponent}
     </TabsContent>
   );
 }
