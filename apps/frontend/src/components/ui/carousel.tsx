@@ -7,7 +7,8 @@ import useEmblaCarousel, {
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/lib/icons";
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
@@ -195,7 +196,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <IconChevronLeft />
+      <HugeiconsIcon icon={ChevronLeftIcon} />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -225,7 +226,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <IconChevronRight />
+      <HugeiconsIcon icon={ChevronRightIcon} />
       <span className="sr-only">Next slide</span>
     </Button>
   );

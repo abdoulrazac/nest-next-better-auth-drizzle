@@ -12,7 +12,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
-import { IconSearch, IconCheck } from "@tabler/icons-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SearchIcon, CheckIcon } from "@/lib/icons";
 
 function Command({
   className,
@@ -78,7 +79,10 @@ function CommandInput({
           {...props}
         />
         <InputGroupAddon>
-          <IconSearch className="size-3.5 shrink-0 opacity-50" />
+          <HugeiconsIcon
+            icon={SearchIcon}
+            className="size-3.5 shrink-0 opacity-50"
+          />
         </InputGroupAddon>
       </InputGroup>
     </div>
@@ -158,7 +162,10 @@ function CommandItem({
       {...props}
     >
       {children}
-      <IconCheck className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
+      <HugeiconsIcon
+        icon={CheckIcon}
+        className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100"
+      />
     </CommandPrimitive.Item>
   );
 }
