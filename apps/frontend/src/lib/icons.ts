@@ -8,16 +8,18 @@
 // ─── Navigation & Layout ────────────────────────────────────────────────────
 export {
   ArrowDown01Icon as ArrowDownIcon,
+  ArrowDown01Icon as ChevronDownIcon,
   ArrowLeft01Icon as ArrowLeftIcon,
+  ArrowLeft01Icon as ChevronLeftIcon,
   ArrowRight01Icon as ArrowRightIcon,
+  ArrowRight01Icon as ChevronRightIcon,
   ArrowUp01Icon as ArrowUpIcon,
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
+  ArrowUp01Icon as ChevronUpIcon,
+  ArrowUpDownIcon as ChevronsUpDownIcon,
   DashboardSquare01Icon as DashboardIcon,
   LayoutGridIcon as GridIcon,
   Home01Icon as HomeIcon,
+  LayoutLeftIcon as SidebarIcon,
   ListViewIcon as ListViewIcon,
   Menu01Icon as MenuIcon,
   MinusSignIcon as MinusIcon,
@@ -28,13 +30,14 @@ export {
 // ─── User & Auth ─────────────────────────────────────────────────────────────
 export {
   EyeIcon,
-  EyeOffIcon,
+  ViewOffIcon as EyeOffIcon,
   LockIcon,
   LockPasswordIcon,
   Login01Icon as LoginIcon,
   Logout01Icon as LogoutIcon,
   SecurityCheckIcon,
   ShieldUserIcon,
+  SmartPhone01Icon as SmartphoneIcon,
   SquareUnlock01Icon as UnlockIcon,
   UserCheck01Icon as UserCheckIcon,
   User02Icon as UserIcon,
@@ -95,6 +98,7 @@ export {
   MessageAdd01Icon as MessagePlusIcon,
   MessageMultiple01Icon as MessagesIcon,
   CallIcon as PhoneIcon,
+  SentIcon as SendIcon,
   Video01Icon as VideoIcon,
 } from "@hugeicons/core-free-icons";
 
@@ -119,6 +123,8 @@ export {
   CheckmarkSquare01Icon as CheckSquareIcon,
   Delete01Icon as DeleteIcon,
   InformationCircleIcon as InfoIcon,
+  Loading03Icon as LoadingIcon,
+  Loading03Icon as SpinnerIcon,
   Delete02Icon as TrashIcon,
 } from "@hugeicons/core-free-icons";
 
@@ -130,13 +136,14 @@ export {
   MoreHorizontalCircle01Icon as MoreHorizontalIcon,
   MoreVerticalIcon,
   PrinterIcon,
-  Refresh01Icon as RefreshIcon,
+  RefreshIcon,
   ReloadIcon,
   Search01Icon as SearchIcon,
   Share01Icon as ShareIcon,
   SortingAZ01Icon as SortAscIcon,
   SortingZA01Icon as SortDescIcon,
   SortByDown01Icon as SortIcon,
+  SquareArrowUpRightIcon as ExternalLinkIcon,
   Upload01Icon as UploadIcon,
 } from "@hugeicons/core-free-icons";
 
@@ -155,7 +162,7 @@ export {
   Calendar01Icon as CalendarIcon,
   Clock01Icon as ClockIcon,
   LegalDocument01Icon as DocumentIcon,
-  HistoryIcon,
+  Clock01Icon as HistoryIcon,
   Notebook01Icon as NotebookIcon,
   Note01Icon as NoteIcon,
 } from "@hugeicons/core-free-icons";
@@ -171,6 +178,7 @@ export {
 
 // ─── Misc ─────────────────────────────────────────────────────────────────────
 export {
+  Briefcase01Icon as BriefcaseIcon,
   FlashIcon,
   FavouriteIcon as HeartIcon,
   HelpCircleIcon,
@@ -181,3 +189,6 @@ export {
   TelephoneIcon,
   Ticket01Icon as TicketIcon,
 } from "@hugeicons/core-free-icons";
+
+// ─── Finance ──────────────────────────────────────────────────────────────────
+export { CreditCardIcon } from "@hugeicons/core-free-icons";
