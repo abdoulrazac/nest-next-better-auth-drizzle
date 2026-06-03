@@ -1,5 +1,6 @@
 import {
   BellIcon,
+  BriefcaseIcon,
   DashboardIcon,
   DocumentIcon,
   FileIcon,
@@ -71,6 +72,16 @@ export const sidebarData: { navGroups: NavGroup[] } = {
         { title: "Notifications", url: "/notifications", icon: BellIcon },
         { title: "Fichiers", url: "/files", icon: FileIcon },
         { title: "Webhooks", url: "/webhooks", icon: WebhookIcon },
+      ],
+    },
+    {
+      title: "Showcase",
+      items: [
+        {
+          title: "Produits",
+          url: "/showcase/products",
+          icon: BriefcaseIcon,
+        },
       ],
     },
     {
