@@ -117,7 +117,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     category: "Alimentation",
     price: 19.99,
     stock: 300,
-    status: "ACTIVE",
+    status: "INACTIVE",
     description:
       "Huile d'olive première pression à froid, AOP Provence, bouteille en verre.",
     createdAt: "2024-03-15T10:00:00Z",
