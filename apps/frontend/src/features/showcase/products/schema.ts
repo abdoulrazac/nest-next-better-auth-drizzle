@@ -6,14 +6,10 @@ export const productFormSchema = z.object({
   reference: z
     .string()
     .min(2, "La référence doit contenir au moins 2 caractères"),
-  category: z.enum(["Électronique", "Vêtements", "Alimentation", "Mobilier"], {
-    required_error: "Sélectionnez une catégorie",
-  }),
+  category: z.enum(["Électronique", "Vêtements", "Alimentation", "Mobilier"]),
   price: z.coerce.number().positive("Le prix doit être positif"),
   stock: z.coerce.number().int().min(0, "Le stock ne peut pas être négatif"),
-  status: z.enum(["ACTIVE", "INACTIVE", "DRAFT", "OUT_OF_STOCK"], {
-    required_error: "Sélectionnez un statut",
-  }),
+  status: z.enum(["ACTIVE", "INACTIVE", "DRAFT", "OUT_OF_STOCK"]),
   description: z.string().optional().default(""),
   similarProductId: z.string().optional(),
 });

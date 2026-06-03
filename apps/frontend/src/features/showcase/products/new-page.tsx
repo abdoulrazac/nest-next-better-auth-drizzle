@@ -31,7 +31,8 @@ export function ProductNewPage() {
     control,
     formState: { errors },
   } = useForm<ProductFormValues>({
-    resolver: zodResolver(productFormSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(productFormSchema as any) as any,
     defaultValues: {
       name: "",
       reference: "",

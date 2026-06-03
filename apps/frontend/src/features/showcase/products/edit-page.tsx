@@ -45,7 +45,8 @@ export function ProductEditPage({ productId }: ProductEditPageProps) {
     reset,
     formState: { errors },
   } = useForm<ProductFormValues>({
-    resolver: zodResolver(productFormSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(productFormSchema as any) as any,
     defaultValues: {
       name: "",
       reference: "",

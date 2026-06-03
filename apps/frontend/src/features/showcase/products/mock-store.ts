@@ -44,7 +44,7 @@ export async function updateProduct(
   await delay();
   const idx = _products.findIndex((p) => p.id === id);
   if (idx === -1) throw new Error(`Produit ${id} introuvable`);
-  const updated = { ..._products[idx], ...values };
+  const updated: Product = { ..._products[idx]!, ...values } as Product;
   _products = _products.map((p) => (p.id === id ? updated : p));
   return updated;
 }
