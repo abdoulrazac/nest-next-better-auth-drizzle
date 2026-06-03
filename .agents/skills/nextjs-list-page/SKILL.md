@@ -1,153 +1,225 @@
 ---
-name: nextjs-list-page
-description: Create a feature list page with TanStack Table data table, toolbar (search + filters), pagination, row actions dropdown, bulk actions bar, and optional card grid view. Use when building admin list/index pages for any resource (users, roles, files, webhooks, etc.) in this Next.js project.
+name: list-page
+description: "Scaffold a new list page with DataTable, search, filters, bulk actions, pagination, and confirm dialogs. Pattern: centralised hook owns all mutations, handlers, configs, and ConfirmDialog. Thin page consumes hook. DetailSheet receives handlers via props. Use when creating any admin list/index page."
 ---
 
-# Next.js List Page
+# List Page Scaffold
 
-## Stack
+## When to Use
 
-- **TanStack Table v8** (`@tanstack/react-table`) for table logic
-- **DataTable** — `@/components/data-table/data-table` (supports `selectable`, `pagination`, `emptyMessage`, `onRowClick`)
-- **CellActions** — `@/components/cell-actions` (default export + factory functions)
-- **PageHeader** — `@/components/page-header` (default export, use `primaryAction`/`secondaryActions`)
-- **TableHeader** — `@/components/table-header` (search, filters, bulk actions bar)
-- **StatusBadge** — `@/components/status-badge`
-- **ConfirmDialog** — `@/components/confirm-dialog` (never use `AlertDialog` directly)
-- **Icons** — `import { XxxIcon } from "@/lib/icons"` + `<HugeiconsIcon icon={XxxIcon} className="h-4 w-4" />`
-- **TanStack Query** for data fetching — see `nextjs-api-hooks` skill
-- **Sonner** `toast` for feedback — UI labels and toasts in **French**
+- Creating a new entity listing page
+- Adding paginated, searchable, filterable table with CRUD
+- Adding bulk actions (delete, export) to a list
 
 ## File Structure
 
 ```
-features/<name>/
-  index.tsx         ← Page component (exported, used in app/ route)
-  columns.tsx       ← ColumnDef<TData>[] with CellActions
-  hooks.ts          ← useQuery/useMutation (see nextjs-api-hooks skill)
-  types.ts          ← TypeScript interfaces
-  mutate-dialog.tsx ← Create/edit dialog (see nextjs-form-dialog skill)
+src/features/<entity>/
+├── index.tsx          # List page — thin consumer
+├── columns.tsx        # Column definitions factory
+├── hooks.ts           # Centralised hook (data + handlers + configs)
+├── schema.ts          # Zod schemas
+├── types.ts           # TypeScript types (from @repo/validators)
+├── detail-sheet.tsx   # Detail sheet (receives handlers via props)
+└── mutate-dialog.tsx  # Create/edit dialog
 ```
 
----
+## Step 1 — Centralised Hook (`hooks.ts`)
 
-## Quick Start
-
-### 1. Page component (`index.tsx`)
+The hook owns everything. The detail sheet and any embedded table receive `handlers` via props — no duplicated mutations.
 
 ```tsx
 "use client";
-import { useState } from "react";
-import { DataTable } from "@/components/data-table/data-table";
-import PageHeader, { PageHeaderActions } from "@/components/page-header";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { buildColumns } from "./columns";
-import { MutateDialog } from "./mutate-dialog";
-import { useListUsers, useDeleteUser } from "./hooks";
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { client } from "@repo/api-client";
 import { toast } from "sonner";
-import type { User } from "./types";
+import { useRouter } from "next/navigation";
+import { useState, useMemo } from "react";
+import {
+  useConfirmDialog,
+  confirmDialogPresets,
+} from "@/components/hooks/use-confirm-dialog";
+import {
+  executeBulkAction,
+  showBulkResultToast,
+} from "@/components/hooks/use-bulk-selection";
+import {
+  createSearchField,
+  createFilterField,
+  createResetButton,
+  createBulkActions,
+} from "@/components/table-header";
+import { buildEntityColumns } from "./columns";
+import type { Entity } from "./types";
+import { TrashIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import SingleSelect from "@/components/single-select";
 
-export function UsersPage() {
-  const { data, isLoading } = useListUsers();
-  const deleteUser = useDeleteUser();
+export function useEntity() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { confirm, ConfirmDialogComponent } = useConfirmDialog();
 
-  const [editTarget, setEditTarget] = useState<User | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
-  const [mutateOpen, setMutateOpen] = useState(false);
+  // ── State ──────────────────────────────────────────────────────────────────
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [selectedItems, setSelectedItems] = useState<Entity[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const columns = buildColumns({
-    onEdit: (user) => {
-      setEditTarget(user);
-      setMutateOpen(true);
-    },
-    onDelete: (user) => setDeleteTarget(user),
+  // ── Data ───────────────────────────────────────────────────────────────────
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["entities", page, pageSize, searchTerm, statusFilter],
+    queryFn: () =>
+      client.entities.list({
+        page,
+        pageSize,
+        search: searchTerm,
+        status: statusFilter || undefined,
+      }),
   });
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Utilisateurs"
-        description="Gérez les utilisateurs de l'application."
-        primaryAction={PageHeaderActions.create(
-          "/users/new",
-          "Nouvel utilisateur",
-        )}
-        // or with onClick:
-        // primaryAction={{ label: "Nouvel utilisateur", icon: <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />, onClick: () => { setEditTarget(null); setMutateOpen(true); } }}
-      />
+  const items: Entity[] = data?.data?.items ?? [];
+  const total: number = data?.data?.total ?? 0;
 
-      <DataTable
-        columns={columns}
-        data={data?.items ?? []}
-        isLoading={isLoading}
-        selectable
-        emptyMessage="Aucun utilisateur trouvé."
-      />
+  // ── Mutations ──────────────────────────────────────────────────────────────
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => client.entities.delete({ path: { id } }),
+    onSuccess: () => {
+      toast.success("Élément supprimé");
+      void queryClient.invalidateQueries({ queryKey: ["entities"] });
+    },
+    onError: () => toast.error("Erreur lors de la suppression"),
+  });
 
-      <MutateDialog
-        open={mutateOpen}
-        onOpenChange={setMutateOpen}
-        user={editTarget}
-      />
+  // ── Handlers ───────────────────────────────────────────────────────────────
+  const handlers = {
+    onView: (id: string) => setSelectedId(id),
+    onEdit: (id: string) => router.push(`/module/entities/${id}/edit`),
+    onDelete: async (id: string) => {
+      const ok = await confirm(confirmDialogPresets.delete("cet élément"));
+      if (!ok) return;
+      await deleteMutation.mutateAsync(id);
+    },
+    onBulkDelete: async () => {
+      const ok = await confirm(
+        confirmDialogPresets.delete(`${selectedItems.length} éléments`),
+      );
+      if (!ok) return;
+      const result = await executeBulkAction(selectedItems, (item) =>
+        deleteMutation.mutateAsync(item.id),
+      );
+      showBulkResultToast(result, "Supprimés", "Erreur");
+      setSelectedItems([]);
+      void queryClient.invalidateQueries({ queryKey: ["entities"] });
+    },
+  };
 
-      <ConfirmDialog
-        open={!!deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title={`Supprimer ${deleteTarget?.name} ?`}
-        description="Cette action est irréversible."
-        confirmLabel="Supprimer"
-        variant="destructive"
-        onConfirm={async () => {
-          await deleteUser.mutateAsync(deleteTarget!.id);
-          toast.success("Utilisateur supprimé");
-          setDeleteTarget(null);
-        }}
-        isPending={deleteUser.isPending}
-      />
-    </div>
+  // ── Table config ───────────────────────────────────────────────────────────
+  const columns = useMemo(() => buildEntityColumns(handlers), []);
+
+  const searchConfig = createSearchField(
+    searchTerm,
+    (v) => {
+      setSearchTerm(v);
+      setPage(1);
+    },
+    { placeholder: "Rechercher..." },
   );
+
+  const filtersConfig = [
+    createFilterField(
+      "status",
+      <SingleSelect
+        value={statusFilter}
+        onValueChange={(v) => {
+          setStatusFilter(v);
+          setPage(1);
+        }}
+        options={[
+          { value: "ACTIVE", label: "Actif" },
+          { value: "INACTIVE", label: "Inactif" },
+        ]}
+        placeholder="Statut"
+        btnClassName="min-w-28"
+      />,
+    ),
+  ];
+
+  const actionsConfig = [
+    createResetButton(() => {
+      setSearchTerm("");
+      setStatusFilter("");
+      setPage(1);
+    }),
+  ];
+
+  const bulkActionsConfig =
+    selectedItems.length > 0
+      ? createBulkActions(
+          selectedItems.length,
+          [
+            {
+              label: "Supprimer",
+              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              onClick: handlers.onBulkDelete,
+              variant: "destructive",
+            },
+          ],
+          { onClose: () => setSelectedItems([]) },
+        )
+      : undefined;
+
+  return {
+    items,
+    total,
+    isLoading,
+    error,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    selectedItems,
+    setSelectedItems,
+    selectedId,
+    setSelectedId,
+    handlers,
+    columns,
+    searchConfig,
+    filtersConfig,
+    actionsConfig,
+    bulkActionsConfig,
+    ConfirmDialogComponent,
+  };
 }
 ```
 
-### 2. Columns with CellActions (`columns.tsx`)
-
-Use factory functions from `@/components/cell-actions`:
+## Step 2 — Column Factory (`columns.tsx`)
 
 ```tsx
 "use client";
-import { type ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "@/components/data-table/column-header";
-import {
+
+import CellActions, {
   createViewAction,
   createEditAction,
   createDeleteAction,
-  StandardCellActions,
 } from "@/components/cell-actions";
 import { StatusBadge } from "@/components/status-badge";
-import type { User } from "./types";
+import type { ColumnDef } from "@tanstack/react-table";
+import type { Entity } from "./types";
 
-interface ColumnOptions {
-  onEdit: (user: User) => void;
-  onDelete: (user: User) => void;
-  onView?: (user: User) => void;
+interface ColumnCallbacks {
+  onView: (id: string) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-export function buildColumns({
-  onEdit,
-  onDelete,
-  onView,
-}: ColumnOptions): ColumnDef<User>[] {
+export function buildEntityColumns(cb: ColumnCallbacks): ColumnDef<Entity>[] {
   return [
-    {
-      accessorKey: "name",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Nom" />
-      ),
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-    },
+    { accessorKey: "reference", header: "Référence" },
+    { accessorKey: "name", header: "Nom" },
     {
       accessorKey: "status",
       header: "Statut",
@@ -156,11 +228,13 @@ export function buildColumns({
     {
       id: "actions",
       cell: ({ row }) => (
-        <StandardCellActions
-          onView={onView ? () => onView(row.original) : undefined}
-          onEdit={() => onEdit(row.original)}
-          onDelete={() => onDelete(row.original)}
-          deleteLabel={`l'utilisateur ${row.original.name}`}
+        <CellActions
+          visibleActions={1}
+          actions={[
+            createViewAction(() => cb.onView(row.original.id)),
+            createEditAction(() => cb.onEdit(row.original.id)),
+            createDeleteAction(() => cb.onDelete(row.original.id)),
+          ]}
         />
       ),
     },
@@ -168,188 +242,127 @@ export function buildColumns({
 }
 ```
 
-Or use `CellActions` directly with full control:
+## Step 3 — List Page (`index.tsx`)
 
-```tsx
-import CellActions, { createEditAction, createDeleteAction } from "@/components/cell-actions";
-
-cell: ({ row }) => (
-  <CellActions
-    visibleActions={2}
-    actions={[
-      createViewAction(() => onView(row.original)),
-      createEditAction(() => onEdit(row.original)),
-      createDeleteAction(() => onDelete(row.original), {
-        confirmDialog: { description: `Supprimer ${row.original.name} ?` },
-      }),
-    ]}
-  />
-),
-```
-
-### 3. Toolbar with TableHeader (`toolbar.tsx`)
-
-Simple approach using `TableHeader`:
+Thin consumer — calls the hook once, wires JSX.
 
 ```tsx
 "use client";
-import TableHeader, {
-  createSearchField,
-  createResetButton,
-} from "@/components/table-header";
-import type { Table } from "@tanstack/react-table";
 
-export function Toolbar<TData>({
-  table,
-  search,
-  onSearch,
-}: {
-  table: Table<TData>;
-  search: string;
-  onSearch: (v: string) => void;
-}) {
-  return (
-    <TableHeader
-      search={createSearchField(search, onSearch, {
-        placeholder: "Rechercher un utilisateur...",
-      })}
-      actions={[
-        createResetButton(() => {
-          onSearch("");
-          table.resetColumnFilters();
-        }),
-      ]}
-    />
-  );
-}
-```
-
-Or with TanStack Table native filtering (more integrated):
-
-```tsx
-"use client";
-import { type Table } from "@tanstack/react-table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { DataTableFacetedFilter } from "@/components/data-table/faceted-filter";
-import { DataTableViewOptions } from "@/components/data-table/view-options";
+import { BasePage } from "@/components/layout/base-page";
+import { Pagination } from "@/components/pagination";
+import { DataTable } from "@/components/data-table/data-table";
+import PageHeader, { PageHeaderActions } from "@/components/page-header";
+import TableHeader from "@/components/table-header";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircleIcon } from "@/lib/icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { XIcon } from "@/lib/icons";
+import { EntityDetailSheet } from "./detail-sheet";
+import { useEntity } from "./hooks";
 
-export function Toolbar<TData>({ table }: { table: Table<TData> }) {
-  const isFiltered = table.getState().columnFilters.length > 0;
+export default function EntityListPage() {
+  const {
+    items,
+    total,
+    isLoading,
+    error,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    setSelectedItems,
+    selectedId,
+    setSelectedId,
+    handlers,
+    columns,
+    searchConfig,
+    filtersConfig,
+    actionsConfig,
+    bulkActionsConfig,
+    ConfirmDialogComponent,
+  } = useEntity();
+
   return (
-    <div className="flex items-center justify-between gap-2">
-      <div className="flex flex-1 items-center gap-2">
-        <Input
-          placeholder="Rechercher..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(e) =>
-            table.getColumn("name")?.setFilterValue(e.target.value)
-          }
-          className="h-8 w-[200px]"
+    <BasePage
+      breadcrumbs={[
+        { title: "Module", url: "/module" },
+        { title: "Entités", url: "/module/entities" },
+      ]}
+    >
+      <div className="space-y-6">
+        <PageHeader
+          title="Entités"
+          description="Gérez vos entités"
+          variant="list"
+          primaryAction={PageHeaderActions.create(
+            "/module/entities/new",
+            "Nouveau",
+          )}
         />
-        <DataTableFacetedFilter
-          column={table.getColumn("status")}
-          title="Statut"
-          options={[
-            { label: "Actif", value: "ACTIVE" },
-            { label: "Inactif", value: "INACTIVE" },
-          ]}
+        <TableHeader
+          search={searchConfig}
+          filters={filtersConfig}
+          actions={actionsConfig}
+          bulkActions={bulkActionsConfig}
         />
-        {isFiltered && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => table.resetColumnFilters()}
-          >
-            Réinitialiser{" "}
-            <HugeiconsIcon icon={XIcon} className="ml-1 h-4 w-4" />
-          </Button>
+        {error && (
+          <Alert variant="destructive">
+            <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+            <AlertDescription>
+              Erreur : {(error as Error).message}
+            </AlertDescription>
+          </Alert>
+        )}
+        <DataTable
+          columns={columns}
+          data={items}
+          isLoading={isLoading}
+          pagination={false}
+          selectable
+          onSelectionChange={setSelectedItems}
+          emptyMessage="Aucune entité trouvée."
+        />
+        {total > 0 && (
+          <Pagination
+            currentPage={page}
+            totalPages={Math.ceil(total / pageSize)}
+            pageSize={pageSize}
+            totalCount={total}
+            onPageChange={setPage}
+            onPageSizeChange={(s) => {
+              setPageSize(s);
+              setPage(1);
+            }}
+          />
         )}
       </div>
-      <DataTableViewOptions table={table} />
-    </div>
+
+      {ConfirmDialogComponent}
+
+      <EntityDetailSheet
+        entityId={selectedId}
+        open={!!selectedId}
+        onOpenChange={(open) => {
+          if (!open) setSelectedId(null);
+        }}
+        handlers={handlers}
+      />
+    </BasePage>
   );
 }
 ```
 
----
+## Checklist
 
-## Bulk Actions
-
-Use `TableHeader` with `bulkActions` config:
-
-```tsx
-import TableHeader, { createBulkActions } from "@/components/table-header";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { TrashIcon } from "@/lib/icons";
-
-const selectedRows = table.getFilteredSelectedRowModel().rows;
-
-<TableHeader
-  bulkActions={createBulkActions(
-    selectedRows.length,
-    [
-      {
-        label: "Supprimer",
-        icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
-        onClick: handleBulkDelete,
-        variant: "destructive",
-      },
-    ],
-    { onClose: () => table.resetRowSelection() },
-  )}
-/>;
-```
-
----
-
-## Card Grid Variant
-
-```tsx
-const [view, setView] = useState<"table" | "grid">("table");
-
-{
-  view === "table" ? (
-    <DataTable
-      columns={columns}
-      data={items}
-      isLoading={isLoading}
-      selectable
-    />
-  ) : (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {items.map((item) => (
-        <ResourceCard key={item.id} item={item} />
-      ))}
-    </div>
-  );
-}
-```
-
----
-
-## PageHeaderActions helpers
-
-```tsx
-import PageHeader, { PageHeaderActions } from "@/components/page-header";
-
-// Shortcuts for common actions:
-PageHeaderActions.create("/resource/new"); // → "Nouveau" button with PlusIcon
-PageHeaderActions.create("/resource/new", "Ajouter");
-PageHeaderActions.refresh(() => refetch()); // → "Actualiser"
-PageHeaderActions.export(() => handleExport()); // → "Exporter"
-```
-
----
-
-## Notes
-
-- All UI labels, placeholders, toasts → **French**
-- `PageHeader` default export — import as `import PageHeader from "@/components/page-header"`
-- `CellActions` default export — import as `import CellActions from "@/components/cell-actions"`
-- `DataTable` named export — `import { DataTable } from "@/components/data-table/data-table"`
-- `confirmDialog` inline in `CellAction` auto-spawns `ConfirmDialog` — no need to manage dialog state in columns
-- `DataTable` `selectable` prop injects checkbox column automatically
-- `StatusBadge` infers color from status string — no manual `variant` needed in most cases
+- [ ] `"use client"` en tête de tous les fichiers
+- [ ] Hook centralisé (`hooks.ts`) — mutations, handlers, configs, ConfirmDialogComponent
+- [ ] Page fine — aucune mutation ni handler définis dans la page
+- [ ] `BasePage` avec breadcrumbs
+- [ ] `PageHeader variant="list"` avec `primaryAction`
+- [ ] `TableHeader` consomme searchConfig / filtersConfig / actionsConfig / bulkActionsConfig
+- [ ] `DataTable` avec `pagination={false}`, `selectable`, `onSelectionChange`
+- [ ] `Pagination` séparée en-dessous
+- [ ] `ConfirmDialogComponent` rendu une fois à la racine
+- [ ] `DetailSheet` reçoit `handlers` via props (pas de mutations propres)
+- [ ] Changement de filtre remet page à 1
+- [ ] Labels, toasts, placeholders en français
