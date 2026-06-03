@@ -2,13 +2,13 @@
 
 import PageHeader from "@/components/shared/page-header";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Key, Link01Icon } from "@hugeicons/core-free-icons";
+import { Key01Icon, Link01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ApiKeysTab } from "./_components/api-keys-tab";
 import { WebhooksTab } from "./_components/webhooks-tab";
 
 const tabs = [
-  { value: "api-keys", label: "Clés API", icon: Key },
+  { value: "api-keys", label: "Clés API", icon: Key01Icon },
   { value: "webhooks", label: "Webhooks", icon: Link01Icon },
 ];
 

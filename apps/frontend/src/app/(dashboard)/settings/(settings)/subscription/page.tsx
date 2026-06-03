@@ -11,7 +11,8 @@ import {
 import { PLAN_NAMES, type PlanId } from "@/lib/plans";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import { AlertCircle, Loader2, Smartphone } from "lucide-react";
+import { AlertCircleIcon, LoadingIcon, SmartphoneIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { SubscriptionBillingHistory } from "./_components/subscription-billing-history";
 import { SubscriptionPlanCard } from "./_components/subscription-plan-card";
@@ -32,7 +33,10 @@ export default function SubscriptionPage() {
     return (
       <div className="flex flex-col">
         <div className="flex h-64 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <HugeiconsIcon
+            icon={LoadingIcon}
+            className="h-8 w-8 animate-spin text-primary"
+          />
         </div>
       </div>
     );
@@ -42,7 +46,10 @@ export default function SubscriptionPage() {
     return (
       <div className="flex flex-col">
         <div className="flex h-64 flex-col items-center justify-center gap-3 text-center">
-          <AlertCircle className="h-10 w-10 text-destructive" />
+          <HugeiconsIcon
+            icon={AlertCircleIcon}
+            className="h-10 w-10 text-destructive"
+          />
           <p className="font-semibold">
             Impossible de charger les données d'abonnement
           </p>
@@ -72,7 +79,10 @@ export default function SubscriptionPage() {
         {/* Alerte paiements en attente */}
         {pendingPayments.length > 0 && (
           <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
-            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+            <HugeiconsIcon
+              icon={AlertCircleIcon}
+              className="mt-0.5 h-5 w-5 shrink-0 text-amber-500"
+            />
             <div>
               <p className="font-semibold text-sm">
                 {pendingPayments.length} paiement(s) en attente de confirmation
@@ -129,7 +139,7 @@ export default function SubscriptionPage() {
           />
 
           <div className="flex flex-wrap items-center gap-3 rounded-xl bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
-            <Smartphone className="h-4 w-4 shrink-0" />
+            <HugeiconsIcon icon={SmartphoneIcon} className="h-4 w-4 shrink-0" />
             <span>Paiement sécurisé via</span>
             <span className="font-medium text-foreground">LigdiCash</span>
             <span>—</span>

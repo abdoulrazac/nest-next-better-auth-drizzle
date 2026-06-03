@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Save } from "@hugeicons/core-free-icons";
+import { FloppyDiskIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { TaxRateForm } from "./tax-rate-form";
 
@@ -61,7 +61,7 @@ export function CreateTaxRateDialog({
             Annuler
           </Button>
           <Button type="submit" form="create-tax-rate-dialog-form">
-            <HugeiconsIcon icon={Save} className="mr-1 h-4 w-4" />
+            <HugeiconsIcon icon={FloppyDiskIcon} className="mr-1 h-4 w-4" />
             Créer
           </Button>
         </DialogFooter>

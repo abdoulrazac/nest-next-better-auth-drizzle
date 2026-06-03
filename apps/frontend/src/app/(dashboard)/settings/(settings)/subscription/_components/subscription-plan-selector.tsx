@@ -12,7 +12,8 @@ import {
 } from "@/lib/plans";
 import { cn } from "@/lib/utils";
 import { formatXOF } from "@/lib/format";
-import { CheckCircle, ChevronRight } from "lucide-react";
+import { CheckCircleIcon, ChevronRightIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 interface Props {
   currentPlan: PlanId;
@@ -68,7 +69,10 @@ export function SubscriptionPlanSelector({
             <ul className="mb-4 flex-1 space-y-1">
               {PLAN_FEATURES[p].map((f) => (
                 <li key={f} className="flex items-start gap-1.5 text-xs">
-                  <CheckCircle className="mt-0.5 h-3 w-3 shrink-0 text-emerald-500" />
+                  <HugeiconsIcon
+                    icon={CheckCircleIcon}
+                    className="mt-0.5 h-3 w-3 shrink-0 text-emerald-500"
+                  />
                   {f}
                 </li>
               ))}
@@ -81,7 +85,12 @@ export function SubscriptionPlanSelector({
               className="w-full"
             >
               {isCurrent ? "Plan actuel" : isDown ? "Rétrograder" : "Choisir"}
-              {!isCurrent && <ChevronRight className="ml-1 h-3.5 w-3.5" />}
+              {!isCurrent && (
+                <HugeiconsIcon
+                  icon={ChevronRightIcon}
+                  className="ml-1 h-3.5 w-3.5"
+                />
+              )}
             </Button>
           </div>
         );

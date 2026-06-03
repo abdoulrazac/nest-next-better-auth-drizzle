@@ -3,13 +3,13 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import {
-  AlertCircle,
-  Clock,
+  AlertCircleIcon,
+  Clock01Icon,
   Delete02Icon,
-  Edit,
+  PencilEdit01Icon,
   FileExportIcon,
-  Login,
-  Logout,
+  Login01Icon,
+  Logout01Icon,
   PlusSignCircleIcon,
   PrinterIcon,
   ViewIcon,
@@ -33,11 +33,11 @@ export interface AuditLogRow {
   user?: { id: string; name: string } | null;
 }
 
-const ACTION_ICONS: Record<string, typeof Login> = {
-  LOGIN: Login,
-  LOGOUT: Logout,
+const ACTION_ICONS: Record<string, typeof Login01Icon> = {
+  LOGIN: Login01Icon,
+  LOGOUT: Logout01Icon,
   CREATE: PlusSignCircleIcon,
-  UPDATE: Edit,
+  UPDATE: PencilEdit01Icon,
   DELETE: Delete02Icon,
   EXPORT: FileExportIcon,
   PRINT: PrinterIcon,
@@ -106,7 +106,7 @@ export function auditColumns({
         return (
           <div className="flex items-center gap-2">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-500">
-              <HugeiconsIcon icon={Clock} className="h-3.5 w-3.5" />
+              <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
             </span>
             <div className="min-w-0">
               <p className="text-sm font-medium text-slate-800">
@@ -241,7 +241,7 @@ export function auditColumns({
         return (
           <Badge variant="outline" className={cn(style?.className)}>
             {severity === "CRITICAL" && (
-              <HugeiconsIcon icon={AlertCircle} className="mr-1 h-3 w-3" />
+              <HugeiconsIcon icon={AlertCircleIcon} className="mr-1 h-3 w-3" />
             )}
             {SEVERITY_LABELS[severity] ?? severity}
           </Badge>

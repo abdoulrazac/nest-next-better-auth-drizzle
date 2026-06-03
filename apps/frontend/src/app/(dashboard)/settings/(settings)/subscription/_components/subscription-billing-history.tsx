@@ -16,7 +16,8 @@ import { PLAN_NAMES, type PlanId } from "@/lib/plans";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CreditCard } from "lucide-react";
+import { CreditCardIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 const PAYMENT_STATUS_BADGE: Record<string, { label: string; class: string }> = {
   PENDING: { label: "En attente", class: "bg-amber-100 text-amber-700" },
@@ -67,7 +68,10 @@ export function SubscriptionBillingHistory({
     return (
       <Card className="border-dashed">
         <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
-          <CreditCard className="h-10 w-10 text-muted-foreground/50" />
+          <HugeiconsIcon
+            icon={CreditCardIcon}
+            className="h-10 w-10 text-muted-foreground/50"
+          />
           <p className="font-semibold text-muted-foreground">
             Aucun historique de facturation
           </p>
@@ -136,7 +140,7 @@ export function SubscriptionBillingHistory({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <CreditCard className="h-5 w-5" />
+              <HugeiconsIcon icon={CreditCardIcon} className="h-5 w-5" />
               Historique de facturation
             </CardTitle>
           </CardHeader>

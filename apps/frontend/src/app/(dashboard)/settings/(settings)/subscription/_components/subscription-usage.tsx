@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { PLAN_LIMITS, type PlanId } from "@/lib/plans";
 import { cn } from "@/lib/utils";
-import { AlertCircle } from "lucide-react";
+import { AlertCircleIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 interface UsageMeterProps {
   label: string;
@@ -115,7 +116,10 @@ export function SubscriptionUsage({ plan, usage, onUpgrade }: Props) {
 
         {warnings.length > 0 && (
           <div className="flex items-start gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+            <HugeiconsIcon
+              icon={AlertCircleIcon}
+              className="mt-0.5 h-4 w-4 shrink-0 text-amber-500"
+            />
             <p className="text-xs text-amber-700 dark:text-amber-400">
               Vous approchez de votre limite pour : {warnings.join(", ")}.{" "}
               {onUpgrade && (

@@ -3,16 +3,16 @@
 import { cn } from "@/lib/utils";
 import {
   AlarmClockIcon,
-  Building,
+  Building01Icon,
   Calendar03Icon,
-  Code,
+  CodeIcon,
   DashboardSquare02Icon,
   DatabaseSyncIcon,
-  FileDatabaseIcon,
-  InputNumericIcon,
+  DatabaseIcon,
+  CalculatorIcon,
   MoneyBag02Icon,
-  Refresh,
-  Settings,
+  RefreshIcon,
+  Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
@@ -21,7 +21,7 @@ import { usePathname } from "next/navigation";
 interface NavItem {
   label: string;
   href: string;
-  icon: typeof Settings;
+  icon: typeof Settings01Icon;
   description?: string;
 }
 
@@ -48,19 +48,19 @@ const settingsNavGroups: NavGroup[] = [
       {
         label: "Général",
         href: "/settings/general",
-        icon: Settings,
+        icon: Settings01Icon,
         description: "Préférences générales",
       },
       {
         label: "Entreprise",
         href: "/settings/company",
-        icon: Building,
+        icon: Building01Icon,
         description: "Informations légales",
       },
       {
         label: "Numérotation",
         href: "/settings/numbering",
-        icon: InputNumericIcon,
+        icon: CalculatorIcon,
         description: "Préférences de numérotation",
       },
       {
@@ -89,13 +89,13 @@ const settingsNavGroups: NavGroup[] = [
       {
         label: "Gestion des données",
         href: "/settings/data",
-        icon: FileDatabaseIcon,
+        icon: DatabaseIcon,
         description: "Import/Export de données",
       },
       {
         label: "Sauvegarde",
         href: "/settings/backup",
-        icon: Refresh,
+        icon: RefreshIcon,
         description: "Sauvegardes automatiques",
       },
     ],
@@ -112,7 +112,7 @@ const settingsNavGroups: NavGroup[] = [
       {
         label: "Développeurs",
         href: "/settings/developers",
-        icon: Code,
+        icon: CodeIcon,
         description: "API et webhooks",
       },
       {

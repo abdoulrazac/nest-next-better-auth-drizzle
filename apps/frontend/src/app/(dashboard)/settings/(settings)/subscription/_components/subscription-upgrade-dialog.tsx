@@ -11,7 +11,13 @@ import {
   type PlanId,
 } from "@/lib/plans";
 import { api } from "@/trpc/react";
-import { AlertCircle, CheckCircle, ExternalLink, Loader2 } from "lucide-react";
+import {
+  AlertCircleIcon,
+  CheckCircleIcon,
+  ExternalLinkIcon,
+  LoadingIcon,
+} from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -137,7 +143,10 @@ export function SubscriptionUpgradeDialog({
     return (
       <div className="flex flex-col items-center gap-4 py-6 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
-          <CheckCircle className="h-8 w-8 text-emerald-500" />
+          <HugeiconsIcon
+            icon={CheckCircleIcon}
+            className="h-8 w-8 text-emerald-500"
+          />
         </div>
         <h3 className="text-lg font-bold">Plan activé !</h3>
         <p className="max-w-xs text-sm text-muted-foreground">
@@ -151,7 +160,10 @@ export function SubscriptionUpgradeDialog({
   if (state === "TIMEOUT") {
     return (
       <div className="flex flex-col items-center gap-4 py-6 text-center">
-        <AlertCircle className="h-10 w-10 text-amber-500" />
+        <HugeiconsIcon
+          icon={AlertCircleIcon}
+          className="h-10 w-10 text-amber-500"
+        />
         <h3 className="text-lg font-bold">Paiement non reçu</h3>
         <p className="max-w-xs text-sm text-muted-foreground">
           Nous n'avons pas encore reçu la confirmation. Si vous avez payé, votre
@@ -166,7 +178,7 @@ export function SubscriptionUpgradeDialog({
               variant="outline"
               onClick={() => window.open(payUrl, "_blank")}
             >
-              <ExternalLink className="mr-2 h-4 w-4" />
+              <HugeiconsIcon icon={ExternalLinkIcon} className="mr-2 h-4 w-4" />
               Ré-ouvrir le paiement
             </Button>
           )}
@@ -178,7 +190,10 @@ export function SubscriptionUpgradeDialog({
   if (state === "ERROR") {
     return (
       <div className="flex flex-col items-center gap-4 py-6 text-center">
-        <AlertCircle className="h-10 w-10 text-destructive" />
+        <HugeiconsIcon
+          icon={AlertCircleIcon}
+          className="h-10 w-10 text-destructive"
+        />
         <h3 className="text-lg font-bold">Erreur de paiement</h3>
         <p className="max-w-xs text-sm text-muted-foreground">{errorMsg}</p>
         <div className="flex gap-2">
@@ -194,7 +209,10 @@ export function SubscriptionUpgradeDialog({
   if (state === "WAITING") {
     return (
       <div className="flex flex-col items-center gap-4 py-6 text-center">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <HugeiconsIcon
+          icon={LoadingIcon}
+          className="h-10 w-10 animate-spin text-primary"
+        />
         <h3 className="text-lg font-bold">En attente de votre paiement</h3>
         <p className="max-w-xs text-sm text-muted-foreground">
           Complétez le paiement dans l'onglet ouvert. Cette page se met à jour
@@ -206,7 +224,10 @@ export function SubscriptionUpgradeDialog({
             size="sm"
             onClick={() => window.open(payUrl, "_blank")}
           >
-            <ExternalLink className="mr-2 h-3.5 w-3.5" />
+            <HugeiconsIcon
+              icon={ExternalLinkIcon}
+              className="mr-2 h-3.5 w-3.5"
+            />
             Ré-ouvrir la page de paiement
           </Button>
         )}
@@ -242,7 +263,10 @@ export function SubscriptionUpgradeDialog({
       {/* Avertissement downgrade */}
       {targetPlan === "FREE" && (
         <div className="flex items-start gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
-          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+          <HugeiconsIcon
+            icon={AlertCircleIcon}
+            className="mt-0.5 h-4 w-4 shrink-0 text-amber-500"
+          />
           <p className="text-xs text-amber-700 dark:text-amber-400">
             Votre abonnement sera résilié en fin de période actuelle. Vous
             perdrez l'accès aux fonctionnalités avancées.
@@ -269,7 +293,10 @@ export function SubscriptionUpgradeDialog({
         onClick={handlePay}
       >
         {state === "LOADING" ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <HugeiconsIcon
+            icon={LoadingIcon}
+            className="mr-2 h-4 w-4 animate-spin"
+          />
         ) : null}
         {targetPlan === "FREE" ? "Résilier l'abonnement" : "Payer maintenant"}
       </Button>
