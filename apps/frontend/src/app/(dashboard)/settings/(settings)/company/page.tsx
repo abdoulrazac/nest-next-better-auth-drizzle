@@ -1,17 +1,10 @@
-"use client";
+import { SettingsPlaceholder } from "@/features/settings/placeholder";
 
-import PageHeader from "@/components/page-header";
-import { CompanyForm } from "./_components/company-form";
-
-export default function CompanyPage() {
+export default function Page() {
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Données entreprise"
-        description="Configurez les informations légales et coordonnées de votre entreprise"
-        variant="list"
-      />
-      <CompanyForm />
-    </div>
+    <SettingsPlaceholder
+      title="Données entreprise"
+      description="Informations légales et coordonnées de votre entreprise"
+    />
   );
 }

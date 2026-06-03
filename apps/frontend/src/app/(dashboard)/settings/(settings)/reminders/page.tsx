@@ -1,18 +1,10 @@
-"use client";
+import { SettingsPlaceholder } from "@/features/settings/placeholder";
 
-import PageHeader from "@/components/page-header";
-import { ReminderConfigForm } from "./_components/reminder-config-form";
-
-export default function RemindersSettingsPage() {
+export default function Page() {
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Configuration des relances"
-        description="Configurez les délais et niveaux de rappels de paiement automatiques"
-        variant="list"
-      />
-
-      <ReminderConfigForm />
-    </div>
+    <SettingsPlaceholder
+      title="Relances"
+      description="Configuration des rappels de paiement"
+    />
   );
 }

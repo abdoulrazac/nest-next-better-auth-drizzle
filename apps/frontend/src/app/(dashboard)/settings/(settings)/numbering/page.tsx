@@ -1,18 +1,10 @@
-"use client";
+import { SettingsPlaceholder } from "@/features/settings/placeholder";
 
-import PageHeader from "@/components/page-header";
-import { NumberingForm } from "./_components/numbering-form";
-
-export default function NumberingSettingsPage() {
+export default function Page() {
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Numérotation des documents"
-        description="Configurez les préférences de numérotation des documents"
-        variant="list"
-      />
-
-      <NumberingForm />
-    </div>
+    <SettingsPlaceholder
+      title="Numérotation"
+      description="Séquences et numérotation automatique"
+    />
   );
 }
