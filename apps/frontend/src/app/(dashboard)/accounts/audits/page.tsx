@@ -1,6 +1,6 @@
 "use client";
 
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { EmbeddedAuditTable } from "./_components/embedded-audit-table";
 
 export default function AuditPage() {

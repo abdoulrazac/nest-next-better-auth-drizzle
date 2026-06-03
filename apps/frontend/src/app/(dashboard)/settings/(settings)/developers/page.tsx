@@ -1,6 +1,6 @@
 "use client";
 
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Key01Icon, Link01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";

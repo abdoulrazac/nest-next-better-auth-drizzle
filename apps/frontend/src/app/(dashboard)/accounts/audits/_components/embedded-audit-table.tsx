@@ -2,7 +2,7 @@
 "use client";
 
 import { Pagination } from "@/components/pagination";
-import { DataTable } from "@/components/shared/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import SingleSelect from "@/components/single-select";
 import TableHeader, {
   createFilterField,

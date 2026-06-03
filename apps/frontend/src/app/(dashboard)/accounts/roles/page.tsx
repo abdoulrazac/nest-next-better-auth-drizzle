@@ -2,7 +2,7 @@
 "use client";
 
 import { DataTable } from "@/components/shared";
-import PageHeader, { PageHeaderActions } from "@/components/shared/page-header";
+import PageHeader, { PageHeaderActions } from "@/components/page-header";
 import TableHeader, {
   createResetButton,
   createSearchField,

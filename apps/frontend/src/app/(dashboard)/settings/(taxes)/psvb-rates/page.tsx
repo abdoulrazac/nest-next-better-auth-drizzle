@@ -3,7 +3,7 @@
 
 import { Pagination } from "@/components/pagination";
 import { DataTable, FormDialog } from "@/components/shared";
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { Spinner } from "@/components/spinner";
 import TableHeader from "@/components/table-header";
 import { Alert, AlertDescription } from "@/components/ui/alert";

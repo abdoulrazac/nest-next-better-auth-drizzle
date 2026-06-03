@@ -2,7 +2,7 @@
 "use client";
 
 import { BasePage } from "@/components";
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";

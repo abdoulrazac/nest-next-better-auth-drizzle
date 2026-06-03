@@ -5,7 +5,7 @@
  * Page d'intégration DGI — e-MECEF Driver
  */
 
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import {
   Card,

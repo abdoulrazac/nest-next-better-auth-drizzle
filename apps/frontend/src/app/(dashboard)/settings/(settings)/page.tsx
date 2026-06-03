@@ -1,6 +1,6 @@
 "use client";
 
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { SettingsDashboardChart } from "./_components/dashboard-chart";
 import { SettingsDashboardKpis } from "./_components/dashboard-kpis";
 import { SettingsDashboardRecentActions } from "./_components/dashboard-recent-actions";

@@ -2,9 +2,9 @@
 "use client";
 
 import { BasePage } from "@/components";
-import { ConfirmDialog } from "@/components/shared/confirm-dialog";
-import { DataTable } from "@/components/shared/data-table";
-import PageHeader from "@/components/shared/page-header";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { DataTable } from "@/components/data-table/data-table";
+import PageHeader from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

@@ -1,6 +1,6 @@
 "use client";
 
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { ReminderConfigForm } from "./_components/reminder-config-form";
 
 export default function RemindersSettingsPage() {

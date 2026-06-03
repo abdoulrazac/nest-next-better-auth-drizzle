@@ -2,9 +2,9 @@
 "use client";
 
 import { DataTable } from "@/components/shared";
-import { DetailItem, DetailSection } from "@/components/shared/detail-section";
-import { KpiCard } from "@/components/shared/kpi-card";
-import PageHeader from "@/components/shared/page-header";
+import { DetailItem, DetailSection } from "@/components/detail-section";
+import { KpiCard } from "@/components/kpi-card";
+import PageHeader from "@/components/page-header";
 import { Spinner } from "@/components/spinner";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

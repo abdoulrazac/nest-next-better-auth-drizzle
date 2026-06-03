@@ -5,7 +5,7 @@ import CellActions, {
   createDeleteAction,
   createEditAction,
   createViewAction,
-} from "@/components/shared/cell-actions";
+} from "@/components/cell-actions";
 import { Badge } from "@/components/ui/badge";
 import { Shield } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";

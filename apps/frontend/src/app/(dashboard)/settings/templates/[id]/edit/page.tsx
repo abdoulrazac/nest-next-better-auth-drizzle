@@ -2,7 +2,7 @@
 "use client";
 
 import { BasePage } from "@/components";
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import type { TemplateType } from "@/lib/template";
 import { api } from "@/trpc/react";
 import { useParams, useRouter } from "next/navigation";

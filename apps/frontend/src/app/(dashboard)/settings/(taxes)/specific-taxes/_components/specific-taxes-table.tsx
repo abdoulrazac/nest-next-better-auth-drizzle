@@ -4,7 +4,7 @@ import CellActions, {
   createDeleteAction,
   createEditAction,
   createToggleStatusAction,
-} from "@/components/shared/cell-actions";
+} from "@/components/cell-actions";
 import { Badge } from "@/components/ui/badge";
 import { TaxesIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";

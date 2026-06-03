@@ -3,7 +3,7 @@ import { StatusBadge } from "@/components/shared";
 import CellActions, {
   createDeleteAction,
   createEditAction,
-} from "@/components/shared/cell-actions";
+} from "@/components/cell-actions";
 import { Badge } from "@/components/ui/badge";
 import { PSVB_GROUP_LABELS } from "@/server/api/common/schemas/psvb-rate.schema";
 import { PercentCircleIcon } from "@hugeicons/core-free-icons";

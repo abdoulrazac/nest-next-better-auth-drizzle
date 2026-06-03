@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/trpc/react";
 import type { MemberWithRelations } from "@/types/accounts";

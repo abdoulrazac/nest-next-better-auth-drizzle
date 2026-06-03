@@ -1,6 +1,6 @@
 "use client";
 
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { NumberingForm } from "./_components/numbering-form";
 
 export default function NumberingSettingsPage() {

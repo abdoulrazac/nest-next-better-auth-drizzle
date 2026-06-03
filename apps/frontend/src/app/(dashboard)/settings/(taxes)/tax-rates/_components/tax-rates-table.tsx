@@ -3,7 +3,7 @@ import { StatusBadge } from "@/components/shared";
 import CellActions, {
   createDeleteAction,
   createEditAction,
-} from "@/components/shared/cell-actions";
+} from "@/components/cell-actions";
 import { Badge } from "@/components/ui/badge";
 import { PercentCircleIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";

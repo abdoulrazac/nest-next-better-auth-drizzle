@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { KpiCard } from "@/components/shared/kpi-card";
+import { KpiCard } from "@/components/kpi-card";
 import { ErrorState, LoadingState } from "@/components/shared";
 import { api } from "@/trpc/react";
 

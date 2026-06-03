@@ -1,6 +1,6 @@
 "use client";
 
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { GeneralSettingsForm } from "./_components/general-settings-form";
 
 export default function GeneralSettingsPage() {

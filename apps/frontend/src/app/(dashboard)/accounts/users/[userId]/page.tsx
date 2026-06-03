@@ -3,7 +3,7 @@
 
 import { EmbeddedAuditTable } from "@/app/(admin)/accounts/audits/_components/embedded-audit-table";
 import BasePage from "@/components/layout/base-page";
-import PageHeader from "@/components/shared/page-header";
+import PageHeader from "@/components/page-header";
 import { Spinner } from "@/components/spinner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
