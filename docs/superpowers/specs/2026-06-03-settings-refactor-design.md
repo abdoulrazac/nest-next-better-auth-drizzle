@@ -10,6 +10,8 @@ Replace all broken tRPC imports in `app/(dashboard)/settings/` with working code
 ## Constraints
 
 - Keep the `(settings)/layout.tsx` + `SettingsNav` sidebar — no layout changes
+- **All feature components live in `apps/frontend/src/features/settings/`** — same pattern as `features/users/`, `features/roles/`
+- Route pages (`app/(dashboard)/settings/...`) are minimal wrappers that import from `features/settings/`
 - UI language: French (labels, toasts, placeholders)
 - Icons: `@/lib/icons` only — never import `@hugeicons/core-free-icons` directly
 - `apiClient` from `@/lib/api` — object syntax: `apiClient.get({ url, query })`
@@ -27,10 +29,17 @@ Replace all broken tRPC imports in `app/(dashboard)/settings/` with working code
 
 ## Section 2 — Pages To Fix
 
-### 2a. General Settings Page
+All feature components live in `apps/frontend/src/features/settings/`. Route pages are 5-line wrappers.
 
-**File:** `settings/(settings)/general/_components/general-settings-form.tsx`  
-**New files:** `settings/(settings)/general/_components/schema.ts`, `settings/(settings)/general/_components/hooks.ts`
+### 2a. General Settings Feature
+
+**Feature files:**
+
+- `features/settings/general/schema.ts` — Zod schemas
+- `features/settings/general/hooks.ts` — TanStack Query hooks
+- `features/settings/general/index.tsx` — `GeneralSettingsPage` component
+
+**Route wrapper:** `settings/(settings)/general/page.tsx` → `import { GeneralSettingsPage } from "@/features/settings/general"`
 
 Two `Card` sections on one page:
 
@@ -48,21 +57,19 @@ Two `Card` sections on one page:
 - Fuseau horaire (text Input)
 - Save button — calls `PATCH /v1/settings/preferences`
 
-Types come from `@repo/validators/settings`:
+Types from `@repo/validators/settings`: `AppSettingsResponse`, `UpdateAppSettings`, `UserPreferencesResponse`, `UpdateUserPreferences`.
 
-- `AppSettingsResponse`, `UpdateAppSettings`
-- `UserPreferencesResponse`, `UpdateUserPreferences`
-
-Schema file defines local Zod schemas matching those types.  
-Hooks file exports: `useGetAppSettings`, `useUpdateAppSettings`, `useGetPreferences`, `useUpdatePreferences`.
+Hooks: `useGetAppSettings`, `useUpdateAppSettings`, `useGetPreferences`, `useUpdatePreferences`.
 
 Error handling: inline `<p className="text-sm text-destructive">` (no `ErrorState` from shared).
 
-### 2b. Developers Page — API Keys Tab
+### 2b. Developers Feature — API Keys Tab
 
-**File:** `settings/(settings)/developers/_components/api-keys-tab.tsx`
+**Feature files:**
 
-Fix broken imports only — logic stays the same:
+- `features/settings/developers/api-keys-tab.tsx` — fix broken imports, logic unchanged
+
+Fix broken imports:
 
 - `@/server/better-auth/client` → `@/lib/auth-client`
 - `@/hooks/use-confirm-dialog` → `@/components/hooks/use-confirm-dialog`
@@ -71,11 +78,16 @@ Fix broken imports only — logic stays the same:
 - All `@hugeicons/core-free-icons` direct imports → `@/lib/icons`
 - Remove `// @ts-nocheck`
 
-### 2c. Developers Page — Webhooks Tab
+### 2c. Developers Feature — Webhooks Tab
 
-**File:** `settings/(settings)/developers/_components/webhooks-tab.tsx`
+**Feature files:**
 
-Full rewrite — replace tRPC with `apiClient` + TanStack Query wired to `WebhooksController`:
+- `features/settings/developers/hooks.ts` — TanStack Query hooks for webhooks CRUD
+- `features/settings/developers/webhooks-tab.tsx` — full rewrite
+
+**Route wrapper:** `settings/(settings)/developers/page.tsx` → import both tabs from `@/features/settings/developers/`
+
+Webhooks wired to `WebhooksController`:
 
 | Action | Endpoint                  |
 | ------ | ------------------------- |
@@ -88,28 +100,34 @@ No "test" action (endpoint does not exist).
 
 Types from `@repo/validators/webhooks`: `WebhookResponse`, `CreateWebhookInput`, `WebhooksPaginatedResponse`.
 
-UI keeps same structure as old project: table of webhooks + create dialog.  
-Create/edit dialog uses react-hook-form + Zod schema (name, url, events array, optional secret).  
-Delete uses `useConfirmDialog` from `@/components/hooks/use-confirm-dialog`.
+UI: table of webhooks + create/edit dialog (react-hook-form + Zod). Delete uses `useConfirmDialog` from `@/components/hooks/use-confirm-dialog`.
 
-New hooks file: `settings/(settings)/developers/_components/hooks.ts` — exports `useListWebhooks`, `useCreateWebhook`, `useUpdateWebhook`, `useDeleteWebhook`.
+Hooks: `useListWebhooks`, `useCreateWebhook`, `useUpdateWebhook`, `useDeleteWebhook`.
 
 ---
 
 ## Section 3 — Placeholder Pages
 
-These 9 pages have no backend. Each is replaced with a minimal placeholder that compiles cleanly.
+These 9 pages have no backend. Each route page is replaced with a minimal placeholder. A shared `SettingsPlaceholder` component lives in `features/settings/placeholder.tsx`.
 
-**Pattern for each placeholder:**
+**`features/settings/placeholder.tsx`:**
 
 ```tsx
 import PageHeader from "@/components/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function XxxPage() {
+interface SettingsPlaceholderProps {
+  title: string;
+  description: string;
+}
+
+export function SettingsPlaceholder({
+  title,
+  description,
+}: SettingsPlaceholderProps) {
   return (
     <div className="space-y-6">
-      <PageHeader title="<titre>" description="<description>" variant="list" />
+      <PageHeader title={title} description={description} variant="list" />
       <Card>
         <CardContent className="flex items-center justify-center py-16 text-muted-foreground text-sm">
           Cette fonctionnalité sera disponible prochainement.
@@ -120,7 +138,17 @@ export default function XxxPage() {
 }
 ```
 
-| File                                  | Title               | Description                           |
+Each route page becomes:
+
+```tsx
+import { SettingsPlaceholder } from "@/features/settings/placeholder";
+
+export default function Page() {
+  return <SettingsPlaceholder title="..." description="..." />;
+}
+```
+
+| Route page                            | Title               | Description                           |
 | ------------------------------------- | ------------------- | ------------------------------------- |
 | `(settings)/page.tsx`                 | Vue d'ensemble      | Aperçu rapide de votre plateforme     |
 | `(settings)/company/page.tsx`         | Données entreprise  | Informations légales et coordonnées   |
@@ -132,28 +160,40 @@ export default function XxxPage() {
 | `(settings)/subscription/page.tsx`    | Abonnement          | Plan et facturation                   |
 | `(settings)/dgi-integration/page.tsx` | Certification DGI   | Connexion aux services fiscaux        |
 
-Sub-component files (e.g. `company/_components/`, `fiscal-years/_components/`) are left untouched — they are no longer imported after the page refactor.
+Sub-component files (e.g. `company/_components/`, `fiscal-years/_components/`) are left untouched — no longer imported.
 
 ---
 
 ## File Map
 
-| Action      | Path                                                                |
-| ----------- | ------------------------------------------------------------------- |
-| Create      | `settings/(settings)/general/_components/schema.ts`                 |
-| Create      | `settings/(settings)/general/_components/hooks.ts`                  |
-| Rewrite     | `settings/(settings)/general/_components/general-settings-form.tsx` |
-| Create      | `settings/(settings)/developers/_components/hooks.ts`               |
-| Fix imports | `settings/(settings)/developers/_components/api-keys-tab.tsx`       |
-| Rewrite     | `settings/(settings)/developers/_components/webhooks-tab.tsx`       |
-| Replace     | `settings/(settings)/page.tsx`                                      |
-| Replace     | `settings/(settings)/company/page.tsx`                              |
-| Replace     | `settings/(settings)/fiscal-years/page.tsx`                         |
-| Replace     | `settings/(settings)/numbering/page.tsx`                            |
-| Replace     | `settings/(settings)/backup/page.tsx`                               |
-| Replace     | `settings/(settings)/data/page.tsx`                                 |
-| Replace     | `settings/(settings)/reminders/page.tsx`                            |
-| Replace     | `settings/(settings)/subscription/page.tsx`                         |
-| Replace     | `settings/(settings)/dgi-integration/page.tsx`                      |
+**New `features/settings/` structure:**
 
-All paths relative to `apps/frontend/src/app/(dashboard)/`.
+| Action | Path                                            |
+| ------ | ----------------------------------------------- |
+| Create | `features/settings/placeholder.tsx`             |
+| Create | `features/settings/general/schema.ts`           |
+| Create | `features/settings/general/hooks.ts`            |
+| Create | `features/settings/general/index.tsx`           |
+| Create | `features/settings/developers/hooks.ts`         |
+| Create | `features/settings/developers/api-keys-tab.tsx` |
+| Create | `features/settings/developers/webhooks-tab.tsx` |
+| Create | `features/settings/developers/index.tsx`        |
+
+**Route pages (wrappers only):**
+
+| Action  | Path                                           |
+| ------- | ---------------------------------------------- |
+| Replace | `settings/(settings)/general/page.tsx`         |
+| Replace | `settings/(settings)/developers/page.tsx`      |
+| Replace | `settings/(settings)/page.tsx`                 |
+| Replace | `settings/(settings)/company/page.tsx`         |
+| Replace | `settings/(settings)/fiscal-years/page.tsx`    |
+| Replace | `settings/(settings)/numbering/page.tsx`       |
+| Replace | `settings/(settings)/backup/page.tsx`          |
+| Replace | `settings/(settings)/data/page.tsx`            |
+| Replace | `settings/(settings)/reminders/page.tsx`       |
+| Replace | `settings/(settings)/subscription/page.tsx`    |
+| Replace | `settings/(settings)/dgi-integration/page.tsx` |
+
+All feature paths relative to `apps/frontend/src/`.  
+All route paths relative to `apps/frontend/src/app/(dashboard)/`.
