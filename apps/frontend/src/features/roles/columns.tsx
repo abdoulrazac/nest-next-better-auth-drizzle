@@ -5,15 +5,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { CellActions } from "@/components/data-table/cell-actions";
-import { EditIcon, TrashIcon } from "@/lib/icons";
-import type { Role } from "./types";
+import { EyeIcon, EditIcon, TrashIcon } from "@/lib/icons";
 
 interface BuildColumnsOptions {
+  onView: (role: Role) => void;
   onEdit: (role: Role) => void;
   onDelete: (role: Role) => void;
 }
 
 export function buildColumns({
+  onView,
   onEdit,
   onDelete,
 }: BuildColumnsOptions): ColumnDef<Role>[] {
@@ -80,9 +81,14 @@ export function buildColumns({
         return (
           <CellActions
             actions={[
-              { label: "Edit", icon: EditIcon, onClick: () => onEdit(role) },
+              { label: "Voir", icon: EyeIcon, onClick: () => onView(role) },
               {
-                label: "Delete",
+                label: "Modifier",
+                icon: EditIcon,
+                onClick: () => onEdit(role),
+              },
+              {
+                label: "Supprimer",
                 icon: TrashIcon,
                 onClick: () => onDelete(role),
                 variant: "destructive",

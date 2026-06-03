@@ -11,6 +11,7 @@ import { ShieldUserIcon, TrashIcon } from "@/lib/icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { buildColumns } from "./columns";
 import { MutateRoleDialog } from "./mutate-dialog";
+import { RoleDetailSheet } from "./detail-sheet";
 import { useListRoles, useDeleteRole } from "./hooks";
 import type { Role } from "./types";
 
@@ -19,6 +20,8 @@ export function RolesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Role | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetRoleId, setSheetRoleId] = useState<string | null>(null);
 
   const { data, isLoading } = useListRoles({ search: search || undefined });
   const deleteRole = useDeleteRole();
@@ -28,6 +31,10 @@ export function RolesPage() {
   const columns = useMemo(
     () =>
       buildColumns({
+        onView: (role) => {
+          setSheetRoleId(role.id);
+          setSheetOpen(true);
+        },
         onEdit: (role) => {
           setEditTarget(role);
           setDialogOpen(true);
@@ -125,6 +132,21 @@ export function RolesPage() {
         description="Are you sure you want to delete this role? This action cannot be undone."
         onConfirm={handleDeleteConfirm}
         isPending={deleteRole.isPending}
+      />
+
+      <RoleDetailSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        roleId={sheetRoleId}
+        onEdit={(role) => {
+          setSheetOpen(false);
+          setEditTarget(role);
+          setDialogOpen(true);
+        }}
+        onDelete={(role) => {
+          setSheetOpen(false);
+          setDeleteId(role.id);
+        }}
       />
     </div>
   );
