@@ -27,6 +27,19 @@ export function useListRoles(params?: {
   });
 }
 
+export function useGetRole(id: string | null, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: roleKeys.detail(id ?? ""),
+    queryFn: async () => {
+      const res = (await apiClient.get({
+        url: `/v1/roles/${id}`,
+      })) as any;
+      return res.data as Role;
+    },
+    enabled: !!id && (options?.enabled ?? true),
+  });
+}
+
 export function useCreateRole() {
   const qc = useQueryClient();
   return useMutation({
