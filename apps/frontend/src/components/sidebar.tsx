@@ -1,18 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
-  UsersIcon,
-  ShieldUserIcon,
-  DocumentIcon,
   BellIcon,
+  DashboardIcon,
+  DocumentIcon,
   FileUploadIcon,
   SettingsIcon,
+  ShieldUserIcon,
+  UsersIcon,
   WebhookIcon,
-  DashboardIcon,
 } from "@/lib/icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: DashboardIcon },

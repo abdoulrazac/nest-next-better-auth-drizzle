@@ -1,6 +1,6 @@
 {
-  "id": "6044763b-f476-46a6-a265-8873ca4b056e",
-  "prevId": "7504fdb6-ec73-4517-bebc-a994008f1b30",
+  "id": "c9d05e3e-dd94-4070-9108-acb7e5aa96be",
+  "prevId": "6044763b-f476-46a6-a265-8873ca4b056e",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -627,13 +627,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
         "metadata": {
           "name": "metadata",
           "type": "text",
@@ -683,7 +676,7 @@
           "name": "plan_expires_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {
@@ -1011,27 +1004,6 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "team_slug_organizationId_uidx": {
-          "name": "team_slug_organizationId_uidx",
-          "columns": [
-            {
-              "expression": "slug",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "organization_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}

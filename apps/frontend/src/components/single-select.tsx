@@ -16,10 +16,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useState, type ReactNode } from "react";
-import { useDebounce } from "use-debounce";
 
 export interface SingleSelectOption {
   value: string;
@@ -59,7 +58,6 @@ export default function SingleSelect({
 }: SingleSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebounce(search, 300);
 
   const handleSearch = (v: string) => {
     setSearch(v);
