@@ -1,6 +1,7 @@
 // src/components/providers.tsx
 "use client";
 
+import { organizationPlugin } from "@/lib/auth/organization-plugin";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@better-auth-ui/react";
 import { useRouter } from "next/navigation";
@@ -35,6 +36,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               }
             }}
             Link={Link}
+            plugins={[organizationPlugin()]}
           >
             {children}
             <Toaster />

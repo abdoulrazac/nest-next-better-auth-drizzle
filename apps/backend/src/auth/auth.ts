@@ -1,6 +1,5 @@
 // apps/backend/src/auth/auth.ts
-// import { env } from '@/config/env';
-const env = process.env;
+import { env } from '@/config/env';
 import { expo } from '@better-auth/expo';
 import { db, schema } from '@repo/db';
 import { createEmailService } from '@repo/emails';
