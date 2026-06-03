@@ -1,5 +1,5 @@
 import { viewPaths } from "@better-auth-ui/core";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { Auth } from "@/components/auth/auth";
 
 interface AuthPageProps {
@@ -16,7 +16,7 @@ export default async function AuthPage({ params }: AuthPageProps) {
   const { path } = await params;
 
   if (!validPaths.includes(path as (typeof validPaths)[number])) {
-    redirect("/auth/sign-in");
+    notFound();
   }
 
   return (
