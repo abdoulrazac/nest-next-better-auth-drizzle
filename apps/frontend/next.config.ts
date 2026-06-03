@@ -1,13 +1,11 @@
 import type { NextConfig } from "next";
 import path from "path";
+import "./src/env";
 
 // INTERNAL_API_URL is for server-side rewrites (e.g. http://app:3000 in Docker).
 // NEXT_PUBLIC_API_URL is the public URL baked into the browser bundle.
 // In local dev without Docker both fall back to http://localhost:3000.
-const apiUrl =
-  process.env["INTERNAL_API_URL"] ??
-  process.env["NEXT_PUBLIC_API_URL"] ??
-  "http://localhost:3000";
+const apiUrl = process.env["NEXT_PUBLIC_API_URL"] ?? "http://localhost:3000";
 
 const securityHeaders = [
   // Block rendering in <iframe> / <frame> / <object> — prevents clickjacking
