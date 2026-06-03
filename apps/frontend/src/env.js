@@ -23,7 +23,8 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_VERSION: z.string().default("v1"),
     NEXT_PUBLIC_API_URL: z.string().url().default("http://localhost:3000"),
     NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3002"),
-    NEXT_PUBLIC_RECAPTCHA_SITE_KEY: z.string().default(""),
+    NEXT_PUBLIC_RECAPTCHA_PROVIDER: z.string().default("google-recaptcha"),
+    NEXT_PUBLIC_RECAPTCHA_SITE_KEY: z.string().default("google-recaptcha"),
   },
 
   /**

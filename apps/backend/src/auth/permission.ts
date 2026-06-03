@@ -14,6 +14,7 @@ const statement = {
 } as const;
 
 export const ac = createAccessControl(statement);
+export const orgAc = createAccessControl(statement);
 
 // Define system roles
 const adminRole = ac.newRole({
