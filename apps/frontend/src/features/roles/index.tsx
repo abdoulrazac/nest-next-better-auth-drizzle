@@ -4,10 +4,11 @@ import { useState, useMemo } from "react";
 import { type Table } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
 import { DataTableBulkActionBar } from "@/components/data-table/bulk-action-bar";
-import { PageHeader } from "@/components/page-header";
+import PageHeader from "@/components/page-header";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { ShieldUserIcon, TrashIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { buildColumns } from "./columns";
 import { MutateRoleDialog } from "./mutate-dialog";
 import { useListRoles, useDeleteRole } from "./hooks";
@@ -95,9 +96,9 @@ export function RolesPage() {
       <PageHeader
         title="Roles"
         description="Manage roles and their permissions."
-        action={{
+        primaryAction={{
           label: "New Role",
-          icon: ShieldUserIcon,
+          icon: <HugeiconsIcon icon={ShieldUserIcon} className="h-4 w-4" />,
           onClick: handleOpenCreate,
         }}
       />

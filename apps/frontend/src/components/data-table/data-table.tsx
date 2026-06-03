@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   TableBody,
@@ -33,16 +34,26 @@ interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
   data: TData[];
   isLoading?: boolean;
+  pagination?: boolean;
+  selectable?: boolean;
+  onSelectionChange?: (rows: TData[]) => void;
   toolbar?: (table: Table<TData>) => React.ReactNode;
   onRowClick?: (row: TData) => void;
+  emptyMessage?: string;
+  className?: string;
 }
 
 export function DataTable<TData>({
   columns,
   data,
   isLoading,
+  pagination = true,
+  selectable = false,
+  onSelectionChange,
   toolbar,
   onRowClick,
+  emptyMessage = "Aucune donnée trouvée.",
+  className,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -53,9 +64,34 @@ export function DataTable<TData>({
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
 
+  const selectColumn: ColumnDef<TData> = {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
+        aria-label="Tout sélectionner"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(v) => row.toggleSelected(!!v)}
+        aria-label="Sélectionner la ligne"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+    size: 40,
+  };
+
+  const allColumns: ColumnDef<TData>[] = selectable
+    ? [selectColumn, ...columns]
+    : columns;
+
   const table = useReactTable({
     data,
-    columns,
+    columns: allColumns,
     state: {
       sorting,
       columnFilters,
@@ -63,8 +99,16 @@ export function DataTable<TData>({
       rowSelection,
       expanded,
     },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
+    enableRowSelection: selectable,
+    onRowSelectionChange: (updater) => {
+      setRowSelection(updater);
+      if (onSelectionChange) {
+        const newSelection =
+          typeof updater === "function" ? updater(rowSelection) : updater;
+        const selected = data.filter((_, i) => newSelection[i]);
+        onSelectionChange(selected);
+      }
+    },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -72,12 +116,12 @@ export function DataTable<TData>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: pagination ? getPaginationRowModel() : undefined,
     getExpandedRowModel: getExpandedRowModel(),
   });
 
   return (
-    <div className="space-y-4">
+    <div className={cn("space-y-4", className)}>
       {toolbar && toolbar(table)}
       <div className="rounded-md border">
         <UITable>
@@ -101,7 +145,7 @@ export function DataTable<TData>({
             {isLoading ? (
               Array.from({ length: 5 }).map((_, rowIndex) => (
                 <TableRow key={`skeleton-${rowIndex}`}>
-                  {columns.map((_, colIndex) => (
+                  {allColumns.map((_, colIndex) => (
                     <TableCell key={`skeleton-${rowIndex}-${colIndex}`}>
                       <Skeleton className="h-4 w-full" />
                     </TableCell>
@@ -129,17 +173,17 @@ export function DataTable<TData>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+                  colSpan={allColumns.length}
+                  className="h-24 text-center text-muted-foreground"
                 >
-                  No results.
+                  {emptyMessage}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </UITable>
       </div>
-      <DataTablePagination table={table} />
+      {pagination && <DataTablePagination table={table} />}
     </div>
   );
 }

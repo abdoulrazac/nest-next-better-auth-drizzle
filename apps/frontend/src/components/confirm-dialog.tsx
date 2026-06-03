@@ -2,15 +2,21 @@
 
 import {
   AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { AlertCircleIcon, InfoIcon, TrashIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import type { IconSvgElement } from "@hugeicons/react";
+import { cn } from "@/lib/utils";
+
+type ConfirmVariant = "destructive" | "warning" | "info";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -19,28 +25,69 @@ interface ConfirmDialogProps {
   description: string;
   confirmLabel?: string;
   cancelLabel?: string;
-  variant?: "destructive" | "default";
+  variant?: ConfirmVariant;
   onConfirm: () => void | Promise<void>;
   isPending?: boolean;
 }
+
+const VARIANT_CONFIG: Record<
+  ConfirmVariant,
+  { icon: IconSvgElement; bg: string; color: string }
+> = {
+  destructive: {
+    icon: TrashIcon,
+    bg: "bg-destructive/10",
+    color: "text-destructive",
+  },
+  warning: {
+    icon: AlertCircleIcon,
+    bg: "bg-orange-100 dark:bg-orange-900/20",
+    color: "text-orange-600",
+  },
+  info: {
+    icon: InfoIcon,
+    bg: "bg-blue-100 dark:bg-blue-900/20",
+    color: "text-blue-600",
+  },
+};
 
 export function ConfirmDialog({
   open,
   onOpenChange,
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel = "Confirmer",
+  cancelLabel = "Annuler",
   variant = "destructive",
   onConfirm,
   isPending = false,
 }: ConfirmDialogProps) {
+  const cfg = VARIANT_CONFIG[variant];
+
+  const handleConfirm = async () => {
+    await onConfirm();
+    onOpenChange(false);
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <div
+            className={cn(
+              "mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full",
+              cfg.bg,
+            )}
+          >
+            <HugeiconsIcon
+              icon={cfg.icon}
+              className={cn("h-6 w-6", cfg.color)}
+            />
+          </div>
+          <AlertDialogTitle className="text-center">{title}</AlertDialogTitle>
+          <AlertDialogDescription className="text-center">
+            {description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>
@@ -48,12 +95,9 @@ export function ConfirmDialog({
           </AlertDialogCancel>
           <AlertDialogAction asChild>
             <Button
-              variant={variant}
+              variant={variant === "destructive" ? "destructive" : "default"}
+              onClick={handleConfirm}
               disabled={isPending}
-              onClick={(e) => {
-                e.preventDefault();
-                onConfirm();
-              }}
             >
               {isPending ? "..." : confirmLabel}
             </Button>

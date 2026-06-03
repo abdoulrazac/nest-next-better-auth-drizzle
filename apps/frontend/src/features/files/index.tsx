@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { FileUploadIcon } from "@/lib/icons";
-import { PageHeader } from "@/components/page-header";
+import { HugeiconsIcon } from "@hugeicons/react";
+import PageHeader from "@/components/page-header";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable } from "@/components/data-table";
 import { toast } from "sonner";
@@ -45,9 +46,9 @@ export function FilesPage() {
       <PageHeader
         title="Files"
         description="Manage uploaded files"
-        action={{
+        primaryAction={{
           label: "Upload File",
-          icon: FileUploadIcon,
+          icon: <HugeiconsIcon icon={FileUploadIcon} className="h-4 w-4" />,
           onClick: () => setUploadOpen(true),
         }}
       />

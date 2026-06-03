@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { type Table } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
 import { DataTableBulkActionBar } from "@/components/data-table/bulk-action-bar";
-import { PageHeader } from "@/components/page-header";
+import PageHeader from "@/components/page-header";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserPlusIcon, TrashIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { buildColumns } from "./columns";
 import { MutateUserDialog } from "./mutate-dialog";
 import { UserDetailSheet } from "./detail-sheet";
@@ -124,9 +125,9 @@ export function UsersPage() {
       <PageHeader
         title="Users"
         description="Manage your application users."
-        action={{
+        primaryAction={{
           label: "New User",
-          icon: UserPlusIcon,
+          icon: <HugeiconsIcon icon={UserPlusIcon} className="h-4 w-4" />,
           onClick: handleOpenCreate,
         }}
       />

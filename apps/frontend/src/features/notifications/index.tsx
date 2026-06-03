@@ -14,7 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PageHeader } from "@/components/page-header";
+import PageHeader from "@/components/page-header";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 import {
   useListNotifications,
@@ -144,22 +145,16 @@ export function NotificationsPage() {
       <PageHeader
         title="Notifications"
         description="Stay up to date with system events."
-      >
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => markAllAsRead.mutate()}
-          disabled={markAllAsRead.isPending || unreadCount === 0}
-        >
-          <Icon
-            icon={CheckIcon}
-            size={14}
-            strokeWidth={1.5}
-            className="mr-1.5"
-          />
-          Mark all as read
-        </Button>
-      </PageHeader>
+        secondaryActions={[
+          {
+            label: "Mark all as read",
+            icon: <HugeiconsIcon icon={CheckIcon} className="h-4 w-4" />,
+            onClick: () => markAllAsRead.mutate(),
+            disabled: markAllAsRead.isPending || unreadCount === 0,
+            variant: "outline",
+          },
+        ]}
+      />
 
       {/* Filter tabs */}
       <div className="flex items-center gap-1 border-b pb-2">
