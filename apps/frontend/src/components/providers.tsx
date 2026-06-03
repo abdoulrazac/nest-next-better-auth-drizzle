@@ -3,12 +3,12 @@
 
 import { organizationPlugin } from "@/lib/auth/organization-plugin";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "@better-auth-ui/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ThemeProvider } from "./theme-provider";
 import { TooltipProvider } from "./ui/tooltip";
 import { Toaster } from "./ui/sonner";
+import { AuthProvider } from "./auth/auth-provider";
 import { authClient } from "../lib/auth-client";
 import { getQueryClient } from "../lib/query-client";
 
@@ -39,8 +39,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
             plugins={[organizationPlugin()]}
           >
             {children}
-            <Toaster />
           </AuthProvider>
+
+          <Toaster />
         </QueryClientProvider>
       </TooltipProvider>
     </ThemeProvider>
