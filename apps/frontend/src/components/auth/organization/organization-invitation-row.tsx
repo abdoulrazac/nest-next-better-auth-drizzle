@@ -8,7 +8,8 @@ import {
   useHasPermission,
 } from "@better-auth-ui/react";
 import type { Invitation } from "better-auth/client";
-import { X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { XIcon } from "@/lib/icons";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -90,7 +91,7 @@ export function OrganizationInvitationRow({
               onClick={() => cancelInvitation({ invitationId: invitation.id })}
               aria-label={organizationLocalization.cancelInvitation}
             >
-              {cancelPending ? <Spinner /> : <X />}
+              {cancelPending ? <Spinner /> : <HugeiconsIcon icon={XIcon} />}
             </Button>
           )}
       </TableCell>

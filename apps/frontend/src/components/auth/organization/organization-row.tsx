@@ -7,7 +7,8 @@ import {
   useSetActiveOrganization,
 } from "@better-auth-ui/react";
 import type { Organization } from "better-auth/client";
-import { Settings as SettingsIcon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SettingsIcon } from "@/lib/icons";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -60,7 +61,7 @@ export function OrganizationRow({ organization }: OrganizationRowProps) {
         onClick={manageOrganization}
         aria-label={organizationLocalization.manage}
       >
-        {setActivePending ? <Spinner /> : <SettingsIcon />}
+        {setActivePending ? <Spinner /> : <HugeiconsIcon icon={SettingsIcon} />}
 
         {organizationLocalization.manage}
       </Button>

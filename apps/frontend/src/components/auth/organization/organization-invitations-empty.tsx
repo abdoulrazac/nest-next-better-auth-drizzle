@@ -1,7 +1,8 @@
 "use client";
 
 import { useAuthPlugin } from "@better-auth-ui/react";
-import { Send } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SendIcon } from "@/lib/icons";
 
 import { Button } from "@/components/ui/button";
 import { organizationPlugin } from "@/lib/auth/organization-plugin";
@@ -21,7 +22,7 @@ export function OrganizationInvitationsEmpty({
 
   return (
     <div className="flex flex-col items-center gap-4 p-4 text-center">
-      <Send className="size-6 text-muted-foreground" />
+      <HugeiconsIcon icon={SendIcon} className="size-6 text-muted-foreground" />
 
       <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold text-foreground">

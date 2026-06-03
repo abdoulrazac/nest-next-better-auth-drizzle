@@ -7,7 +7,8 @@ import {
   useDeleteOrganization,
 } from "@better-auth-ui/react";
 import type { Organization } from "better-auth/client";
-import { TriangleAlert } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { AlertIcon } from "@/lib/icons";
 import type { SyntheticEvent } from "react";
 import { toast } from "sonner";
 
@@ -70,7 +71,7 @@ export function DeleteOrganizationDialog({
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <AlertDialogHeader>
             <AlertDialogMedia className="bg-destructive/10 text-destructive">
-              <TriangleAlert />
+              <HugeiconsIcon icon={AlertIcon} />
             </AlertDialogMedia>
 
             <AlertDialogTitle>

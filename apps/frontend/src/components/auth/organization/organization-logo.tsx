@@ -1,7 +1,8 @@
 "use client";
 
 import type { Organization } from "better-auth/client";
-import { Briefcase } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { BriefcaseIcon } from "@/lib/icons";
 import type { ComponentProps, ReactNode } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -67,7 +68,9 @@ export function OrganizationLogo({
         className={cn("text-muted-foreground!", fallbackTextClasses[size])}
         delayMs={normalizedLogo ? 600 : undefined}
       >
-        {fallback || initials || <Briefcase className="size-4" />}
+        {fallback || initials || (
+          <HugeiconsIcon icon={BriefcaseIcon} className="size-4" />
+        )}
       </AvatarFallback>
     </Avatar>
   );

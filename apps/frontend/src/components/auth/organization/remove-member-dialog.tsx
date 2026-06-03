@@ -7,7 +7,8 @@ import {
   useRemoveMember,
 } from "@better-auth-ui/react";
 import type { Member, User } from "better-auth/client";
-import { Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { TrashIcon } from "@/lib/icons";
 import { toast } from "sonner";
 
 import {
@@ -57,7 +58,7 @@ export function RemoveMemberDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogMedia className="bg-destructive/10 text-destructive">
-            <Trash2 />
+            <HugeiconsIcon icon={TrashIcon} />
           </AlertDialogMedia>
 
           <AlertDialogTitle>

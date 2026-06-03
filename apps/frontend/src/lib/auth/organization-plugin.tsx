@@ -4,7 +4,8 @@ import {
   type OrganizationLocalization,
   type OrganizationPluginOptions,
 } from "@better-auth-ui/core/plugins";
-import { Briefcase } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { BriefcaseIcon } from "@/lib/icons";
 
 import { OrganizationsSettings } from "@/components/auth/organization/organizations-settings";
 
@@ -21,7 +22,10 @@ export const organizationPlugin = createAuthPlugin(
           view: "organizations",
           label: (
             <>
-              <Briefcase className="text-muted-foreground" />
+              <HugeiconsIcon
+                icon={BriefcaseIcon}
+                className="text-muted-foreground"
+              />
               {core.localization.organizations}
             </>
           ),

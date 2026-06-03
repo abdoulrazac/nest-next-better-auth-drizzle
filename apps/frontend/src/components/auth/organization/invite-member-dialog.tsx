@@ -6,7 +6,8 @@ import {
   useAuthPlugin,
   useInviteMember,
 } from "@better-auth-ui/react";
-import { UserPlus } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { UserPlusIcon } from "@/lib/icons";
 import { type SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -95,7 +96,7 @@ export function InviteMemberDialog({
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <AlertDialogHeader>
             <AlertDialogMedia>
-              <UserPlus />
+              <HugeiconsIcon icon={UserPlusIcon} />
             </AlertDialogMedia>
 
             <AlertDialogTitle>

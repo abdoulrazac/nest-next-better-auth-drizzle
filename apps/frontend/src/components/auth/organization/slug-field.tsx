@@ -7,7 +7,8 @@ import {
   useCheckSlug,
 } from "@better-auth-ui/react";
 import { useDebouncer } from "@tanstack/react-pacer";
-import { Check, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckIcon, XIcon } from "@/lib/icons";
 import { useEffect } from "react";
 
 import { Field, FieldError } from "@/components/ui/field";
@@ -94,9 +95,12 @@ export function SlugField({
         {checkSlugEnabled && !!value.trim() && value.trim() !== currentSlug && (
           <InputGroupAddon align="inline-end">
             {checkSlugData?.status ? (
-              <Check className="size-4 text-foreground" />
+              <HugeiconsIcon
+                icon={CheckIcon}
+                className="size-4 text-foreground"
+              />
             ) : checkSlugError ? (
-              <X className="size-4 text-destructive" />
+              <HugeiconsIcon icon={XIcon} className="size-4 text-destructive" />
             ) : (
               <Spinner />
             )}

@@ -9,7 +9,8 @@ import {
   useUpdateMemberRole,
 } from "@better-auth-ui/react";
 import type { Member, Organization, User } from "better-auth/client";
-import { LogOut, Pencil, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { EditIcon, LogoutIcon, TrashIcon } from "@/lib/icons";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -98,7 +99,11 @@ export function OrganizationMemberRow({
                   disabled={isUpdatingRole}
                   aria-label={organizationLocalization.changeMemberRole}
                 >
-                  {isUpdatingRole ? <Spinner /> : <Pencil />}
+                  {isUpdatingRole ? (
+                    <Spinner />
+                  ) : (
+                    <HugeiconsIcon icon={EditIcon} />
+                  )}
                 </Button>
               </DropdownMenuTrigger>
 
@@ -126,7 +131,7 @@ export function OrganizationMemberRow({
               aria-label={organizationLocalization.leaveOrganization}
               onClick={() => setLeaveOpen(true)}
             >
-              <LogOut />
+              <HugeiconsIcon icon={LogoutIcon} />
             </Button>
           ) : (
             hasDeletePermission?.success && (
@@ -137,7 +142,7 @@ export function OrganizationMemberRow({
                 aria-label={organizationLocalization.removeMember}
                 onClick={() => setRemoveOpen(true)}
               >
-                <Trash2 />
+                <HugeiconsIcon icon={TrashIcon} />
               </Button>
             )
           )}

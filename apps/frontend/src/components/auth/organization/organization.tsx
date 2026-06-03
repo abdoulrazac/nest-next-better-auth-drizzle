@@ -8,7 +8,8 @@ import {
   useAuthenticate,
   useAuthPlugin,
 } from "@better-auth-ui/react";
-import { Settings as SettingsIcon, User2 as UserIcon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SettingsIcon, UserIcon } from "@/lib/icons";
 import { useEffect, useMemo } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -109,7 +110,10 @@ export function Organization({
               }
               className="gap-1"
             >
-              <SettingsIcon className="text-muted-foreground" />
+              <HugeiconsIcon
+                icon={SettingsIcon}
+                className="text-muted-foreground"
+              />
 
               {localization.settings.settings}
             </Link>
@@ -124,7 +128,10 @@ export function Organization({
               }
               className="gap-1"
             >
-              <UserIcon className="text-muted-foreground" />
+              <HugeiconsIcon
+                icon={UserIcon}
+                className="text-muted-foreground"
+              />
 
               {organizationLocalization.people}
             </Link>

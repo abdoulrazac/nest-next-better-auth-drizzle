@@ -7,7 +7,8 @@ import {
   useLeaveOrganization,
 } from "@better-auth-ui/react";
 import type { Organization } from "better-auth/client";
-import { LogOut } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { LogoutIcon } from "@/lib/icons";
 import { toast } from "sonner";
 
 import {
@@ -63,7 +64,7 @@ export function LeaveOrganizationDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogMedia className="bg-destructive/10 text-destructive">
-            <LogOut />
+            <HugeiconsIcon icon={LogoutIcon} />
           </AlertDialogMedia>
 
           <AlertDialogTitle>

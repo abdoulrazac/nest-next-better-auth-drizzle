@@ -8,7 +8,8 @@ import {
   useHasPermission,
   useListOrganizationInvitations,
 } from "@better-auth-ui/react";
-import { ChevronUp, Filter, Search, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ChevronUpIcon, FilterIcon, SearchIcon, XIcon } from "@/lib/icons";
 import { type ComponentProps, type ReactNode, useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -145,14 +146,17 @@ export function OrganizationInvitations({
             />
 
             <InputGroupAddon>
-              <Search className="text-muted-foreground" />
+              <HugeiconsIcon
+                icon={SearchIcon}
+                className="text-muted-foreground"
+              />
             </InputGroupAddon>
           </InputGroup>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="outline" disabled={isPending}>
-                <Filter />
+                <HugeiconsIcon icon={FilterIcon} />
 
                 {organizationLocalization.role}
               </Button>
@@ -179,7 +183,7 @@ export function OrganizationInvitations({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="outline" disabled={isPending}>
-                <Filter />
+                <HugeiconsIcon icon={FilterIcon} />
 
                 {organizationLocalization.status}
               </Button>
@@ -222,7 +226,7 @@ export function OrganizationInvitations({
                   className="inline-flex cursor-pointer items-center text-muted-foreground hover:text-foreground"
                   onClick={() => setRoleFilter("all")}
                 >
-                  <X className="size-3" />
+                  <HugeiconsIcon icon={XIcon} className="size-3" />
                 </button>
               </Badge>
             )}
@@ -239,7 +243,7 @@ export function OrganizationInvitations({
                   className="inline-flex cursor-pointer items-center text-muted-foreground hover:text-foreground"
                   onClick={() => setStatusFilter("all")}
                 >
-                  <X className="size-3" />
+                  <HugeiconsIcon icon={XIcon} className="size-3" />
                 </button>
               </Badge>
             )}
@@ -348,7 +352,8 @@ function SortableTableHead({
         {children}
 
         {!!sortDirection && (
-          <ChevronUp
+          <HugeiconsIcon
+            icon={ChevronUpIcon}
             className={cn(
               "size-3 transition-transform duration-100 ease-out",
               sortDirection === "descending" ? "rotate-180" : "",

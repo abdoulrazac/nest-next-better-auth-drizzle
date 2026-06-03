@@ -8,7 +8,8 @@ import {
   useAuthPlugin,
   useUpdateOrganization,
 } from "@better-auth-ui/react";
-import { Trash2, Upload } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { TrashIcon, UploadIcon } from "@/lib/icons";
 import { type ChangeEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -157,7 +158,10 @@ export function ChangeOrganizationLogo({
 
           <DropdownMenuContent align="start" className="min-w-fit">
             <DropdownMenuItem onSelect={() => fileInputRef.current?.click()}>
-              <Upload className="text-muted-foreground" />
+              <HugeiconsIcon
+                icon={UploadIcon}
+                className="text-muted-foreground"
+              />
 
               {organizationLocalization.uploadLogo}
             </DropdownMenuItem>
@@ -167,7 +171,7 @@ export function ChangeOrganizationLogo({
               onSelect={handleDelete}
               variant="destructive"
             >
-              <Trash2 />
+              <HugeiconsIcon icon={TrashIcon} />
 
               {organizationLocalization.deleteLogo}
             </DropdownMenuItem>

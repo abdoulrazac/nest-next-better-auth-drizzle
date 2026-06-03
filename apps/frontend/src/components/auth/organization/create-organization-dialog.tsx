@@ -6,7 +6,8 @@ import {
   useAuthPlugin,
   useCreateOrganization,
 } from "@better-auth-ui/react";
-import { Briefcase } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { BriefcaseIcon } from "@/lib/icons";
 import { type SyntheticEvent, useEffect, useState } from "react";
 
 import {
@@ -71,7 +72,7 @@ export function CreateOrganizationDialog({
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <AlertDialogHeader>
             <AlertDialogMedia>
-              <Briefcase />
+              <HugeiconsIcon icon={BriefcaseIcon} />
             </AlertDialogMedia>
 
             <AlertDialogTitle>
