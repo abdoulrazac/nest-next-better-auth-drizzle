@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { CellActions } from "@/components/data-table/cell-actions";
 import { EyeIcon, EditIcon, TrashIcon } from "@/lib/icons";
+import type { Role } from "./types";
 
 interface BuildColumnsOptions {
   onView: (role: Role) => void;
