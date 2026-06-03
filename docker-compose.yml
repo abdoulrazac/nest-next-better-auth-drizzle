@@ -1,4 +1,4 @@
-version: "3"
+version: "3.1"
 
 services:
   app:
@@ -154,7 +154,7 @@ services:
     build:
       context: .
       target: runner-db-tools
-    command: ["bun", "run", "src/migrate.ts"]
+    command: ["bun", "run", "src/migrate.mts"]
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-app}
     depends_on:

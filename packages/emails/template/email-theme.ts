@@ -12,202 +12,203 @@
  * values for email client compatibility.
  */
 
+
 export const emailTheme = {
-  colors: {
-    // Primary
-    primary: "#1447e6",
-    primaryForeground: "#eff6ff",
+	colors: {
+		// Primary
+		primary: "#1447e6",
+		primaryForeground: "#eff6ff",
 
-    // Foreground
-    foreground: "#0a0a0a",
+		// Foreground
+		foreground: "#0a0a0a",
 
-    // Background
-    background: "#ffffff",
-    backgroundLight: "#ffffff",
+		// Background
+		background: "#ffffff",
+		backgroundLight: "#ffffff",
 
-    // Muted
-    muted: "#f5f5f5",
-    mutedForeground: "#737373",
+		// Muted
+		muted: "#f5f5f5",
+		mutedForeground: "#737373",
 
-    // Border
-    border: "#e5e5e5",
-    borderLight: "#f5f5f5",
+		// Border
+		border: "#e5e5e5",
+		borderLight: "#f5f5f5",
 
-    // Accent
-    accent: "#f5f5f5",
-    accentForeground: "#171717",
+		// Accent
+		accent: "#f5f5f5",
+		accentForeground: "#171717",
 
-    // Destructive
-    destructive: "#e7000b",
-  },
+		// Destructive
+		destructive: "#e7000b",
+	},
 } as const;
 
 // Styles pour les composants d'emails
 export const emailStyles = {
-  // Layout principal
-  main: {
-    backgroundColor: emailTheme.colors.background,
-    fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-  },
+	// Layout principal
+	main: {
+		backgroundColor: emailTheme.colors.background,
+		fontFamily:
+			'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+	},
 
-  container: {
-    backgroundColor: emailTheme.colors.backgroundLight,
-    margin: "40px auto",
-    borderRadius: "8px",
-    overflow: "hidden",
-    maxWidth: "560px",
-    border: `1px solid ${emailTheme.colors.border}`,
-  },
+	container: {
+		backgroundColor: emailTheme.colors.backgroundLight,
+		margin: "40px auto",
+		borderRadius: "8px",
+		overflow: "hidden",
+		maxWidth: "560px",
+		border: `1px solid ${emailTheme.colors.border}`,
+	},
 
-  // Header
-  header: {
-    backgroundColor: emailTheme.colors.primary,
-    padding: "24px 32px",
-  },
+	// Header
+	header: {
+		backgroundColor: emailTheme.colors.primary,
+		padding: "24px 32px",
+	},
 
-  brandText: {
-    color: emailTheme.colors.primaryForeground,
-    fontSize: "18px",
-    fontWeight: "700",
-    margin: "0",
-  },
+	brandText: {
+		color: emailTheme.colors.primaryForeground,
+		fontSize: "18px",
+		fontWeight: "700",
+		margin: "0",
+	},
 
-  // Content
-  content: {
-    padding: "32px",
-  },
+	// Content
+	content: {
+		padding: "32px",
+	},
 
-  // Heading
-  heading: {
-    color: emailTheme.colors.foreground,
-    fontSize: "22px",
-    fontWeight: "700",
-    margin: "0 0 12px",
-  },
+	// Heading
+	heading: {
+		color: emailTheme.colors.foreground,
+		fontSize: "22px",
+		fontWeight: "700",
+		margin: "0 0 12px",
+	},
 
-  // Body text
-  body: {
-    color: emailTheme.colors.mutedForeground,
-    fontSize: "15px",
-    lineHeight: "24px",
-    margin: "0 0 24px",
-  },
+	// Body text
+	body: {
+		color: emailTheme.colors.mutedForeground,
+		fontSize: "15px",
+		lineHeight: "24px",
+		margin: "0 0 24px",
+	},
 
-  // Button
-  button: {
-    backgroundColor: emailTheme.colors.foreground,
-    borderRadius: "6px",
-    color: emailTheme.colors.primaryForeground,
-    display: "inline-block",
-    fontSize: "14px",
-    fontWeight: "600",
-    padding: "12px 24px",
-    textDecoration: "none",
-    textAlign: "center" as const,
-  },
+	// Button
+	button: {
+		backgroundColor: emailTheme.colors.foreground,
+		borderRadius: "6px",
+		color: emailTheme.colors.primaryForeground,
+		display: "inline-block",
+		fontSize: "14px",
+		fontWeight: "600",
+		padding: "12px 24px",
+		textDecoration: "none",
+		textAlign: "center" as const,
+	},
 
-  buttonPrimary: {
-    backgroundColor: emailTheme.colors.primary,
-    borderRadius: "6px",
-    color: emailTheme.colors.primaryForeground,
-    display: "inline-block",
-    fontSize: "14px",
-    fontWeight: "600",
-    padding: "12px 24px",
-    textDecoration: "none",
-    textAlign: "center" as const,
-  },
+	buttonPrimary: {
+		backgroundColor: emailTheme.colors.primary,
+		borderRadius: "6px",
+		color: emailTheme.colors.primaryForeground,
+		display: "inline-block",
+		fontSize: "14px",
+		fontWeight: "600",
+		padding: "12px 24px",
+		textDecoration: "none",
+		textAlign: "center" as const,
+	},
 
-  // Note
-  note: {
-    color: emailTheme.colors.mutedForeground,
-    fontSize: "12px",
-    lineHeight: "18px",
-    margin: "24px 0 0",
-  },
+	// Note
+	note: {
+		color: emailTheme.colors.mutedForeground,
+		fontSize: "12px",
+		lineHeight: "18px",
+		margin: "24px 0 0",
+	},
 
-  // Footer
-  footer: {
-    backgroundColor: emailTheme.colors.background,
-    padding: "20px 32px",
-    textAlign: "center" as const,
-  },
+	// Footer
+	footer: {
+		backgroundColor: emailTheme.colors.background,
+		padding: "20px 32px",
+		textAlign: "center" as const,
+	},
 
-  footerText: {
-    color: emailTheme.colors.mutedForeground,
-    fontSize: "12px",
-    margin: "0",
-    lineHeight: "18px",
-  },
+	footerText: {
+		color: emailTheme.colors.mutedForeground,
+		fontSize: "12px",
+		margin: "0",
+		lineHeight: "18px",
+	},
 
-  // Divider
-  hr: {
-    borderColor: emailTheme.colors.border,
-    margin: "0",
-  },
+	// Divider
+	hr: {
+		borderColor: emailTheme.colors.border,
+		margin: "0",
+	},
 
-  // Destructive styles
-  headingDestructive: {
-    color: emailTheme.colors.destructive,
-    fontSize: "22px",
-    fontWeight: "700",
-    margin: "0 0 12px",
-  },
+	// Destructive styles
+	headingDestructive: {
+		color: emailTheme.colors.destructive,
+		fontSize: "22px",
+		fontWeight: "700",
+		margin: "0 0 12px",
+	},
 
-  buttonDestructive: {
-    backgroundColor: emailTheme.colors.destructive,
-    borderRadius: "6px",
-    color: "#ffffff",
-    display: "inline-block",
-    fontSize: "14px",
-    fontWeight: "600",
-    padding: "12px 24px",
-    textDecoration: "none",
-    textAlign: "center" as const,
-  },
+	buttonDestructive: {
+		backgroundColor: emailTheme.colors.destructive,
+		borderRadius: "6px",
+		color: "#ffffff",
+		display: "inline-block",
+		fontSize: "14px",
+		fontWeight: "600",
+		padding: "12px 24px",
+		textDecoration: "none",
+		textAlign: "center" as const,
+	},
 
-  warningBox: {
-    backgroundColor: "#fef2f2",
-    borderLeft: `4px solid ${emailTheme.colors.destructive}`,
-    borderRadius: "4px",
-    padding: "12px 16px",
-    margin: "0 0 24px",
-  },
+	warningBox: {
+		backgroundColor: "#fef2f2",
+		borderLeft: `4px solid ${emailTheme.colors.destructive}`,
+		borderRadius: "4px",
+		padding: "12px 16px",
+		margin: "0 0 24px",
+	},
 
-  warningText: {
-    color: emailTheme.colors.destructive,
-    fontSize: "13px",
-    lineHeight: "20px",
-    margin: "0",
-  },
+	warningText: {
+		color: emailTheme.colors.destructive,
+		fontSize: "13px",
+		lineHeight: "20px",
+		margin: "0",
+	},
 
-  // Badge styles
-  badge: {
-    backgroundColor: emailTheme.colors.muted,
-    borderRadius: "4px",
-    color: emailTheme.colors.mutedForeground,
-    display: "inline-block",
-    fontSize: "13px",
-    fontWeight: "500",
-    padding: "4px 10px",
-    margin: "0 0 24px",
-  },
+	// Badge styles
+	badge: {
+		backgroundColor: emailTheme.colors.muted,
+		borderRadius: "4px",
+		color: emailTheme.colors.mutedForeground,
+		display: "inline-block",
+		fontSize: "13px",
+		fontWeight: "500",
+		padding: "4px 10px",
+		margin: "0 0 24px",
+	},
 
-  // OTP styles
-  otpBox: {
-    backgroundColor: emailTheme.colors.muted,
-    borderRadius: "8px",
-    padding: "20px",
-    textAlign: "center" as const,
-    margin: "0 0 24px",
-  },
+	// OTP styles
+	otpBox: {
+		backgroundColor: emailTheme.colors.muted,
+		borderRadius: "8px",
+		padding: "20px",
+		textAlign: "center" as const,
+		margin: "0 0 24px",
+	},
 
-  otpCode: {
-    color: emailTheme.colors.foreground,
-    fontSize: "36px",
-    fontWeight: "700",
-    letterSpacing: "8px",
-    margin: "0",
-  },
+	otpCode: {
+		color: emailTheme.colors.foreground,
+		fontSize: "36px",
+		fontWeight: "700",
+		letterSpacing: "8px",
+		margin: "0",
+	},
 } as const;
