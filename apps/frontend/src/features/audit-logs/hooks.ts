@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
-import type { AuditLog, AuditLogsPaginatedResponse } from "./types";
+import type { AuditLogsPaginatedResponse } from "./types";
 
 export const auditKeys = {
   all: ["audit-logs"] as const,
@@ -16,10 +16,11 @@ export function useListAuditLogs(params?: {
   return useQuery({
     queryKey: auditKeys.list(params),
     queryFn: async () => {
-      const res = await (apiClient.get as any)("/v1/audit-logs", {
+      const res = (await apiClient.get({
+        url: "/v1/audit-logs",
         query: params,
-      });
-      return res as AuditLogsPaginatedResponse;
+      })) as any;
+      return res.data as AuditLogsPaginatedResponse;
     },
     staleTime: 60_000,
   });
