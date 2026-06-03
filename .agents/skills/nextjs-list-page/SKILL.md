@@ -8,176 +8,99 @@ description: Create a feature list page with TanStack Table data table, toolbar 
 ## Stack
 
 - **TanStack Table v8** (`@tanstack/react-table`) for table logic
-- **Custom DataTable system** (`@/components/data-table/`) — `DataTable`, `DataTableColumnHeader`, `DataTableFacetedFilter`, `DataTableViewOptions`, `BulkActionBar`, `CellActions`
-- **Shared components** — `PageHeader` (`@/components/page-header`), `StatusBadge` (`@/components/status-badge`), `EmptyState` (`@/components/empty-state`)
-- **Icons** — always use `Icon` from `@/components/ui/icon` + barrel from `@/lib/icons`. Never import from `lucide-react`.
-- **TanStack Query** for data fetching
-- **Sonner** for toast notifications
-- **ConfirmDialog** (`@/components/confirm-dialog`) for delete confirmations — never use `AlertDialog` directly
+- **DataTable** — `@/components/data-table/data-table` (supports `selectable`, `pagination`, `emptyMessage`, `onRowClick`)
+- **CellActions** — `@/components/cell-actions` (default export + factory functions)
+- **PageHeader** — `@/components/page-header` (default export, use `primaryAction`/`secondaryActions`)
+- **TableHeader** — `@/components/table-header` (search, filters, bulk actions bar)
+- **StatusBadge** — `@/components/status-badge`
+- **ConfirmDialog** — `@/components/confirm-dialog` (never use `AlertDialog` directly)
+- **Icons** — `import { XxxIcon } from "@/lib/icons"` + `<HugeiconsIcon icon={XxxIcon} className="h-4 w-4" />`
+- **TanStack Query** for data fetching — see `nextjs-api-hooks` skill
+- **Sonner** `toast` for feedback — UI labels and toasts in **French**
 
 ## File Structure
 
 ```
 features/<name>/
-  index.tsx           ← Page component (exported, used in app/ route)
-  columns.tsx         ← ColumnDef<TData>[] with CellActions
-  <name>-table.tsx    ← Table wrapper + DataTable component
-  toolbar.tsx         ← Search input + filter popovers + view toggle
-  hooks.ts            ← useQuery/useMutation hooks (see nextjs-api-hooks skill)
-  types.ts            ← TypeScript interfaces
+  index.tsx         ← Page component (exported, used in app/ route)
+  columns.tsx       ← ColumnDef<TData>[] with CellActions
+  hooks.ts          ← useQuery/useMutation (see nextjs-api-hooks skill)
+  types.ts          ← TypeScript interfaces
+  mutate-dialog.tsx ← Create/edit dialog (see nextjs-form-dialog skill)
 ```
+
+---
 
 ## Quick Start
 
-### 1. Define columns (`columns.tsx`)
-
-```tsx
-"use client";
-import { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableColumnHeader } from "@/components/data-table/column-header";
-import { CellActions } from "@/components/data-table/cell-actions";
-import { StatusBadge } from "@/components/status-badge";
-import { Icon } from "@/components/ui/icon";
-import { EditIcon, ViewIcon, Delete02Icon as TrashIcon } from "@/lib/icons";
-
-export const columns: ColumnDef<User>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(v) => row.toggleSelected(!!v)}
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <StatusBadge status={row.original.status} />,
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <CellActions
-        row={row}
-        actions={[
-          {
-            label: "View",
-            icon: ViewIcon,
-            onClick: (r) => onView(r.original),
-          },
-          {
-            label: "Edit",
-            icon: EditIcon,
-            onClick: (r) => onEdit(r.original),
-          },
-          { separator: true },
-          {
-            label: "Delete",
-            icon: TrashIcon,
-            variant: "destructive",
-            onClick: (r) => onDelete(r.original.id),
-          },
-        ]}
-      />
-    ),
-  },
-];
-```
-
-> **CellActions note**: actions are passed as an array. Use `separator: true` to add a visual divider. Pass callbacks from the parent via closure or props (see toolbar pattern below).
-
-### 2. Main page component (`index.tsx`)
+### 1. Page component (`index.tsx`)
 
 ```tsx
 "use client";
 import { useState } from "react";
-import { DataTable } from "@/components/data-table";
-import { PageHeader } from "@/components/page-header";
+import { DataTable } from "@/components/data-table/data-table";
+import PageHeader, { PageHeaderActions } from "@/components/page-header";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { Icon } from "@/components/ui/icon";
-import { PlusSignIcon as PlusIcon } from "@/lib/icons";
-import { Button } from "@/components/ui/button";
 import { buildColumns } from "./columns";
-import { Toolbar } from "./toolbar";
-import { MutateUserDialog } from "./mutate-dialog";
+import { MutateDialog } from "./mutate-dialog";
 import { useListUsers, useDeleteUser } from "./hooks";
+import { toast } from "sonner";
+import type { User } from "./types";
 
 export function UsersPage() {
   const { data, isLoading } = useListUsers();
   const deleteUser = useDeleteUser();
 
   const [editTarget, setEditTarget] = useState<User | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
+  const [mutateOpen, setMutateOpen] = useState(false);
 
   const columns = buildColumns({
-    onView: (user) => {
-      /* open detail sheet */
-    },
     onEdit: (user) => {
       setEditTarget(user);
-      setDialogOpen(true);
+      setMutateOpen(true);
     },
-    onDelete: (id) => setDeleteId(id),
+    onDelete: (user) => setDeleteTarget(user),
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <PageHeader
-        title="Users"
-        description="Manage your users here."
-        action={
-          <Button
-            size="sm"
-            onClick={() => {
-              setEditTarget(null);
-              setDialogOpen(true);
-            }}
-          >
-            <Icon icon={PlusIcon} />
-            New User
-          </Button>
-        }
+        title="Utilisateurs"
+        description="Gérez les utilisateurs de l'application."
+        primaryAction={PageHeaderActions.create(
+          "/users/new",
+          "Nouvel utilisateur",
+        )}
+        // or with onClick:
+        // primaryAction={{ label: "Nouvel utilisateur", icon: <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />, onClick: () => { setEditTarget(null); setMutateOpen(true); } }}
       />
 
       <DataTable
         columns={columns}
         data={data?.items ?? []}
         isLoading={isLoading}
-        toolbar={(table) => <Toolbar table={table} />}
+        selectable
+        emptyMessage="Aucun utilisateur trouvé."
       />
 
-      <MutateUserDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+      <MutateDialog
+        open={mutateOpen}
+        onOpenChange={setMutateOpen}
         user={editTarget}
       />
 
       <ConfirmDialog
-        open={!!deleteId}
-        onOpenChange={(open) => !open && setDeleteId(null)}
-        title="Delete user?"
-        description="This action cannot be undone."
-        onConfirm={() => {
-          deleteUser.mutate(deleteId!);
-          setDeleteId(null);
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title={`Supprimer ${deleteTarget?.name} ?`}
+        description="Cette action est irréversible."
+        confirmLabel="Supprimer"
+        variant="destructive"
+        onConfirm={async () => {
+          await deleteUser.mutateAsync(deleteTarget!.id);
+          toast.success("Utilisateur supprimé");
+          setDeleteTarget(null);
         }}
         isPending={deleteUser.isPending}
       />
@@ -186,103 +109,247 @@ export function UsersPage() {
 }
 ```
 
-### 3. Toolbar (`toolbar.tsx`)
+### 2. Columns with CellActions (`columns.tsx`)
+
+Use factory functions from `@/components/cell-actions`:
 
 ```tsx
 "use client";
-import { Table } from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
+import { DataTableColumnHeader } from "@/components/data-table/column-header";
+import {
+  createViewAction,
+  createEditAction,
+  createDeleteAction,
+  StandardCellActions,
+} from "@/components/cell-actions";
+import { StatusBadge } from "@/components/status-badge";
+import type { User } from "./types";
+
+interface ColumnOptions {
+  onEdit: (user: User) => void;
+  onDelete: (user: User) => void;
+  onView?: (user: User) => void;
+}
+
+export function buildColumns({
+  onEdit,
+  onDelete,
+  onView,
+}: ColumnOptions): ColumnDef<User>[] {
+  return [
+    {
+      accessorKey: "name",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Nom" />
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+    },
+    {
+      accessorKey: "status",
+      header: "Statut",
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => (
+        <StandardCellActions
+          onView={onView ? () => onView(row.original) : undefined}
+          onEdit={() => onEdit(row.original)}
+          onDelete={() => onDelete(row.original)}
+          deleteLabel={`l'utilisateur ${row.original.name}`}
+        />
+      ),
+    },
+  ];
+}
+```
+
+Or use `CellActions` directly with full control:
+
+```tsx
+import CellActions, { createEditAction, createDeleteAction } from "@/components/cell-actions";
+
+cell: ({ row }) => (
+  <CellActions
+    visibleActions={2}
+    actions={[
+      createViewAction(() => onView(row.original)),
+      createEditAction(() => onEdit(row.original)),
+      createDeleteAction(() => onDelete(row.original), {
+        confirmDialog: { description: `Supprimer ${row.original.name} ?` },
+      }),
+    ]}
+  />
+),
+```
+
+### 3. Toolbar with TableHeader (`toolbar.tsx`)
+
+Simple approach using `TableHeader`:
+
+```tsx
+"use client";
+import TableHeader, {
+  createSearchField,
+  createResetButton,
+} from "@/components/table-header";
+import type { Table } from "@tanstack/react-table";
+
+export function Toolbar<TData>({
+  table,
+  search,
+  onSearch,
+}: {
+  table: Table<TData>;
+  search: string;
+  onSearch: (v: string) => void;
+}) {
+  return (
+    <TableHeader
+      search={createSearchField(search, onSearch, {
+        placeholder: "Rechercher un utilisateur...",
+      })}
+      actions={[
+        createResetButton(() => {
+          onSearch("");
+          table.resetColumnFilters();
+        }),
+      ]}
+    />
+  );
+}
+```
+
+Or with TanStack Table native filtering (more integrated):
+
+```tsx
+"use client";
+import { type Table } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DataTableFacetedFilter } from "@/components/data-table/faceted-filter";
 import { DataTableViewOptions } from "@/components/data-table/view-options";
-import { BulkActionBar } from "@/components/data-table/bulk-action-bar";
-import { Icon } from "@/components/ui/icon";
-import { Cancel01Icon as XIcon, Delete02Icon as TrashIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { XIcon } from "@/lib/icons";
 
-interface ToolbarProps<TData> {
-  table: Table<TData>;
-}
-
-export function Toolbar<TData>({ table }: ToolbarProps<TData>) {
+export function Toolbar<TData>({ table }: { table: Table<TData> }) {
   const isFiltered = table.getState().columnFilters.length > 0;
-  const selectedRows = table.getFilteredSelectedRowModel().rows;
-
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-1 items-center space-x-2">
-          <Input
-            placeholder="Search..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(e) =>
-              table.getColumn("name")?.setFilterValue(e.target.value)
-            }
-            className="h-8 w-[150px] lg:w-[250px]"
-          />
-          {table.getColumn("status") && (
-            <DataTableFacetedFilter
-              column={table.getColumn("status")}
-              title="Status"
-              options={[
-                { label: "Active", value: "active" },
-                { label: "Inactive", value: "inactive" },
-              ]}
-            />
-          )}
-          {isFiltered && (
-            <Button
-              variant="ghost"
-              onClick={() => table.resetColumnFilters()}
-              className="h-8 px-2"
-            >
-              Reset <Icon icon={XIcon} className="ml-1" />
-            </Button>
-          )}
-        </div>
-        <DataTableViewOptions table={table} />
-      </div>
-
-      {selectedRows.length > 0 && (
-        <BulkActionBar
-          count={selectedRows.length}
-          onClear={() => table.resetRowSelection()}
-          actions={[
-            {
-              label: "Delete selected",
-              icon: TrashIcon,
-              variant: "destructive",
-              onClick: () => {
-                /* bulk delete */
-              },
-            },
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-1 items-center gap-2">
+        <Input
+          placeholder="Rechercher..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(e) =>
+            table.getColumn("name")?.setFilterValue(e.target.value)
+          }
+          className="h-8 w-[200px]"
+        />
+        <DataTableFacetedFilter
+          column={table.getColumn("status")}
+          title="Statut"
+          options={[
+            { label: "Actif", value: "ACTIVE" },
+            { label: "Inactif", value: "INACTIVE" },
           ]}
         />
-      )}
+        {isFiltered && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => table.resetColumnFilters()}
+          >
+            Réinitialiser{" "}
+            <HugeiconsIcon icon={XIcon} className="ml-1 h-4 w-4" />
+          </Button>
+        )}
+      </div>
+      <DataTableViewOptions table={table} />
     </div>
   );
 }
 ```
 
-## Card Grid Variant
+---
 
-For resources like Files, add a view toggle in the toolbar:
+## Bulk Actions
+
+Use `TableHeader` with `bulkActions` config:
 
 ```tsx
-const [view, setView] = useState<"table" | "grid">("table")
+import TableHeader, { createBulkActions } from "@/components/table-header";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { TrashIcon } from "@/lib/icons";
 
-{view === "table" ? (
-  <DataTable ... />
-) : (
-  <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-    {data?.items.map((item) => <FileCard key={item.id} file={item} />)}
-  </div>
-)}
+const selectedRows = table.getFilteredSelectedRowModel().rows;
+
+<TableHeader
+  bulkActions={createBulkActions(
+    selectedRows.length,
+    [
+      {
+        label: "Supprimer",
+        icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+        onClick: handleBulkDelete,
+        variant: "destructive",
+      },
+    ],
+    { onClose: () => table.resetRowSelection() },
+  )}
+/>;
 ```
+
+---
+
+## Card Grid Variant
+
+```tsx
+const [view, setView] = useState<"table" | "grid">("table");
+
+{
+  view === "table" ? (
+    <DataTable
+      columns={columns}
+      data={items}
+      isLoading={isLoading}
+      selectable
+    />
+  ) : (
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      {items.map((item) => (
+        <ResourceCard key={item.id} item={item} />
+      ))}
+    </div>
+  );
+}
+```
+
+---
+
+## PageHeaderActions helpers
+
+```tsx
+import PageHeader, { PageHeaderActions } from "@/components/page-header";
+
+// Shortcuts for common actions:
+PageHeaderActions.create("/resource/new"); // → "Nouveau" button with PlusIcon
+PageHeaderActions.create("/resource/new", "Ajouter");
+PageHeaderActions.refresh(() => refetch()); // → "Actualiser"
+PageHeaderActions.export(() => handleExport()); // → "Exporter"
+```
+
+---
 
 ## Notes
 
-- Use `ConfirmDialog` (not `AlertDialog`) for all destructive confirmations
-- Use `CellActions` for row actions — pass callbacks via `buildColumns({ onEdit, onDelete })` factory
-- `StatusBadge` infers color from status string — no manual `variant` needed
-- For server-side pagination: pass `manualPagination` + `pageCount` to DataTable and fetch with `page` + `pageSize`
-- Always include a loading skeleton: `isLoading` prop on DataTable renders skeleton rows automatically
+- All UI labels, placeholders, toasts → **French**
+- `PageHeader` default export — import as `import PageHeader from "@/components/page-header"`
+- `CellActions` default export — import as `import CellActions from "@/components/cell-actions"`
+- `DataTable` named export — `import { DataTable } from "@/components/data-table/data-table"`
+- `confirmDialog` inline in `CellAction` auto-spawns `ConfirmDialog` — no need to manage dialog state in columns
+- `DataTable` `selectable` prop injects checkbox column automatically
+- `StatusBadge` infers color from status string — no manual `variant` needed in most cases
