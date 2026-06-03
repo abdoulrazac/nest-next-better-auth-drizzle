@@ -5,6 +5,7 @@ import {
   FileIcon,
   SettingsIcon,
   ShieldUserIcon,
+  TagIcon,
   UsersIcon,
   WebhookIcon,
 } from "@/lib/icons";
@@ -15,6 +16,7 @@ export type NavLink = {
   url: string;
   icon?: IconSvgElement;
   badge?: string;
+  addUrl?: string;
 };
 
 export type NavCollapsible = {
@@ -23,6 +25,7 @@ export type NavCollapsible = {
   icon?: IconSvgElement;
   badge?: string;
   items: NavLink[];
+  color?: string;
 };
 
 export type NavItem = NavLink | NavCollapsible;
@@ -39,21 +42,22 @@ export function isNavCollapsible(item: NavItem): item is NavCollapsible {
 export const sidebarData: { navGroups: NavGroup[] } = {
   navGroups: [
     {
-      title: "General",
-      items: [{ title: "Dashboard", url: "/", icon: DashboardIcon }],
+      title: "Général",
+      items: [{ title: "Tableau de bord", url: "/", icon: DashboardIcon }],
     },
     {
-      title: "Account",
+      title: "Comptes",
       items: [
         {
-          title: "Users & Roles",
+          title: "Utilisateurs & Rôles",
           url: "/account",
           icon: UsersIcon,
+          color: "orange",
           items: [
-            { title: "Users", url: "/account/users", icon: UsersIcon },
-            { title: "Roles", url: "/account/roles", icon: ShieldUserIcon },
+            { title: "Utilisateurs", url: "/account/users", icon: UsersIcon },
+            { title: "Rôles", url: "/account/roles", icon: ShieldUserIcon },
             {
-              title: "Audit Logs",
+              title: "Journaux d'audit",
               url: "/account/audit-logs",
               icon: DocumentIcon,
             },
@@ -62,16 +66,32 @@ export const sidebarData: { navGroups: NavGroup[] } = {
       ],
     },
     {
-      title: "System",
+      title: "Système",
       items: [
         { title: "Notifications", url: "/notifications", icon: BellIcon },
-        { title: "Files", url: "/files", icon: FileIcon },
+        { title: "Fichiers", url: "/files", icon: FileIcon },
         { title: "Webhooks", url: "/webhooks", icon: WebhookIcon },
       ],
     },
     {
-      title: "Other",
-      items: [{ title: "Settings", url: "/settings", icon: SettingsIcon }],
+      title: "Paramètres",
+      items: [
+        {
+          title: "Configuration",
+          url: "/settings",
+          icon: SettingsIcon,
+          color: "purple",
+          items: [
+            { title: "Général", url: "/settings/general", icon: SettingsIcon },
+            {
+              title: "Modèles",
+              url: "/settings/templates",
+              icon: DocumentIcon,
+            },
+            { title: "Unités", url: "/settings/units", icon: TagIcon },
+          ],
+        },
+      ],
     },
   ],
 };
