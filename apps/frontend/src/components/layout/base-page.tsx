@@ -12,11 +12,18 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { MoonIcon, SunIcon } from "@/lib/icons";
+import { LaptopIcon, MoonIcon, SunIcon } from "@/lib/icons";
 import { CommandMenu } from "./command-menu";
+import { NavUser } from "../nav-user";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -34,24 +41,41 @@ interface BasePageProps {
 }
 
 function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-8 w-8"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      aria-label="Changer le thème"
-    >
-      <HugeiconsIcon
-        icon={SunIcon}
-        className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-      />
-      <HugeiconsIcon
-        icon={MoonIcon}
-        className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-      />
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          aria-label="Changer le thème"
+        >
+          <HugeiconsIcon
+            icon={SunIcon}
+            className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+          />
+          <HugeiconsIcon
+            icon={MoonIcon}
+            className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+          />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          <HugeiconsIcon icon={SunIcon} className="mr-2 h-4 w-4" />
+          Clair
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          <HugeiconsIcon icon={LaptopIcon} className="mr-2 h-4 w-4" />
+          Système
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          <HugeiconsIcon icon={MoonIcon} className="mr-2 h-4 w-4" />
+          Sombre
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -93,10 +117,11 @@ export function BasePage({
           )}
         </div>
 
-        {/* Droite : CommandMenu + ThemeToggle */}
+        {/* Droite : CommandMenu + ThemeToggle + NavUser */}
         <div className="ml-auto flex items-center gap-2">
           <CommandMenu />
           <ThemeToggle />
+          <NavUser />
         </div>
       </header>
 
