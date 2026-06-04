@@ -172,6 +172,7 @@ export {
 // ─── Theme & Display ──────────────────────────────────────────────────────────
 export {
   ComputerIcon,
+  ComputerIcon as LaptopIcon,
   Moon01Icon as HalfMoonIcon,
   MoonIcon,
   PaintBoardIcon as PaletteIcon,

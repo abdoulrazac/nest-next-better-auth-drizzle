@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { getQueryClient } from "@/lib/query-client";
-import { Sidebar } from "../../components/sidebar";
-import { Header } from "../../components/header";
+import { DashboardShell } from "@/components/dashboard-shell";
 
 export default async function DashboardLayout({
   children,
@@ -26,13 +25,7 @@ export default async function DashboardLayout({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <Header />
-          <main className="flex-1 overflow-y-auto p-6">{children}</main>
-        </div>
-      </div>
+      <DashboardShell>{children}</DashboardShell>
     </HydrationBoundary>
   );
 }
