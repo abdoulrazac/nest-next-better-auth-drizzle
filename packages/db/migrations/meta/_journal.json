@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1780143525444,
-      "tag": "0000_gorgeous_puck",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1780143686888,
-      "tag": "0001_yielding_lila_cheney",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1780512767903,
-      "tag": "0002_thick_stingray",
+      "when": 1780557915107,
+      "tag": "0000_dark_miek",
       "breakpoints": true
     }
   ]

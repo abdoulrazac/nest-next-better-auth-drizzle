@@ -15,7 +15,9 @@ COPY packages/eslint-config/package.json     ./packages/eslint-config/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY packages/ui/package.json                ./packages/ui/
 # --ignore-scripts avoids postinstall scripts running before source exists
-RUN bun install --frozen-lockfile --ignore-scripts
+# Note: --frozen-lockfile is omitted because bun.lock is generated on macOS
+# and contains platform-specific entries that differ on Alpine Linux.
+RUN bun install --ignore-scripts
 
 # ── builder: compile all apps in one pass (turbo handles dep graph) ────────
 FROM installer AS builder
@@ -31,17 +33,23 @@ COPY . .
 RUN bunx turbo run build
 
 # ── runner-db-tools: migrate + seed ───────────────────────────────────────
+# This stage intentionally does NOT depend on `builder` so that frontend/backend
+# build failures don't block database migrations. It only needs the installed
+# node_modules (from installer) and the db package source files.
 FROM base AS runner-db-tools
 WORKDIR /app/packages/db
 
-# Root node_modules needed — bun hoists some deps (e.g. drizzle-kit) there
-COPY --from=builder /app/node_modules                   /app/node_modules
-COPY --from=builder /app/packages/db/src                ./src
-COPY --from=builder /app/packages/db/migrations         ./migrations
-COPY --from=builder /app/packages/db/node_modules       ./node_modules
-COPY --from=builder /app/packages/db/package.json       ./package.json
-COPY --from=builder /app/packages/db/drizzle.config.ts  ./drizzle.config.ts
-COPY --from=builder /app/packages/db/tsconfig.json      ./tsconfig.json
+# Root node_modules needed — bun hoists some deps (e.g. drizzle-orm) there
+COPY --from=installer /app/node_modules                 /app/node_modules
+COPY --from=installer /app/packages/db/node_modules     ./node_modules
+
+# Copy db source files directly from build context (no compile step needed —
+# bun runs TypeScript natively)
+COPY packages/db/src                ./src
+COPY packages/db/migrations         ./migrations
+COPY packages/db/package.json       ./package.json
+COPY packages/db/drizzle.config.ts  ./drizzle.config.ts
+COPY packages/db/tsconfig.json      ./tsconfig.json
 
 # ── runner-backend ─────────────────────────────────────────────────────────
 FROM oven/bun:1.3.14-alpine AS runner-backend
