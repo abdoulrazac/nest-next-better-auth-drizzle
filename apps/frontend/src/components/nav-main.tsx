@@ -21,7 +21,7 @@ import { ChevronRightIcon } from "@/lib/icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function NavCollapsibleGroup({
   item,
@@ -34,15 +34,19 @@ function NavCollapsibleGroup({
     item.items?.some((s) => currentPath.startsWith(s.url ?? "___")) ?? false;
   const storageKey = `sidebar-open-${item.title}`;
 
-  const [isOpen, setIsOpen] = useState<boolean>(() => {
-    if (typeof window === "undefined") return isChildActive || !!item.isActive;
+  // SSR-safe: start with route-based default, read localStorage after mount
+  const [isOpen, setIsOpen] = useState<boolean>(
+    isChildActive || !!item.isActive,
+  );
+
+  useEffect(() => {
     try {
       const val = localStorage.getItem(storageKey);
-      return val !== null ? val === "true" : isChildActive || !!item.isActive;
+      if (val !== null) setIsOpen(val === "true");
     } catch {
-      return isChildActive || !!item.isActive;
+      /* ignore */
     }
-  });
+  }, [storageKey]);
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
