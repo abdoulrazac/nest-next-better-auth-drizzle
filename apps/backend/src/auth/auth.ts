@@ -1,5 +1,6 @@
 // apps/backend/src/auth/auth.ts
 import { env } from '@/config/env';
+import { apiKey } from '@better-auth/api-key';
 import { expo } from '@better-auth/expo';
 import { db, schema } from '@repo/db';
 import { createEmailService } from '@repo/emails';
@@ -56,6 +57,20 @@ export const auth = betterAuth({
       ac,
       roles,
       defaultRole,
+    }),
+    apiKey({
+      defaultPrefix: env.BETTER_AUTH_API_KEY_PREFIX,
+      startingCharactersConfig: {
+        charactersLength: env.BETTER_AUTH_API_KEY_PREFIX.length + 6, // prefix + 6 random chars
+      },
+      enableSessionForAPIKeys: false,
+      enableMetadata: true,
+      apiKeyHeaders: ['x-api-key'],
+      references: 'organization',
+      rateLimit: {
+        timeWindow: 5 * 60 * 1_000, // 5 minutes
+        maxRequests: 10, // Limite à 10 requêtes par fenêtre de 5 minutes
+      },
     }),
     organization({
       ac: orgAc,

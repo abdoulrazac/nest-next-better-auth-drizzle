@@ -34,6 +34,7 @@
     "@anatine/zod-openapi": "^2.2.8",
     "@aws-sdk/client-s3": "^3.1057.0",
     "@aws-sdk/s3-request-presigner": "^3.1057.0",
+    "@better-auth/api-key": "^1.6.14",
     "@better-auth/expo": "^1.6.14",
     "@fastify/helmet": "^13.0.2",
     "@fastify/static": "^9.1.3",

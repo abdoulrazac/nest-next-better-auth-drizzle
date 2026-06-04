@@ -20,6 +20,11 @@ export const envSchema = z.object({
     .string()
     .min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
   BETTER_AUTH_URL: z.string().url('BETTER_AUTH_URL must be a valid URL'),
+  BETTER_AUTH_API_KEY_PREFIX: z.string().default('api_k_'),
+  RECAPTCHA_PROVIDER: z
+    .enum(['hcaptcha', 'captchafox', 'google-recaptcha'])
+    .default('google-recaptcha'), // or "hcaptcha", "captchafox", "google-recaptcha"
+  RECAPTCHA_SECRET_KEY: z.string().default('google-recaptcha'),
 
   // CORS — comma-separated list of allowed origins
   // e.g. "http://localhost:3002,http://localhost:3003"
