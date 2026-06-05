@@ -20,6 +20,7 @@ interface Props {
   value?: Date | string | undefined;
   onChange?: (date: Date | string) => void;
   disabled?: (date: Date) => boolean;
+  triggerDisabled?: boolean;
   defaultMonth?: Date;
   startMonth?: Date;
   endMonth?: Date;
@@ -32,6 +33,7 @@ export default function CalendarPopover({
   value,
   onChange,
   disabled,
+  triggerDisabled,
   defaultMonth,
   startMonth = new Date(new Date().getFullYear() - 80, 0),
   endMonth = new Date(new Date().getFullYear() + 10, 11),
@@ -44,6 +46,7 @@ export default function CalendarPopover({
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
+          disabled={triggerDisabled}
           className={cn(
             "w-full pl-3 text-left font-normal",
             "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",

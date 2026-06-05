@@ -30,6 +30,7 @@ interface SingleSelectProps {
   value?: string;
   onValueChange?: (value: string) => void;
   onSearchChange?: (search: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   searchPlaceholder?: string;
   emptyMessage?: string;
@@ -46,6 +47,7 @@ export default function SingleSelect({
   value,
   onValueChange,
   onSearchChange,
+  onBlur,
   placeholder = "Sélectionner...",
   searchPlaceholder = "Rechercher...",
   emptyMessage = "Aucun résultat.",
@@ -67,7 +69,13 @@ export default function SingleSelect({
   const selected = options.find((o) => o.value === value);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) onBlur?.();
+      }}
+    >
       <PopoverTrigger asChild>
         <Button
           variant="outline"

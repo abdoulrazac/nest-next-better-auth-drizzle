@@ -55,16 +55,15 @@ export function FormDateField<T extends FieldValues>({
             value={field.value}
             onChange={field.onChange}
             placeholder={placeholder}
+            triggerDisabled={disabled}
             disabled={
-              disabled
-                ? () => true
-                : minDate || maxDate
-                  ? (date: Date) => {
-                      if (minDate && date < minDate) return true;
-                      if (maxDate && date > maxDate) return true;
-                      return false;
-                    }
-                  : undefined
+              minDate || maxDate
+                ? (date: Date) => {
+                    if (minDate && date < minDate) return true;
+                    if (maxDate && date > maxDate) return true;
+                    return false;
+                  }
+                : undefined
             }
             startMonth={minDate}
             endMonth={maxDate}

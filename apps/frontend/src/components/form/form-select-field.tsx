@@ -43,6 +43,7 @@ interface MultiSelectProps {
   value?: string[];
   onValueChange?: (value: string[]) => void;
   onSearchChange?: (q: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   disabled?: boolean;
 }
@@ -52,6 +53,7 @@ function MultiSelect({
   value = [],
   onValueChange,
   onSearchChange,
+  onBlur,
   placeholder = "Sélectionner...",
   disabled = false,
 }: MultiSelectProps) {
@@ -69,7 +71,13 @@ function MultiSelect({
     .map((o) => o.label);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) onBlur?.();
+      }}
+    >
       <PopoverTrigger asChild>
         <Button
           type="button"
@@ -170,6 +178,7 @@ export function FormSelectField<T extends FieldValues>({
               options={options}
               value={field.value ?? ""}
               onValueChange={field.onChange}
+              onBlur={field.onBlur}
               onSearchChange={onSearchChange}
               placeholder={placeholder}
               disabled={disabled}
@@ -179,6 +188,7 @@ export function FormSelectField<T extends FieldValues>({
               options={options}
               value={field.value ?? []}
               onValueChange={field.onChange}
+              onBlur={field.onBlur}
               onSearchChange={onSearchChange}
               placeholder={placeholder}
               disabled={disabled}
