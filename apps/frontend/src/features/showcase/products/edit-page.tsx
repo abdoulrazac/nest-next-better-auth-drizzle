@@ -1,13 +1,13 @@
 // apps/frontend/src/features/showcase/products/edit-page.tsx
 "use client";
 
-import { FormSection } from "@/components/form-section";
 import {
   FormActions,
   FormSelectField,
   FormTextareaField,
   FormTextField,
 } from "@/components/form";
+import { FormSection } from "@/components/form/form-section";
 import { BasePage } from "@/components/layout/base-page";
 import { PageHeader } from "@/components/page-header";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
