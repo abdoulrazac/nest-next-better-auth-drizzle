@@ -366,3 +366,5 @@ export default function EntityListPage() {
 - [ ] `DetailSheet` reçoit `handlers` via props (pas de mutations propres)
 - [ ] Changement de filtre remet page à 1
 - [ ] Labels, toasts, placeholders en français
+- [ ] Dialogs create/edit : champs via `FormTextField` / `FormSelectField` / etc. + `FormActions variant="dialog"` de `@/components/form`
+- [ ] Pages formulaire standalone : `FormActions variant="page"` de `@/components/form`

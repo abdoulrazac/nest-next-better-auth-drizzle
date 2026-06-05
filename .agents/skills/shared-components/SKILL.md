@@ -400,7 +400,7 @@ Presets : `confirmDialogPresets.delete(name)`, `.cancel()`, `.archive()`, `.rest
 
 ## Bulk Actions
 
-```tsx
+````tsx
 import {
   executeBulkAction,
   showBulkResultToast,
@@ -417,4 +417,136 @@ const handleBulkDelete = async () => {
   setSelectedItems([]);
   await queryClient.invalidateQueries({ queryKey: ["users"] });
 };
+
+---
+
+## Form Components
+
+Composants de formulaire génériques avec `Controller` + `Field`/`FieldLabel`/`FieldError`. Import depuis `@/components/form`.
+
+```tsx
+import {
+  FormActions,
+  FormTextField,
+  FormTextareaField,
+  FormSwitchField,
+  FormCheckboxField,
+  FormSelectField,
+  FormDateField,
+} from "@/components/form";
+````
+
+**Props communs à tous les champs** (`<T extends FieldValues>`) :
+
+| Prop           | Type               | Notes                               |
+| -------------- | ------------------ | ----------------------------------- |
+| `form`         | `UseFormReturn<T>` | Instance RHF                        |
+| `name`         | `Path<T>`          | Nom du champ (type-safe)            |
+| `label`        | `string`           | Libellé                             |
+| `required`     | `boolean`          | Affiche `*` (cosmétique uniquement) |
+| `description`  | `string`           | Texte d'aide sous le champ          |
+| `disabled`     | `boolean`          | Désactive le champ                  |
+| `defaultValue` | valeur             | Valeur initiale                     |
+
+### FormTextField
+
+```tsx
+<FormTextField
+  form={form}
+  name="email"
+  label="Email"
+  type="email" // "text" | "email"
+  required
+  disabled={isPending}
+/>
+```
+
+### FormTextareaField
+
+```tsx
+<FormTextareaField
+  form={form}
+  name="description"
+  label="Description"
+  rows={4}
+/>
+```
+
+### FormSwitchField / FormCheckboxField
+
+Disposition horizontale (label + toggle sur la même ligne).
+
+```tsx
+<FormSwitchField form={form} name="isActive" label="Actif" />
+<FormCheckboxField form={form} name="acceptTerms" label="J'accepte les conditions" />
+```
+
+### FormSelectField
+
+```tsx
+// Single select
+<FormSelectField
+  form={form}
+  name="role"
+  label="Rôle"
+  variant="single"
+  options={[
+    { value: "admin", label: "Admin" },
+    { value: "member", label: "Membre" },
+  ]}
+/>
+
+// Multi select (badges)
+<FormSelectField
+  form={form}
+  name="permissions"
+  label="Permissions"
+  variant="multi"
+  options={permissionOptions}
+/>
+```
+
+### FormDateField
+
+```tsx
+<FormDateField
+  form={form}
+  name="startDate"
+  label="Date de début"
+  triggerDisabled={isPending}
+/>
+```
+
+> `disabled` sur `FormDateField` est un prédicat `(date: Date) => boolean` pour désactiver des dates. Utiliser `triggerDisabled` pour désactiver le bouton trigger.
+
+### FormActions
+
+Groupe boutons submit / annuler / reset. **Toujours en bas du formulaire.**
+
+```tsx
+<FormActions
+  variant="dialog" // "page" | "dialog"
+  isLoading={isPending}
+  disabled={isPending}
+  submitLabel={isEdit ? "Mettre à jour" : "Créer"}
+  submitLoadingLabel={isEdit ? "Mise à jour..." : "Création..."}
+  onCancel={onClose}
+  // onReset={() => form.reset()} // optionnel
+/>
+```
+
+| Prop                 | Type                 | Default               | Notes                             |
+| -------------------- | -------------------- | --------------------- | --------------------------------- |
+| `variant`            | `"page" \| "dialog"` | required              | `dialog` = boutons alignés droite |
+| `isLoading`          | `boolean`            | `false`               | Affiche spinner sur le bouton     |
+| `disabled`           | `boolean`            | `false`               |                                   |
+| `submitLabel`        | `string`             | `"Enregistrer"`       |                                   |
+| `submitLoadingLabel` | `string`             | `"Enregistrement..."` |                                   |
+| `cancelLabel`        | `string`             | `"Annuler"`           |                                   |
+| `onCancel`           | `() => void`         | required              |                                   |
+| `onReset`            | `() => void`         | —                     | Affiche un bouton Réinitialiser   |
+| `resetLabel`         | `string`             | `"Réinitialiser"`     |                                   |
+
+```
+
 ```
