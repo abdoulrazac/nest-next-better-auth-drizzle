@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { LoadingIcon } from "@/lib/icons";
-import { cn } from "@/lib/utils";
 
 interface FormActionsProps {
   variant: "page" | "dialog";
