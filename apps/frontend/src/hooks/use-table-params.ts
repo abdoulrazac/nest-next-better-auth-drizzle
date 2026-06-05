@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 
 export interface TableParamsConfig {
@@ -21,14 +22,18 @@ export function useTableParams(config?: TableParamsConfig) {
   const filterKeys = config?.filterKeys ?? [];
   const defaultPageSize = config?.defaultPageSize ?? 10;
 
-  const parsers = {
-    search: parseAsString.withDefault(""),
-    page: parseAsInteger.withDefault(1),
-    pageSize: parseAsInteger.withDefault(defaultPageSize),
-    ...Object.fromEntries(
-      filterKeys.map((k) => [k, parseAsString.withDefault("")]),
-    ),
-  };
+  const parsers = useMemo(
+    () => ({
+      search: parseAsString.withDefault(""),
+      page: parseAsInteger.withDefault(1),
+      pageSize: parseAsInteger.withDefault(defaultPageSize),
+      ...Object.fromEntries(
+        filterKeys.map((k) => [k, parseAsString.withDefault("")]),
+      ),
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [defaultPageSize, filterKeys.join(",")],
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [params, setParams] = useQueryStates(parsers as any, {
@@ -67,7 +72,7 @@ export function useTableParams(config?: TableParamsConfig) {
     setPageSize: (size: number) => void setParams({ pageSize: size, page: 1 }),
 
     // ── Reset ────────────────────────────────────────────────────────────────
-    /** Effacer search + tous les filtres + remettre page à 1 */
+    /** Efface search + tous les filtres + remet page à 1. pageSize est conservé. */
     resetFilters: () =>
       void setParams({
         search: null,
