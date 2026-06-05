@@ -48,14 +48,16 @@ export function FormSwitchField<T extends FieldValues>({
               {required && " *"}
             </FieldLabel>
             {description && <FieldDescription>{description}</FieldDescription>}
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </FieldContent>
           <Switch
             id={String(name)}
+            ref={field.ref}
             checked={!!field.value}
             onCheckedChange={field.onChange}
+            onBlur={field.onBlur}
             disabled={disabled}
           />
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
         </Field>
       )}
     />

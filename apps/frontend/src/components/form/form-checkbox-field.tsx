@@ -12,6 +12,7 @@ import {
   Field,
   FieldLabel,
   FieldDescription,
+  FieldContent,
   FieldError,
 } from "@/components/ui/field";
 
@@ -43,19 +44,21 @@ export function FormCheckboxField<T extends FieldValues>({
         <Field orientation="horizontal" data-invalid={fieldState.invalid}>
           <Checkbox
             id={String(name)}
+            ref={field.ref}
             checked={!!field.value}
             onCheckedChange={field.onChange}
+            onBlur={field.onBlur}
             disabled={disabled}
             required={required}
           />
-          <div className="flex flex-col gap-0.5">
+          <FieldContent>
             <FieldLabel htmlFor={String(name)}>
               {label}
               {required && " *"}
             </FieldLabel>
             {description && <FieldDescription>{description}</FieldDescription>}
-          </div>
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </FieldContent>
         </Field>
       )}
     />

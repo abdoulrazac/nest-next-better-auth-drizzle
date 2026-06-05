@@ -23,7 +23,7 @@ interface FormTextFieldProps<T extends FieldValues> {
   description?: string;
   disabled?: boolean;
   defaultValue?: PathValue<T, Path<T>>;
-  type?: "text" | "email" | "number";
+  type?: "text" | "email";
   placeholder?: string;
   autoFocus?: boolean;
 }
