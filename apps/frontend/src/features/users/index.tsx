@@ -1,174 +1,191 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { type Table } from "@tanstack/react-table";
-import { DataTable } from "@/components/data-table";
-import { DataTableBulkActionBar } from "@/components/data-table/bulk-action-bar";
-import PageHeader from "@/components/page-header";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { Input } from "@/components/ui/input";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableViewOptions } from "@/components/data-table/view-options";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { UserPlusIcon, TrashIcon } from "@/lib/icons";
+  confirmDialogPresets,
+  useConfirmDialog,
+} from "@/components/hooks/use-confirm-dialog";
+import { Pagination } from "@/components/pagination";
+import { PageHeader } from "@/components/page-header";
+import SingleSelect from "@/components/single-select";
+import TableHeader, {
+  createBulkActions,
+  createFilterField,
+  createResetButton,
+  createSearchField,
+} from "@/components/table-header";
+import { PlusIcon, TrashIcon } from "@/lib/icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useTableParams } from "@/hooks/use-table-params";
+import { useMemo, useState } from "react";
 import { buildColumns } from "./columns";
-import { MutateUserDialog } from "./mutate-dialog";
 import { UserDetailSheet } from "./detail-sheet";
-import { useListUsers, useDeleteUser } from "./hooks";
+import { useDeleteUser, useListUsers } from "./hooks";
+import { MutateUserDialog } from "./mutate-dialog";
 import type { User } from "./types";
 
+const STATUS_OPTIONS = [
+  { value: "active", label: "Actif" },
+  { value: "banned", label: "Banni" },
+];
+
 export function UsersPage() {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const {
+    search,
+    setSearch,
+    getFilter,
+    setFilter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    resetFilters,
+  } = useTableParams({ filterKeys: ["status"] });
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<User | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [sheetUserId, setSheetUserId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedItems, setSelectedItems] = useState<User[]>([]);
 
-  const params = {
+  const { data, isLoading } = useListUsers({
+    page,
+    pageSize,
     search: search || undefined,
-    status: statusFilter || undefined,
-  };
+    status: getFilter("status") || undefined,
+  });
 
-  const { data, isLoading } = useListUsers(params);
   const deleteUser = useDeleteUser();
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
 
-  const users = data?.items ?? [];
+  const { confirm, ConfirmDialogComponent } = useConfirmDialog();
 
-  const columns = useMemo(
-    () =>
-      buildColumns({
-        onView: (user) => {
-          setSheetUserId(user.id);
-          setSheetOpen(true);
-        },
-        onEdit: (user) => {
-          setEditTarget(user);
-          setDialogOpen(true);
-        },
-        onDelete: (user) => setDeleteId(user.id),
-      }),
-    [],
+  const handlers = useMemo(
+    () => ({
+      onView: (user: User) => setSelectedId(user.id),
+      onEdit: (user: User) => {
+        setEditTarget(user);
+        setDialogOpen(true);
+      },
+      onDelete: async (user: User) => {
+        const ok = await confirm(confirmDialogPresets.delete(`"${user.name}"`));
+        if (ok) deleteUser.mutate(user.id);
+      },
+      onBulkDelete: async (users: User[]) => {
+        const ok = await confirm(
+          confirmDialogPresets.delete(`${users.length} utilisateur(s)`),
+        );
+        if (ok) {
+          users.forEach((u) => deleteUser.mutate(u.id));
+          setSelectedItems([]);
+        }
+      },
+    }),
+    [confirm, deleteUser],
   );
 
-  function handleOpenCreate() {
-    setEditTarget(null);
-    setDialogOpen(true);
-  }
+  const columns = useMemo(() => buildColumns(handlers), [handlers]);
 
-  function handleDialogClose(open: boolean) {
-    setDialogOpen(open);
-    if (!open) setEditTarget(null);
-  }
+  const searchConfig = createSearchField(search, setSearch, {
+    placeholder: "Rechercher un utilisateur...",
+  });
 
-  function handleDeleteConfirm() {
-    if (!deleteId) return;
-    deleteUser.mutate(deleteId, {
-      onSuccess: () => setDeleteId(null),
-      onError: () => setDeleteId(null),
-    });
-  }
+  const filtersConfig = [
+    createFilterField(
+      "status",
+      <SingleSelect
+        value={getFilter("status")}
+        onValueChange={(v) => setFilter("status", v)}
+        options={STATUS_OPTIONS}
+        placeholder="Statut"
+        btnClassName="min-w-32"
+      />,
+    ),
+  ];
 
-  function toolbar(table: Table<User>) {
-    const selectedRows = table.getFilteredSelectedRowModel().rows;
-    return (
-      <div className="flex items-center gap-3 flex-wrap">
-        <Input
-          placeholder="Search users…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="h-8 w-[200px]"
-        />
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="h-8 w-[140px]">
-            <SelectValue placeholder="All statuses" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-            <SelectItem value="banned">Banned</SelectItem>
-          </SelectContent>
-        </Select>
-        {selectedRows.length > 0 && (
-          <DataTableBulkActionBar
-            selectedCount={selectedRows.length}
-            onClearSelection={() => table.resetRowSelection()}
-            actions={[
-              {
-                label: "Delete selected",
-                icon: TrashIcon,
-                variant: "destructive",
-                onClick: () => {
-                  // bulk delete: iterate selected
-                  selectedRows.forEach((row) => {
-                    deleteUser.mutate((row.original as User).id);
-                  });
-                  table.resetRowSelection();
-                },
-              },
-            ]}
-          />
-        )}
-      </div>
-    );
-  }
+  const actionsConfig = [createResetButton(resetFilters)];
+
+  const bulkActionsConfig =
+    selectedItems.length > 0
+      ? createBulkActions(
+          selectedItems.length,
+          [
+            {
+              label: "Supprimer",
+              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              onClick: () => handlers.onBulkDelete(selectedItems),
+              variant: "destructive",
+            },
+          ],
+          { onClose: () => setSelectedItems([]) },
+        )
+      : undefined;
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Users"
-        description="Manage your application users."
+        title="Utilisateurs"
+        description="Gérez les utilisateurs de l'application."
+        variant="list"
         primaryAction={{
-          label: "New User",
-          icon: <HugeiconsIcon icon={UserPlusIcon} className="h-4 w-4" />,
-          onClick: handleOpenCreate,
+          label: "Nouvel utilisateur",
+          icon: <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />,
+          onClick: () => {
+            setEditTarget(null);
+            setDialogOpen(true);
+          },
         }}
       />
 
       <DataTable
         columns={columns}
-        data={users}
+        data={items}
         isLoading={isLoading}
-        toolbar={toolbar}
+        pagination={false}
+        selectable
+        onSelectionChange={setSelectedItems}
+        emptyMessage="Aucun utilisateur trouvé."
+        toolbar={(table) => (
+          <TableHeader
+            search={searchConfig}
+            filters={filtersConfig}
+            actions={actionsConfig}
+            bulkActions={bulkActionsConfig}
+            extra={<DataTableViewOptions table={table} />}
+          />
+        )}
       />
+
+      {total > 0 && (
+        <Pagination
+          currentPage={page}
+          totalPages={Math.ceil(total / pageSize)}
+          pageSize={pageSize}
+          totalCount={total}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+        />
+      )}
+
+      {ConfirmDialogComponent}
 
       <MutateUserDialog
         open={dialogOpen}
-        onOpenChange={handleDialogClose}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) setEditTarget(null);
+        }}
         user={editTarget}
       />
 
-      <ConfirmDialog
-        open={!!deleteId}
-        onOpenChange={(open) => {
-          if (!open) setDeleteId(null);
-        }}
-        title="Delete user"
-        description="Are you sure you want to delete this user? This action cannot be undone."
-        onConfirm={handleDeleteConfirm}
-        isPending={deleteUser.isPending}
-      />
-
       <UserDetailSheet
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        userId={sheetUserId}
-        onEdit={(user) => {
-          setSheetOpen(false);
-          setEditTarget(user);
-          setDialogOpen(true);
+        userId={selectedId}
+        open={!!selectedId}
+        onOpenChange={(open) => {
+          if (!open) setSelectedId(null);
         }}
-        onDelete={(user) => {
-          setSheetOpen(false);
-          setDeleteId(user.id);
-        }}
+        handlers={handlers}
       />
     </div>
   );
