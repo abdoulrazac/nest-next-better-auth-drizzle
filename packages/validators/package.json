@@ -62,6 +62,12 @@
       "import": "./dist/shared.schema.js",
       "types": "./src/shared.schema.ts",
       "default": "./dist/shared.schema.js"
+    },
+    "./products": {
+      "require": "./dist/products.js",
+      "import": "./dist/products.js",
+      "types": "./src/products.ts",
+      "default": "./dist/products.js"
     }
   },
   "scripts": {

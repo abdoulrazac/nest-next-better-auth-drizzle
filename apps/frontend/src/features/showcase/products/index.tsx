@@ -1,14 +1,15 @@
 // apps/frontend/src/features/showcase/products/index.tsx
 "use client";
 
-import { BasePage } from "@/components/layout/base-page";
 import { DataTable } from "@/components/data-table/data-table";
-import { Pagination } from "@/components/pagination";
+import { DataTableViewOptions } from "@/components/data-table/view-options";
+import { BasePage } from "@/components/layout/base-page";
 import { PageHeader, PageHeaderActions } from "@/components/page-header";
+import { Pagination } from "@/components/pagination";
 import TableHeader from "@/components/table-header";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { AlertCircleIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { ProductDetailSheet } from "./detail-sheet";
 import { useProducts } from "./hooks";
 
@@ -52,13 +53,6 @@ export function ProductsListPage() {
           )}
         />
 
-        <TableHeader
-          search={searchConfig}
-          filters={filtersConfig}
-          actions={actionsConfig}
-          bulkActions={bulkActionsConfig}
-        />
-
         {error && (
           <Alert variant="destructive">
             <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
@@ -76,6 +70,15 @@ export function ProductsListPage() {
           selectable
           onSelectionChange={setSelectedItems}
           emptyMessage="Aucun produit trouvé."
+          toolbar={(table) => (
+            <TableHeader
+              search={searchConfig}
+              filters={filtersConfig}
+              actions={actionsConfig}
+              bulkActions={bulkActionsConfig}
+              extra={<DataTableViewOptions table={table} />}
+            />
+          )}
         />
 
         {total > 0 && (
@@ -85,10 +88,7 @@ export function ProductsListPage() {
             pageSize={pageSize}
             totalCount={total}
             onPageChange={setPage}
-            onPageSizeChange={(s) => {
-              setPageSize(s);
-              setPage(1);
-            }}
+            onPageSizeChange={setPageSize} // setPageSize auto-remet la page à 1
           />
         )}
       </div>

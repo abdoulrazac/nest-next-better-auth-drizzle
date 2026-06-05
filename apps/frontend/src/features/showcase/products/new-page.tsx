@@ -1,36 +1,33 @@
 // apps/frontend/src/features/showcase/products/new-page.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { BasePage } from "@/components/layout/base-page";
-import { PageHeader, PageHeaderActions } from "@/components/page-header";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { FormSection } from "@/components/form-section";
-import SingleSelect from "@/components/single-select";
-import { CategorySelect } from "./_components/category-select";
+import {
+  FormActions,
+  FormSelectField,
+  FormTextareaField,
+  FormTextField,
+} from "@/components/form";
+import { BasePage } from "@/components/layout/base-page";
+import { PageHeader } from "@/components/page-header";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PRODUCT_CATEGORIES } from "@repo/validators/products";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { ProductSelect } from "./_components/product-select";
+import { productKeys } from "./hooks";
 import * as mockStore from "./mock-store";
 import { productFormSchema, type ProductFormValues } from "./schema";
-import { productKeys } from "./hooks";
 
 export function ProductNewPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<ProductFormValues>({
+  const form = useForm<ProductFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productFormSchema as any) as any,
     defaultValues: {
@@ -45,8 +42,9 @@ export function ProductNewPage() {
     },
   });
 
+  const isSubmitting = form.formState.isSubmitting;
+
   const onSubmit = async (values: ProductFormValues) => {
-    setIsSubmitting(true);
     try {
       await mockStore.createProduct(values);
       void queryClient.invalidateQueries({ queryKey: productKeys.all });
@@ -54,8 +52,6 @@ export function ProductNewPage() {
       router.push("/showcase/products");
     } catch {
       toast.error("Erreur lors de la création");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -67,160 +63,160 @@ export function ProductNewPage() {
         { title: "Nouveau produit" },
       ]}
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="space-y-6">
           <PageHeader
             title="Nouveau produit"
             variant="create"
             backNavigation={{ href: "/showcase/products", label: "Produits" }}
-            primaryAction={PageHeaderActions.save(
-              handleSubmit(onSubmit),
-              isSubmitting,
-            )}
-            secondaryActions={[PageHeaderActions.cancel("/showcase/products")]}
           />
 
           <FormSection title="Informations générales">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="name">Nom *</Label>
-                <Input
-                  id="name"
-                  placeholder="ex : Laptop Pro 15"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-xs text-destructive">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="reference">Référence *</Label>
-                <Input
-                  id="reference"
-                  placeholder="ex : ELEC-001"
-                  {...register("reference")}
-                />
-                {errors.reference && (
-                  <p className="text-xs text-destructive">
-                    {errors.reference.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <Label>Catégorie *</Label>
-                <Controller
-                  control={control}
-                  name="category"
-                  render={({ field }) => (
-                    <CategorySelect
-                      value={field.value ?? ""}
-                      onValueChange={field.onChange}
-                    />
-                  )}
-                />
-                {errors.category && (
-                  <p className="text-xs text-destructive">
-                    {errors.category.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <Label>Statut *</Label>
-                <Controller
-                  control={control}
-                  name="status"
-                  render={({ field }) => (
-                    <SingleSelect
-                      value={field.value ?? ""}
-                      onValueChange={field.onChange}
-                      options={[
-                        { value: "ACTIVE", label: "Actif" },
-                        { value: "INACTIVE", label: "Inactif" },
-                        { value: "DRAFT", label: "Brouillon" },
-                        { value: "OUT_OF_STOCK", label: "Rupture de stock" },
-                      ]}
-                      placeholder="Sélectionner un statut"
-                      btnClassName="w-full"
-                    />
-                  )}
-                />
-                {errors.status && (
-                  <p className="text-xs text-destructive">
-                    {errors.status.message}
-                  </p>
-                )}
-              </div>
+              <FormTextField
+                form={form}
+                name="name"
+                label="Nom"
+                required
+                placeholder="ex : Laptop Pro 15"
+                disabled={isSubmitting}
+              />
+              <FormTextField
+                form={form}
+                name="reference"
+                label="Référence"
+                required
+                placeholder="ex : ELEC-001"
+                disabled={isSubmitting}
+              />
+              <FormSelectField
+                form={form}
+                name="category"
+                label="Catégorie"
+                required
+                variant="single"
+                options={PRODUCT_CATEGORIES.map((c) => ({
+                  value: c,
+                  label: c,
+                }))}
+                placeholder="Sélectionner une catégorie"
+                disabled={isSubmitting}
+              />
+              <FormSelectField
+                form={form}
+                name="status"
+                label="Statut"
+                required
+                variant="single"
+                options={[
+                  { value: "ACTIVE", label: "Actif" },
+                  { value: "INACTIVE", label: "Inactif" },
+                  { value: "DRAFT", label: "Brouillon" },
+                  { value: "OUT_OF_STOCK", label: "Rupture de stock" },
+                ]}
+                disabled={isSubmitting}
+              />
             </div>
           </FormSection>
 
           <FormSection title="Tarification & Stock">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="price">Prix (€) *</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  {...register("price")}
+              {/* Champ numérique — FormTextField ne supporte pas type="number" */}
+              <Field>
+                <FieldLabel htmlFor="price">Prix (€) *</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="price"
+                  render={({ field, fieldState }) => (
+                    <>
+                      <Input
+                        id="price"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        value={field.value ?? ""}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        disabled={isSubmitting}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </>
+                  )}
                 />
-                {errors.price && (
-                  <p className="text-xs text-destructive">
-                    {errors.price.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="stock">Stock initial *</Label>
-                <Input
-                  id="stock"
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                  {...register("stock")}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="stock">Stock initial *</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="stock"
+                  render={({ field, fieldState }) => (
+                    <>
+                      <Input
+                        id="stock"
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        value={field.value ?? ""}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        disabled={isSubmitting}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </>
+                  )}
                 />
-                {errors.stock && (
-                  <p className="text-xs text-destructive">
-                    {errors.stock.message}
-                  </p>
-                )}
-              </div>
+              </Field>
             </div>
           </FormSection>
 
           <FormSection title="Description & Liens">
             <div className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Décrivez le produit..."
-                  rows={3}
-                  {...register("description")}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Produit similaire</Label>
+              <FormTextareaField
+                form={form}
+                name="description"
+                label="Description"
+                rows={3}
+                placeholder="Décrivez le produit..."
+                disabled={isSubmitting}
+              />
+              {/* Champ avec composant de recherche personnalisé */}
+              <Field>
+                <FieldLabel>Produit similaire</FieldLabel>
                 <Controller
-                  control={control}
+                  control={form.control}
                   name="similarProductId"
-                  render={({ field }) => (
-                    <ProductSelect
-                      value={field.value ?? ""}
-                      onValueChange={field.onChange}
-                    />
+                  render={({ field, fieldState }) => (
+                    <>
+                      <ProductSelect
+                        value={field.value ?? ""}
+                        onValueChange={field.onChange}
+                        disabled={isSubmitting}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </>
                   )}
                 />
                 <p className="text-xs text-muted-foreground">
                   Optionnel — associez un produit similaire pour la
                   recommandation.
                 </p>
-              </div>
+              </Field>
             </div>
           </FormSection>
+
+          <FormActions
+            variant="page"
+            isLoading={isSubmitting}
+            disabled={isSubmitting}
+            submitLabel="Créer le produit"
+            submitLoadingLabel="Création..."
+            onCancel={() => router.push("/showcase/products")}
+          />
         </div>
       </form>
     </BasePage>

@@ -7,3 +7,4 @@ export * from "./webhooks";
 export * from "./messages";
 export * from "./shared.schema";
 export * from "./health";
+export * from "./products";
