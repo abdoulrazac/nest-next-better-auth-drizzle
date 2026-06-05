@@ -17,11 +17,12 @@ import {
   RefreshIcon,
   XIcon,
 } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ReactNode } from "react";
+import { ButtonTooltip } from "./button-tooltip";
 
 export type PageHeaderVariant =
   | "default"
@@ -66,7 +67,6 @@ function ActionButton({ action }: { action: HeaderAction }) {
           <Button
             variant={action.variant ?? "outline"}
             disabled={action.disabled ?? action.loading}
-            size="sm"
           >
             {action.icon}
             {action.label}
@@ -102,7 +102,6 @@ function ActionButton({ action }: { action: HeaderAction }) {
       <Button
         variant={action.variant ?? "default"}
         disabled={action.disabled}
-        size="sm"
         asChild
       >
         <Link href={action.href}>
@@ -117,7 +116,6 @@ function ActionButton({ action }: { action: HeaderAction }) {
       variant={action.variant ?? "default"}
       disabled={action.disabled ?? action.loading}
       onClick={action.onClick}
-      size="sm"
     >
       {action.icon}
       {action.label}
@@ -161,46 +159,38 @@ export default function PageHeader({
         className,
       )}
     >
-      {showBack && (
-        <div>
-          {backHref ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-1 text-muted-foreground"
-              asChild
-            >
-              <Link href={backHref}>
-                <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
-                {typeof backNavigation === "object" && backNavigation.label
-                  ? backNavigation.label
-                  : "Retour"}
-              </Link>
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-1 text-muted-foreground"
-              onClick={handleBack}
-            >
-              <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
-              {typeof backNavigation === "object" && backNavigation.label
-                ? backNavigation.label
-                : "Retour"}
-            </Button>
-          )}
-        </div>
-      )}
       <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-            {status && <div>{status}</div>}
-          </div>
-          {description && (
-            <p className="text-sm text-muted-foreground">{description}</p>
+        <div className="flex flex-row items-center gap-2">
+          {showBack && (
+            <ButtonTooltip
+              variant="ghost"
+              className="w-6 h-6 rounded-full gap-1 text-muted-foreground bg-primary/10 hover:bg-primary/20 data-[state=open]:bg-primary/20 p-1 mr-2 self-center"
+              tooltipContent={
+                typeof backNavigation === "object" && backNavigation.label
+                  ? backNavigation.label
+                  : "Retour"
+              }
+              {...(backHref ? { asChild: true } : { onClick: handleBack })}
+            >
+              {backHref ? (
+                <Link href={backHref}>
+                  <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
+                </Link>
+              ) : (
+                <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
+              )}
+            </ButtonTooltip>
           )}
+
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+              {status && <div>{status}</div>}
+            </div>
+            {description && (
+              <p className="text-sm text-muted-foreground">{description}</p>
+            )}
+          </div>
         </div>
         {(primaryAction || secondaryActions?.length) && (
           <div className="flex items-center gap-2 shrink-0">

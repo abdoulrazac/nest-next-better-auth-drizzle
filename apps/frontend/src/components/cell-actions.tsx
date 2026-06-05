@@ -13,18 +13,17 @@ import {
   CancelSquareIcon,
   CheckCircleIcon,
   CopyIcon,
-  DeleteIcon,
   EditIcon,
+  ExternalLinkIcon,
   EyeIcon,
   FileSearchIcon,
   FolderOpenIcon,
-  ExternalLinkIcon,
   MoreHorizontalIcon,
   SendIcon,
   TrashIcon,
 } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 
@@ -158,6 +157,9 @@ export default function CellActions({
                   disabled={action.disabled ?? action.loading}
                   onClick={() => handleActionClick(action)}
                   asChild={!!action.href}
+                  className={cn({
+                    "text-destructive": action.variant === "destructive",
+                  })}
                 >
                   {action.href ? (
                     <Link href={action.href}>

@@ -1,11 +1,11 @@
-import type { IconSvgElement } from "@hugeicons/react";
 import {
-  HomeIcon,
-  UsersIcon,
-  ShieldUserIcon,
   DocumentIcon,
+  HomeIcon,
   SettingsIcon,
+  ShieldUserIcon,
+  UsersIcon,
 } from "@/lib/icons";
+import type { IconSvgElement } from "@hugeicons/react";
 
 export interface INavItem {
   title: string;
@@ -23,6 +23,18 @@ export const navMenu: INavItem[] = [
     title: "Tableau de bord",
     url: "/",
     icon: HomeIcon,
+  },
+  {
+    title: "Cas d'exemple",
+    icon: DocumentIcon,
+    color: "text-green-600",
+    items: [
+      {
+        title: "Produits",
+        url: "/showcase/products",
+        icon: DocumentIcon,
+      },
+    ],
   },
   {
     title: "Comptes",
@@ -47,20 +59,9 @@ export const navMenu: INavItem[] = [
     ],
   },
   {
-    title: "Paramètres",
+    title: "Configuration",
     icon: SettingsIcon,
     color: "text-purple-600",
-    items: [
-      { title: "Général", url: "/settings/general" },
-      { title: "Données entreprise", url: "/settings/company" },
-      { title: "Exercices fiscaux", url: "/settings/fiscal-years" },
-      { title: "Numérotation", url: "/settings/numbering" },
-      { title: "Sauvegarde", url: "/settings/backup" },
-      { title: "Données", url: "/settings/data" },
-      { title: "Relances", url: "/settings/reminders" },
-      { title: "Abonnement", url: "/settings/subscription" },
-      { title: "Certification DGI", url: "/settings/dgi-integration" },
-      { title: "Développeurs", url: "/settings/developers" },
-    ],
+    items: [{ title: "Paramètres", url: "/settings" }],
   },
 ];

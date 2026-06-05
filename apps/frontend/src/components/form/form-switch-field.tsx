@@ -1,20 +1,20 @@
 "use client";
 
 import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Switch } from "@/components/ui/switch";
+import {
   Controller,
   FieldValues,
   Path,
   PathValue,
   UseFormReturn,
 } from "react-hook-form";
-import { Switch } from "@/components/ui/switch";
-import {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldContent,
-  FieldError,
-} from "@/components/ui/field";
 
 interface FormSwitchFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;

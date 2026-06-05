@@ -1,5 +1,13 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import {
   Controller,
   FieldValues,
@@ -7,14 +15,6 @@ import {
   PathValue,
   UseFormReturn,
 } from "react-hook-form";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldContent,
-  FieldError,
-} from "@/components/ui/field";
 
 interface FormCheckboxFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -49,7 +49,6 @@ export function FormCheckboxField<T extends FieldValues>({
             onCheckedChange={field.onChange}
             onBlur={field.onBlur}
             disabled={disabled}
-            required={required}
           />
           <FieldContent>
             <FieldLabel htmlFor={String(name)}>

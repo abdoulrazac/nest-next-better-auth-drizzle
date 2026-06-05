@@ -1,29 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Controller,
-  FieldValues,
-  Path,
-  PathValue,
-  UseFormReturn,
-} from "react-hook-form";
-import {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldError,
-} from "@/components/ui/field";
 import SingleSelect, {
   type SingleSelectOption,
 } from "@/components/single-select";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -32,9 +13,28 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CheckIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { useState } from "react";
+import {
+  Controller,
+  FieldValues,
+  Path,
+  PathValue,
+  UseFormReturn,
+} from "react-hook-form";
 
 // ── Internal MultiSelect ───────────────────────────────────────────────────
 

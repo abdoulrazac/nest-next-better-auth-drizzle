@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircleIcon, InfoIcon, TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import type { IconSvgElement } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
+import type { IconSvgElement } from "@hugeicons/react";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 type ConfirmVariant = "destructive" | "warning" | "info";
 
@@ -72,10 +72,10 @@ export function ConfirmDialog({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
-        <AlertDialogHeader>
+        <AlertDialogHeader className="flex flex-row gap-6">
           <div
             className={cn(
-              "mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full",
+              "flex h-12 w-16 items-center justify-center rounded-full",
               cfg.bg,
             )}
           >
@@ -84,10 +84,10 @@ export function ConfirmDialog({
               className={cn("h-6 w-6", cfg.color)}
             />
           </div>
-          <AlertDialogTitle className="text-center">{title}</AlertDialogTitle>
-          <AlertDialogDescription className="text-center">
-            {description}
-          </AlertDialogDescription>
+          <div className="flex flex-col">
+            <AlertDialogTitle>{title}</AlertDialogTitle>
+            <AlertDialogDescription>{description}</AlertDialogDescription>
+          </div>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>

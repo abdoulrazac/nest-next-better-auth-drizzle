@@ -1,19 +1,19 @@
 "use client";
 
 import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
+import {
   Controller,
   FieldValues,
   Path,
   PathValue,
   UseFormReturn,
 } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldError,
-} from "@/components/ui/field";
 
 interface FormTextareaFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -54,7 +54,6 @@ export function FormTextareaField<T extends FieldValues>({
             id={String(name)}
             placeholder={placeholder}
             disabled={disabled}
-            required={required}
             rows={rows}
             value={field.value ?? ""}
           />

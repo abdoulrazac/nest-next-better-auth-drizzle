@@ -1,11 +1,9 @@
-import { ensureSession } from "@better-auth-ui/react/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { auth } from "@/lib/auth";
-import { getQueryClient } from "@/lib/query-client";
 import { DashboardShell } from "@/components/dashboard-shell";
+import { getSession } from "@/lib/auth-client";
+import { getQueryClient } from "@/lib/query-client";
 
 export default async function DashboardLayout({
   children,
@@ -13,11 +11,8 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const queryClient = getQueryClient();
-  const requestHeaders = await headers();
 
-  const session = await ensureSession(queryClient, auth, {
-    headers: requestHeaders,
-  });
+  const session = await getSession();
 
   if (!session) {
     redirect("/auth/sign-in");

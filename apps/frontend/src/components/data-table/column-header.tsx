@@ -24,12 +24,45 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
-  if (!column.getCanSort()) {
+  const canSort = column.getCanSort();
+  const canHide = column.getCanHide();
+  const sorted = column.getIsSorted();
+
+  // Plain label — not sortable, not hideable
+  if (!canSort && !canHide) {
     return <div className={cn("text-sm font-medium", className)}>{title}</div>;
   }
 
-  const sorted = column.getIsSorted();
+  // Not sortable but hideable — show minimal dropdown with just Masquer
+  if (!canSort) {
+    return (
+      <div className={cn("flex items-center space-x-2", className)}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 text-muted-foreground data-[state=open]:bg-accent"
+            >
+              <span>{title}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
+              <Icon
+                icon={EyeOffIcon}
+                size={14}
+                className="mr-2 text-muted-foreground"
+              />
+              Masquer
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    );
+  }
 
+  // Sortable — show sort options + optional hide
   return (
     <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
@@ -38,7 +71,7 @@ export function DataTableColumnHeader<TData, TValue>({
             variant="ghost"
             size="sm"
             className={cn(
-              "-ml-3 h-8 data-[state=open]:bg-accent",
+              "h-8 data-[state=open]:bg-accent",
               sorted ? "text-foreground" : "text-muted-foreground",
             )}
           >
@@ -59,7 +92,7 @@ export function DataTableColumnHeader<TData, TValue>({
               size={14}
               className="mr-2 text-muted-foreground"
             />
-            Asc
+            Croissant
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
             <Icon
@@ -67,17 +100,21 @@ export function DataTableColumnHeader<TData, TValue>({
               size={14}
               className="mr-2 text-muted-foreground"
             />
-            Desc
+            Décroissant
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <Icon
-              icon={EyeOffIcon}
-              size={14}
-              className="mr-2 text-muted-foreground"
-            />
-            Hide
-          </DropdownMenuItem>
+          {canHide && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
+                <Icon
+                  icon={EyeOffIcon}
+                  size={14}
+                  className="mr-2 text-muted-foreground"
+                />
+                Masquer
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

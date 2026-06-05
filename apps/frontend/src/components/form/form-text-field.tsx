@@ -1,19 +1,19 @@
 "use client";
 
 import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
   Controller,
   FieldValues,
   Path,
   PathValue,
   UseFormReturn,
 } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldError,
-} from "@/components/ui/field";
 
 interface FormTextFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -57,7 +57,6 @@ export function FormTextField<T extends FieldValues>({
             type={type}
             placeholder={placeholder}
             disabled={disabled}
-            required={required}
             autoFocus={autoFocus}
             value={field.value ?? ""}
           />

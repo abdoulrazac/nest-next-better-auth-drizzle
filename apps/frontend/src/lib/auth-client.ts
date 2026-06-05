@@ -7,7 +7,13 @@ import {
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000",
-  plugins: [adminClient(), organizationClient(), twoFactorClient()],
+  plugins: [
+    adminClient(),
+    organizationClient({
+      dynamicAccessControl: { enabled: true },
+    }),
+    twoFactorClient(),
+  ],
 });
 
 export const { signIn, signOut, signUp, useSession, getSession } = authClient;

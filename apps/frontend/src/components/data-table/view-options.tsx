@@ -20,6 +20,14 @@ interface DataTableViewOptionsProps<TData> {
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
+  const hideableColumns = table
+    .getAllColumns()
+    .filter((column) => column.getCanHide());
+
+  const hiddenCount = hideableColumns.filter(
+    (column) => !column.getIsVisible(),
+  ).length;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,28 +37,48 @@ export function DataTableViewOptions<TData>({
           className="ml-auto hidden h-8 lg:flex"
         >
           <Icon icon={GridIcon} size={14} className="mr-2" />
-          View
+          Colonnes
+          {hiddenCount > 0 && (
+            <span className="ml-1 rounded-full bg-primary text-primary-foreground text-[10px] font-medium px-1.5 py-0.5 leading-none">
+              {hiddenCount}
+            </span>
+          )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-37.5">
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuLabel>Afficher les colonnes</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {table
-          .getAllColumns()
-          .filter(
-            (column) =>
-              typeof column.accessorFn !== "undefined" && column.getCanHide(),
-          )
-          .map((column) => (
+        {hideableColumns.map((column) => {
+          const label =
+            column.columnDef.meta?.label ??
+            (typeof column.columnDef.header === "string"
+              ? column.columnDef.header
+              : column.id);
+          return (
             <DropdownMenuCheckboxItem
               key={column.id}
-              className="capitalize"
               checked={column.getIsVisible()}
               onCheckedChange={(value) => column.toggleVisibility(!!value)}
             >
-              {column.id}
+              {label}
             </DropdownMenuCheckboxItem>
-          ))}
+          );
+        })}
+        {hiddenCount > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-xs px-2"
+              onClick={() =>
+                hideableColumns.forEach((col) => col.toggleVisibility(true))
+              }
+            >
+              Tout afficher
+            </Button>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
+import { Icon } from "@/components/ui/icon";
 import { Spinner } from "@/components/ui/spinner";
+import { CancelIcon, SaveIcon } from "@/lib/icons";
 
 interface FormActionsProps {
   variant: "page" | "dialog";
@@ -47,10 +49,15 @@ export function FormActions({
         onClick={onCancel}
         disabled={isDisabled}
       >
+        <Icon icon={CancelIcon} className="mr-1 h-4 w-4" />
         {cancelLabel}
       </Button>
       <Button type="submit" disabled={isDisabled}>
-        {isLoading && <Spinner className="mr-2 h-4 w-4" />}
+        {isLoading ? (
+          <Spinner className="mr-1 h-4 w-4" />
+        ) : (
+          <Icon icon={SaveIcon} className="mr-1 h-4 w-4" />
+        )}
         {isLoading ? submitLoadingLabel : submitLabel}
       </Button>
     </>

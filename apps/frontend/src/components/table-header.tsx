@@ -73,7 +73,7 @@ function SearchInput({ search }: { search: SearchField }) {
   const handleSubmit = () => search.onSearch(localValue);
 
   return (
-    <div className="flex flex-1 min-w-50 max-w-sm">
+    <div className="flex flex-1 min-w-50 max-w-xs">
       <Input
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
