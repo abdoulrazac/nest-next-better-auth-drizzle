@@ -33,10 +33,6 @@ const TABS = [
   },
 ] as const;
 
-export function generateStaticParams() {
-  return VALID_PATHS.map((path) => ({ path }));
-}
-
 export default function UserSettingsPage() {
   const { path } = useParams<{ path: string }>();
 
