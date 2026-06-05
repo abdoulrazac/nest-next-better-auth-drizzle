@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { LoadingIcon } from "@/lib/icons";
+import { Spinner } from "@/components/ui/spinner";
 
 interface FormActionsProps {
   variant: "page" | "dialog";
@@ -51,12 +50,7 @@ export function FormActions({
         {cancelLabel}
       </Button>
       <Button type="submit" disabled={isDisabled}>
-        {isLoading && (
-          <HugeiconsIcon
-            icon={LoadingIcon}
-            className="mr-2 h-4 w-4 animate-spin"
-          />
-        )}
+        {isLoading && <Spinner className="mr-2 h-4 w-4" />}
         {isLoading ? submitLoadingLabel : submitLabel}
       </Button>
     </>
