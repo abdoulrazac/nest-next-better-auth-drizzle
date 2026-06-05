@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { Icon } from "@/components/ui/icon";
 import { EyeIcon, EyeOffIcon, LockPasswordIcon } from "@/lib/icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import { apiClient } from "@/lib/api";
-import { FormSection } from "@/components/form-section";
-import { Input } from "@/components/ui/input";
+import { FormSection } from "@/components/form/form-section";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { apiClient } from "@/lib/api";
 
 const securitySchema = z
   .object({

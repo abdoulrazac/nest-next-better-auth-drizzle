@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { apiClient } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import type { User, UsersPaginatedResponse } from "./types";
 
 export const userKeys = {
@@ -48,9 +48,9 @@ export function useCreateUser() {
       apiClient.post({ url: "/v1/accounts/users", body: data }) as any,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User created");
+      toast.success("Utilisateur créé avec succès");
     },
-    onError: () => toast.error("Failed to create user"),
+    onError: () => toast.error("Impossible de créer l'utilisateur"),
   });
 }
 
@@ -61,9 +61,9 @@ export function useUpdateUser() {
       apiClient.patch({ url: `/v1/accounts/users/${id}`, body: data }) as any,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User updated");
+      toast.success("Utilisateur mis à jour");
     },
-    onError: () => toast.error("Failed to update user"),
+    onError: () => toast.error("Impossible de modifier l'utilisateur"),
   });
 }
 
@@ -74,8 +74,8 @@ export function useDeleteUser() {
       apiClient.delete({ url: `/v1/accounts/users/${id}` }) as any,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User deleted");
+      toast.success("Utilisateur supprimé");
     },
-    onError: () => toast.error("Failed to delete user"),
+    onError: () => toast.error("Impossible de supprimer l'utilisateur"),
   });
 }

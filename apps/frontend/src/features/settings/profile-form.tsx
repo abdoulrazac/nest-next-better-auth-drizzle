@@ -1,23 +1,23 @@
 "use client";
 
-import { useStore } from "@nanostores/react";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { Icon } from "@/components/ui/icon";
 import { UserIcon } from "@/lib/icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useStore } from "@nanostores/react";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import { authClient } from "@/lib/auth-client";
-import { apiClient } from "@/lib/api";
-import { FormSection } from "@/components/form-section";
+import { FormSection } from "@/components/form/form-section";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { apiClient } from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Display name is required"),

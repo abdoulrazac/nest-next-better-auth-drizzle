@@ -1,18 +1,17 @@
 // apps/frontend/src/features/showcase/products/columns.tsx
 "use client";
 
-import { type ColumnDef } from "@tanstack/react-table";
 import CellActions, {
-  createViewAction,
+  createDeleteAction,
   createEditAction,
-  createAction,
+  createViewAction,
 } from "@/components/cell-actions";
+import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { StatusBadge } from "@/components/status-badge";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { TrashIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import type { Product } from "./types";
+import { type ColumnDef } from "@tanstack/react-table";
 import type { ProductHandlers } from "./hooks";
+import type { Product } from "./types";
 
 export function buildProductColumns(
   handlers: ProductHandlers,
@@ -20,7 +19,11 @@ export function buildProductColumns(
   return [
     {
       accessorKey: "reference",
-      header: "Référence",
+      enableSorting: false,
+      meta: { label: "Référence" },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Référence" />
+      ),
       cell: ({ row }) => (
         <span className="font-mono text-xs text-muted-foreground">
           {row.original.reference}
@@ -29,18 +32,27 @@ export function buildProductColumns(
     },
     {
       accessorKey: "name",
-      header: "Nom",
+      meta: { label: "Nom" },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Nom" />
+      ),
       cell: ({ row }) => (
         <span className="font-medium">{row.original.name}</span>
       ),
     },
     {
       accessorKey: "category",
-      header: "Catégorie",
+      meta: { label: "Catégorie" },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Catégorie" />
+      ),
     },
     {
       accessorKey: "price",
-      header: "Prix",
+      meta: { label: "Prix" },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Prix" />
+      ),
       cell: ({ row }) => (
         <span className="tabular-nums">
           {row.original.price.toLocaleString("fr-FR", {
@@ -52,7 +64,10 @@ export function buildProductColumns(
     },
     {
       accessorKey: "stock",
-      header: "Stock",
+      meta: { label: "Stock" },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Stock" />
+      ),
       cell: ({ row }) => (
         <span
           className={cn(
@@ -66,11 +81,16 @@ export function buildProductColumns(
     },
     {
       accessorKey: "status",
-      header: "Statut",
+      enableSorting: false,
+      meta: { label: "Statut" },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Statut" />
+      ),
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
     },
     {
       id: "actions",
+      enableHiding: false,
       cell: ({ row }) => {
         const id = row.original.id;
         return (
@@ -79,16 +99,7 @@ export function buildProductColumns(
             actions={[
               createViewAction(() => handlers.onView(id)),
               createEditAction(() => handlers.onEdit(id)),
-              // createAction without confirmDialog — la confirmation est centralisée dans hooks.ts
-              createAction(
-                <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
-                () => handlers.onDelete(id),
-                {
-                  tooltip: "Supprimer",
-                  variant: "destructive",
-                  className: "bg-background border-none",
-                },
-              ),
+              createDeleteAction(() => handlers.onDelete(id)),
             ]}
           />
         );

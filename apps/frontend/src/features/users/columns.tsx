@@ -1,7 +1,6 @@
 "use client";
 
 import { type ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { CellActions } from "@/components/data-table/cell-actions";
@@ -9,6 +8,8 @@ import { StatusBadge } from "@/components/status-badge";
 import { EyeIcon, EditIcon, TrashIcon } from "@/lib/icons";
 import type { User } from "./types";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const AVATAR_COLORS = [
   "bg-blue-500",
@@ -28,7 +29,14 @@ function getAvatarColor(name: string) {
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
 
-/** Derive a status string from the UserResponse fields */
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
 function getUserStatus(user: User): "active" | "banned" {
   return user.banned ? "banned" : "active";
 }
@@ -46,42 +54,23 @@ export function buildColumns({
 }: BuildColumnsOptions): ColumnDef<User>[] {
   return [
     {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
       accessorKey: "name",
+      meta: { label: "Nom" },
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Name" />
+        <DataTableColumnHeader column={column} title="Nom" />
       ),
       cell: ({ row }) => {
         const user = row.original;
-        const initials = user.name?.charAt(0)?.toUpperCase() ?? "?";
         const color = getAvatarColor(user.name ?? "");
         return (
           <div className="flex items-center gap-3">
             <div
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full text-white text-sm font-semibold flex-shrink-0",
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white text-xs font-bold",
                 color,
               )}
             >
-              {initials}
+              {getInitials(user.name ?? "?")}
             </div>
             <div className="flex flex-col min-w-0">
               <span className="font-medium text-sm truncate">{user.name}</span>
@@ -95,15 +84,18 @@ export function buildColumns({
     },
     {
       id: "status",
+      enableSorting: false,
+      meta: { label: "Statut" },
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
+        <DataTableColumnHeader column={column} title="Statut" />
       ),
       cell: ({ row }) => <StatusBadge status={getUserStatus(row.original)} />,
     },
     {
       accessorKey: "role",
+      meta: { label: "Rôle" },
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Role" />
+        <DataTableColumnHeader column={column} title="Rôle" />
       ),
       cell: ({ row }) => {
         const role = row.original.role;
@@ -113,29 +105,51 @@ export function buildColumns({
       },
     },
     {
-      accessorKey: "createdAt",
+      accessorKey: "emailVerified",
+      enableSorting: false,
+      meta: { label: "Email vérifié" },
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created" />
+        <DataTableColumnHeader column={column} title="Email vérifié" />
+      ),
+      cell: ({ row }) => (
+        <StatusBadge
+          status={row.original.emailVerified ? "ACTIVE" : "PENDING"}
+          variant={row.original.emailVerified ? "success" : "warning"}
+        />
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      meta: { label: "Créé le" },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Créé le" />
       ),
       cell: ({ row }) => {
         const date = row.original.createdAt;
         if (!date) return "—";
-        return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-          new Date(date),
+        return (
+          <span className="text-sm text-muted-foreground whitespace-nowrap">
+            {format(new Date(date), "dd MMM yyyy", { locale: fr })}
+          </span>
         );
       },
     },
     {
       id: "actions",
+      enableHiding: false,
       cell: ({ row }) => {
         const user = row.original;
         return (
           <CellActions
             actions={[
-              { label: "View", icon: EyeIcon, onClick: () => onView(user) },
-              { label: "Edit", icon: EditIcon, onClick: () => onEdit(user) },
+              { label: "Voir", icon: EyeIcon, onClick: () => onView(user) },
               {
-                label: "Delete",
+                label: "Modifier",
+                icon: EditIcon,
+                onClick: () => onEdit(user),
+              },
+              {
+                label: "Supprimer",
                 icon: TrashIcon,
                 onClick: () => onDelete(user),
                 variant: "destructive",

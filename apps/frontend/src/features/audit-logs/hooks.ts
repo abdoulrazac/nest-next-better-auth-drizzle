@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import type { AuditLogsPaginatedResponse } from "./types";
 
 export const auditKeys = {
@@ -12,6 +12,7 @@ export function useListAuditLogs(params?: {
   pageSize?: number;
   search?: string;
   action?: string;
+  resource?: string;
 }) {
   return useQuery({
     queryKey: auditKeys.list(params),

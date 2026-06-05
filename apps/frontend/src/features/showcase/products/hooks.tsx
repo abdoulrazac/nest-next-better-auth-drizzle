@@ -16,9 +16,9 @@ import {
   createResetButton,
   createSearchField,
 } from "@/components/table-header";
+import { useTableParams } from "@/hooks/use-table-params";
 import { TrashIcon } from "@/lib/icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useTableParams } from "@/hooks/use-table-params";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";

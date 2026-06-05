@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { FormSection } from "@/components/form/form-section";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -19,14 +18,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { FormSection } from "@/components/form-section";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useCreateWebhook, useUpdateWebhook } from "./hooks";
 import {
+  AVAILABLE_EVENTS,
   createWebhookSchema,
   type WebhookFormValues,
-  AVAILABLE_EVENTS,
 } from "./schema";
-import { useCreateWebhook, useUpdateWebhook } from "./hooks";
 import type { Webhook } from "./types";
 
 interface MutateWebhookDialogProps {

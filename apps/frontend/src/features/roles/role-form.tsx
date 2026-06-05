@@ -1,5 +1,8 @@
 "use client";
 
+import { FormActions, FormTextField } from "@/components/form";
+import { FormSection } from "@/components/form/form-section";
+import { PageHeader } from "@/components/page-header";
 import {
   Accordion,
   AccordionContent,
@@ -14,18 +17,15 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
-import { FormTextField, FormActions } from "@/components/form";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FormSection } from "@/components/form-section";
-import { PageHeader } from "@/components/page-header";
-import { cn } from "@/lib/utils";
 import { permissionGroups, permissionList } from "@/lib/permissions";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { createRoleSchema, type RoleFormValues } from "./schema";
 import { useCreateRole, useGetPermissions, useUpdateRole } from "./hooks";
+import { createRoleSchema, type RoleFormValues } from "./schema";
 import type { OrgRole } from "./types";
 
 // ── Helper ────────────────────────────────────────────────────────────────────

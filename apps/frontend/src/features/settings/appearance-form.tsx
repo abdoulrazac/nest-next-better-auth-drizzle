@@ -1,10 +1,10 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { Icon } from "@/components/ui/icon";
-import { SunIcon, MoonIcon, ComputerIcon } from "@/lib/icons";
+import { ComputerIcon, MoonIcon, SunIcon } from "@/lib/icons";
+import { useTheme } from "next-themes";
 
-import { FormSection } from "@/components/form-section";
+import { FormSection } from "@/components/form/form-section";
 import { cn } from "@/lib/utils";
 
 const themes = [

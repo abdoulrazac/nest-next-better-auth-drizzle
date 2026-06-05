@@ -2,32 +2,32 @@
 "use client";
 
 import {
+  DetailGrid,
+  DetailItem,
+  DetailSection,
+} from "@/components/detail-section";
+import {
+  DetailTabs,
+  createDetailsTab,
+  createOverviewTab,
+} from "@/components/detail-tabs";
+import { StatusBadge } from "@/components/status-badge";
+import { Button } from "@/components/ui/button";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/status-badge";
-import {
-  DetailSection,
-  DetailGrid,
-  DetailItem,
-} from "@/components/detail-section";
-import {
-  DetailTabs,
-  createOverviewTab,
-  createDetailsTab,
-} from "@/components/detail-tabs";
 import { EditIcon, ExternalLinkIcon } from "@/lib/icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { VariantTable } from "./_components/variant-table";
-import * as mockStore from "./mock-store";
-import { productKeys } from "./hooks";
 import type { ProductHandlers } from "./hooks";
+import { productKeys } from "./hooks";
+import * as mockStore from "./mock-store";
 
 interface ProductDetailSheetProps {
   productId: string | null;
@@ -55,16 +55,23 @@ export function ProductDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[400px] sm:w-[580px] sm:max-w-xl overflow-y-auto">
+      <SheetContent className="min-w-[500px] sm:w-[580px] sm:max-w-xl overflow-y-auto">
         <SheetHeader>
-          {isLoading ? (
-            <Skeleton className="h-6 w-48" />
-          ) : (
-            <div className="flex items-center justify-between gap-2 pr-6">
-              <div className="flex items-center gap-2 min-w-0">
-                <SheetTitle className="truncate">{product?.name}</SheetTitle>
-                {product && <StatusBadge status={product.status} />}
-              </div>
+          <div className="flex items-center justify-between gap-2 pr-6">
+            <div className="flex items-center gap-2 min-w-0">
+              {isLoading ? (
+                <>
+                  <SheetTitle className="sr-only">Chargement...</SheetTitle>
+                  <Skeleton className="h-6 w-48" />
+                </>
+              ) : (
+                <>
+                  <SheetTitle className="truncate">{product?.name}</SheetTitle>
+                  {product && <StatusBadge status={product.status} />}
+                </>
+              )}
+            </div>
+            {!isLoading && (
               <div className="flex items-center gap-1 shrink-0">
                 <Button
                   variant="ghost"
@@ -89,8 +96,8 @@ export function ProductDetailSheet({
                   Modifier
                 </Button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </SheetHeader>
 
         {isLoading ? (
