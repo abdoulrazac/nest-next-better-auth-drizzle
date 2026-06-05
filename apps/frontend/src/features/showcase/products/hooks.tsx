@@ -1,30 +1,31 @@
 // apps/frontend/src/features/showcase/products/hooks.ts
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { TrashIcon } from "@/lib/icons";
-import {
-  useConfirmDialog,
-  confirmDialogPresets,
-} from "@/components/hooks/use-confirm-dialog";
 import {
   executeBulkAction,
   showBulkResultToast,
 } from "@/components/hooks/use-bulk-selection";
 import {
-  createSearchField,
+  confirmDialogPresets,
+  useConfirmDialog,
+} from "@/components/hooks/use-confirm-dialog";
+import SingleSelect from "@/components/single-select";
+import {
+  createBulkActions,
   createFilterField,
   createResetButton,
-  createBulkActions,
+  createSearchField,
 } from "@/components/table-header";
-import SingleSelect from "@/components/single-select";
-import * as mockStore from "./mock-store";
+import { TrashIcon } from "@/lib/icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { useTableParams } from "@/hooks/use-table-params";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { buildProductColumns } from "./columns";
-import type { Product, ProductCategory, ProductStatus } from "./types";
+import * as mockStore from "./mock-store";
+import type { Product } from "./types";
 
 // ── Query keys ─────────────────────────────────────────────────────────────────
 export const productKeys = {
@@ -48,11 +49,17 @@ export function useProducts() {
   const { confirm, ConfirmDialogComponent } = useConfirmDialog();
 
   // State
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+  const {
+    search,
+    setSearch,
+    getFilter,
+    setFilter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    resetFilters,
+  } = useTableParams({ filterKeys: ["status", "category"] });
   const [selectedItems, setSelectedItems] = useState<Product[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -61,21 +68,23 @@ export function useProducts() {
     queryKey: productKeys.list({
       page,
       pageSize,
-      searchTerm,
-      statusFilter,
-      categoryFilter,
+      search,
+      status: getFilter("status"),
+      category: getFilter("category"),
     }),
     queryFn: async () => {
       await new Promise((r) => setTimeout(r, 200));
       const all = mockStore.getProducts();
+      const q = search.toLowerCase();
+      const statusVal = getFilter("status");
+      const categoryVal = getFilter("category");
       const filtered = all.filter((p) => {
-        const q = searchTerm.toLowerCase();
         const matchSearch =
           !q ||
           p.name.toLowerCase().includes(q) ||
           p.reference.toLowerCase().includes(q);
-        const matchStatus = !statusFilter || p.status === statusFilter;
-        const matchCategory = !categoryFilter || p.category === categoryFilter;
+        const matchStatus = !statusVal || p.status === statusVal;
+        const matchCategory = !categoryVal || p.category === categoryVal;
         return matchSearch && matchStatus && matchCategory;
       });
       const total = filtered.length;
@@ -135,24 +144,18 @@ export function useProducts() {
   // Table config
   const columns = useMemo(() => buildProductColumns(handlers), [handlers]);
 
-  const searchConfig = createSearchField(
-    searchTerm,
-    (v) => {
-      setSearchTerm(v);
-      setPage(1);
-    },
-    { placeholder: "Rechercher un produit..." },
-  );
+  const searchConfig = createSearchField(search, setSearch, {
+    placeholder: "Rechercher un produit...",
+  });
 
   const filtersConfig = [
     createFilterField(
       "status",
       <SingleSelect
-        value={statusFilter}
-        onValueChange={(v) => {
-          setStatusFilter(v);
-          setPage(1);
-        }}
+        value={getFilter("status")}
+        onValueChange={(v) =>
+          setFilter("status", getFilter("status") === v ? "" : v)
+        }
         options={[
           { value: "ACTIVE", label: "Actif" },
           { value: "INACTIVE", label: "Inactif" },
@@ -166,11 +169,10 @@ export function useProducts() {
     createFilterField(
       "category",
       <SingleSelect
-        value={categoryFilter}
-        onValueChange={(v) => {
-          setCategoryFilter(v);
-          setPage(1);
-        }}
+        value={getFilter("category")}
+        onValueChange={(v) =>
+          setFilter("category", getFilter("category") === v ? "" : v)
+        }
         options={[
           { value: "Électronique", label: "Électronique" },
           { value: "Vêtements", label: "Vêtements" },
@@ -183,14 +185,7 @@ export function useProducts() {
     ),
   ];
 
-  const actionsConfig = [
-    createResetButton(() => {
-      setSearchTerm("");
-      setStatusFilter("");
-      setCategoryFilter("");
-      setPage(1);
-    }),
-  ];
+  const actionsConfig = [createResetButton(resetFilters)];
 
   const bulkActionsConfig =
     selectedItems.length > 0
