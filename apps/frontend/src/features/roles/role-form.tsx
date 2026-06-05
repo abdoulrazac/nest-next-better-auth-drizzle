@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { permissionGroups, permissionList } from "@/lib/permissions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { createRoleSchema, type RoleFormValues } from "./schema";
 import { useCreateRole, useGetPermissions, useUpdateRole } from "./hooks";
@@ -224,10 +224,11 @@ export interface RoleFormProps {
 export function RoleForm({ role }: RoleFormProps) {
   const router = useRouter();
   const isEdit = !!role;
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const createRole = useCreateRole();
   const updateRole = useUpdateRole();
+
+  const isSubmitting = createRole.isPending || updateRole.isPending;
 
   const { data: backendPermissions, isLoading: permissionsLoading } =
     useGetPermissions();
@@ -241,26 +242,21 @@ export function RoleForm({ role }: RoleFormProps) {
   });
 
   async function onSubmit(values: RoleFormValues) {
-    setIsSubmitting(true);
-    try {
-      if (isEdit && role) {
-        await updateRole.mutateAsync({
-          id: role.id,
-          data: {
-            roleName: values.role !== role.role ? values.role : undefined,
-            permission: values.permission ?? {},
-          },
-        });
-      } else {
-        await createRole.mutateAsync({
-          role: values.role,
+    if (isEdit && role) {
+      await updateRole.mutateAsync({
+        id: role.id,
+        data: {
+          roleName: values.role !== role.role ? values.role : undefined,
           permission: values.permission ?? {},
-        });
-      }
-      router.push("/accounts/roles");
-    } finally {
-      setIsSubmitting(false);
+        },
+      });
+    } else {
+      await createRole.mutateAsync({
+        role: values.role,
+        permission: values.permission ?? {},
+      });
     }
+    router.push("/accounts/roles");
   }
 
   const allGroupKeys = Object.keys(permissionGroups);

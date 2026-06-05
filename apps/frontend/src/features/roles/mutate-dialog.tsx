@@ -276,6 +276,11 @@ export function MutateRoleDialog({
               label="Nom du rôle"
               placeholder="ex. éditeur"
               disabled={isEdit}
+              description={
+                isEdit
+                  ? "Le nom d'un rôle ne peut pas être modifié après création."
+                  : undefined
+              }
               required
             />
 

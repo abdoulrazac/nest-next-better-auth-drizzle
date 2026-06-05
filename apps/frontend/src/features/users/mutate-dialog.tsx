@@ -105,8 +105,8 @@ export function MutateUserDialog({
           <FormActions
             variant="dialog"
             isLoading={isPending}
-            submitLabel={isEdit ? "Sauvegarder" : "Créer"}
-            submitLoadingLabel="Enregistrement..."
+            submitLabel={isEdit ? "Mettre à jour" : "Créer"}
+            submitLoadingLabel={isEdit ? "Mise à jour..." : "Création..."}
             onCancel={() => onOpenChange(false)}
           />
         </form>
