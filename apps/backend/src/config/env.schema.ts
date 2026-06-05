@@ -31,7 +31,12 @@ export const envSchema = z.object({
   CORS_ORIGINS: z
     .string()
     .default('http://localhost:3002,http://localhost:3003')
-    .transform((val) => val.split(',').map((s) => s.trim())),
+    .transform((val) =>
+      val
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    ),
 
   // OAuth (optional)
   GOOGLE_CLIENT_ID: z.string().optional(),

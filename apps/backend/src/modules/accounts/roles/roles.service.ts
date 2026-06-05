@@ -1,7 +1,9 @@
 // apps/backend/src/modules/accounts/roles/roles.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { statement } from '@/auth/permission';
 import type {
   CreateRoleInput,
+  PermissionsResponse,
   RoleResponse,
   UpdateRoleInput,
   UserRoleResponse,
@@ -11,6 +13,15 @@ import {
   userRoleResponseSchema,
 } from '@repo/validators/accounts';
 import { RolesRepository } from './roles.repository';
+
+/** Better Auth organisation built-in permissions (checked by authClient.organization.*) */
+const builtInStatements: Record<string, string[]> = {
+  organization: ['update', 'delete'],
+  member: ['create', 'update', 'delete'],
+  invitation: ['create', 'cancel'],
+  team: ['create', 'update', 'delete'],
+  ac: ['create', 'read', 'update', 'delete'],
+};
 
 @Injectable()
 export class RolesService {
@@ -56,5 +67,20 @@ export class RolesService {
     await this.findById(roleId);
     const assigned = await this.rolesRepository.assignToUser(userId, roleId);
     return userRoleResponseSchema.parse(assigned);
+  }
+
+  /**
+   * Returns the full permission map available for use in org roles:
+   * - Custom backend resources (from the access-control statement)
+   * - Better Auth org built-ins (organization, member, invitation, team, ac)
+   */
+  getPermissions(): PermissionsResponse {
+    const custom = Object.fromEntries(
+      Object.entries(statement).map(([resource, actions]) => [
+        resource,
+        [...actions] as string[],
+      ]),
+    );
+    return { ...custom, ...builtInStatements };
   }
 }

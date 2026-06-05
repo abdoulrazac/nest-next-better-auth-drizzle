@@ -2,7 +2,7 @@
 import { createAccessControl } from 'better-auth/plugins/access';
 
 // Define permissions per resource
-const statement = {
+export const statement = {
   users: ['read', 'write', 'delete'],
   roles: ['read', 'write', 'delete'],
   'audit-logs': ['read'],

@@ -17,10 +17,12 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   createRoleSchema,
+  permissionsResponseSchema,
   roleResponseSchema,
   updateRoleSchema,
   userRoleResponseSchema,
   type CreateRoleInput,
+  type PermissionsResponse,
   type RoleResponse,
   type UpdateRoleInput,
   type UserRoleResponse,
@@ -40,6 +42,14 @@ export class RolesController {
   @UserHasPermission({ permission: Permissions.roles.read })
   findAll(): Promise<RoleResponse[]> {
     return this.rolesService.findAll();
+  }
+
+  @Get('permissions')
+  @ApiOperation({ summary: 'Get available permissions (resource → actions)' })
+  @ApiZodOkResponse(permissionsResponseSchema)
+  @UserHasPermission({ permission: Permissions.roles.read })
+  getPermissions(): PermissionsResponse {
+    return this.rolesService.getPermissions();
   }
 
   @Get(':id')

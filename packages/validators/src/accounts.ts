@@ -100,6 +100,12 @@ export const auditLogsPaginatedResponseSchema = paginatedResponseSchema(
   auditLogResponseSchema,
 );
 
+/** Shape returned by GET /v1/accounts/roles/permissions */
+export const permissionsResponseSchema = z.record(
+  z.string(),
+  z.array(z.string()),
+);
+
 export type CreateAuditLogInput = {
   userId: string;
   action: string;
@@ -132,3 +138,4 @@ export type RolesPaginatedResponse = z.infer<
 export type AuditLogsPaginatedResponse = z.infer<
   typeof auditLogsPaginatedResponseSchema
 >;
+export type PermissionsResponse = z.infer<typeof permissionsResponseSchema>;

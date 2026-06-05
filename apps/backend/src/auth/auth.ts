@@ -16,7 +16,10 @@ const emailService = createEmailService();
 export const trustedOrigins = env.CORS_ORIGINS;
 
 export const auth = betterAuth({
-  baseURL: env.BETTER_AUTH_URL,
+  baseURL: {
+    allowedHosts: env.CORS_ORIGINS,
+    fallback: env.BETTER_AUTH_URL,
+  },
   secret: env.BETTER_AUTH_SECRET,
   trustedOrigins,
   database: drizzleAdapter(db, {
