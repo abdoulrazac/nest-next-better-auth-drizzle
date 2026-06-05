@@ -1,18 +1,20 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { SearchIcon, XIcon, RefreshIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { RefreshIcon, SearchIcon, XIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { type ReactNode } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { useEffect, useState, type ReactNode } from "react";
 
 // ── Types ───────────────────────────────────────────────────────────────────────
 
 export interface SearchField {
+  /** Valeur commitée (depuis l'URL). L'input se resynchronise dessus. */
   value: string;
-  onChange: (v: string) => void;
+  /** Appelé uniquement sur Enter ou clic du bouton loupe. */
+  onSearch: (v: string) => void;
   placeholder?: string;
 }
 
@@ -48,8 +50,50 @@ interface TableHeaderProps {
   filters?: FilterField[];
   actions?: ActionButton[];
   bulkActions?: BulkActionsConfig;
+  extra?: ReactNode;
   spacing?: "sm" | "md" | "lg";
   className?: string;
+}
+
+// ── SearchInput ─────────────────────────────────────────────────────────────────
+
+/**
+ * Input avec bouton loupe. State local pour la frappe ; onSearch n'est
+ * appelé que sur Enter ou clic du bouton. Se resynchronise avec `value`
+ * lors de la navigation retour/avant.
+ */
+function SearchInput({ search }: { search: SearchField }) {
+  const [localValue, setLocalValue] = useState(search.value);
+
+  // Resync quand l'URL change (navigation retour/avant)
+  useEffect(() => {
+    setLocalValue(search.value);
+  }, [search.value]);
+
+  const handleSubmit = () => search.onSearch(localValue);
+
+  return (
+    <div className="flex flex-1 min-w-50 max-w-sm">
+      <Input
+        value={localValue}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") handleSubmit();
+        }}
+        placeholder={search.placeholder ?? "Rechercher..."}
+        className="rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0"
+      />
+      <Button
+        variant="outline"
+        size="icon"
+        type="button"
+        onClick={handleSubmit}
+        className="rounded-l-none border-l-0 shrink-0"
+      >
+        <HugeiconsIcon icon={SearchIcon} className="h-4 w-4" />
+      </Button>
+    </div>
+  );
 }
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -59,6 +103,7 @@ export default function TableHeader({
   filters,
   actions,
   bulkActions,
+  extra,
   spacing = "md",
   className,
 }: TableHeaderProps) {
@@ -101,34 +146,17 @@ export default function TableHeader({
 
   return (
     <div className={cn("flex flex-wrap items-center", gapClass, className)}>
-      {search && (
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <HugeiconsIcon
-            icon={SearchIcon}
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
-          />
-          <Input
-            value={search.value}
-            onChange={(e) => search.onChange(e.target.value)}
-            placeholder={search.placeholder ?? "Rechercher..."}
-            className="pl-9"
-          />
-        </div>
-      )}
+      {search && <SearchInput search={search} />}
       {filters?.map((f) => (
         <div key={f.id}>{f.component}</div>
       ))}
       {actions?.map((a, i) => (
-        <Button
-          key={i}
-          variant={a.variant ?? "outline"}
-          size="sm"
-          onClick={a.onClick}
-        >
+        <Button key={i} variant={a.variant ?? "outline"} onClick={a.onClick}>
           {a.icon}
           {a.label}
         </Button>
       ))}
+      {extra && <div className="ml-auto">{extra}</div>}
     </div>
   );
 }
@@ -137,10 +165,10 @@ export default function TableHeader({
 
 export function createSearchField(
   value: string,
-  onChange: (v: string) => void,
+  onSearch: (v: string) => void,
   opts?: { placeholder?: string },
 ): SearchField {
-  return { value, onChange, placeholder: opts?.placeholder };
+  return { value, onSearch, placeholder: opts?.placeholder };
 }
 
 export function createFilterField(
