@@ -97,7 +97,7 @@ import PageHeader, { PageHeaderActions } from "@/components/page-header";
 
 ## TableHeader
 
-Search bar + filters + reset + bulk action bar.
+Search bar + filters + reset + bulk action bar. **Toujours alimenté par `useTableParams`** (voir `@/hooks/use-table-params`) — jamais avec du `useState` manuel pour search/filtres/page.
 
 ```tsx
 import TableHeader, {
@@ -109,18 +109,17 @@ import TableHeader, {
 import SingleSelect from "@/components/single-select";
 
 <TableHeader
-  search={createSearchField(searchTerm, setSearchTerm, {
+  // second param de createSearchField = onSearch (appelé sur Enter ou bouton, pas à chaque frappe)
+  // Utiliser les valeurs de useTableParams : search, setSearch, getFilter, setFilter, resetFilters
+  search={createSearchField(search, setSearch, {
     placeholder: "Rechercher...",
   })}
   filters={[
     createFilterField(
       "status",
       <SingleSelect
-        value={statusFilter}
-        onValueChange={(v) => {
-          setStatusFilter(v);
-          setPage(1);
-        }}
+        value={getFilter("status")}
+        onValueChange={(v) => setFilter("status", v)} // setFilter auto-remet la page à 1
         options={[
           { value: "ACTIVE", label: "Actif" },
           { value: "INACTIVE", label: "Inactif" },
@@ -131,11 +130,7 @@ import SingleSelect from "@/components/single-select";
     ),
   ]}
   actions={[
-    createResetButton(() => {
-      setSearchTerm("");
-      setStatusFilter("");
-      setPage(1);
-    }),
+    createResetButton(resetFilters), // remet search + filtres + page à 1 (pageSize préservé)
   ]}
   bulkActions={
     selectedItems.length > 0
@@ -327,10 +322,7 @@ import { Pagination } from "@/components/pagination";
       pageSize={pageSize}
       totalCount={total}
       onPageChange={setPage}
-      onPageSizeChange={(s) => {
-        setPageSize(s);
-        setPage(1);
-      }}
+      onPageSizeChange={setPageSize} // setPageSize auto-remet la page à 1
     />
   );
 }

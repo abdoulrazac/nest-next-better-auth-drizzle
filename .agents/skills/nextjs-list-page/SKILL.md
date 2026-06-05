@@ -50,6 +50,7 @@ import {
   createResetButton,
   createBulkActions,
 } from "@/components/table-header";
+import { useTableParams } from "@/hooks/use-table-params";
 import { buildEntityColumns } from "./columns";
 import type { Entity } from "./types";
 import { TrashIcon } from "@/lib/icons";
@@ -61,23 +62,33 @@ export function useEntity() {
   const queryClient = useQueryClient();
   const { confirm, ConfirmDialogComponent } = useConfirmDialog();
 
-  // ── State ──────────────────────────────────────────────────────────────────
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  // ── State URL (search + filtres + pagination) ──────────────────────────────
+  // Synchronisé avec l'URL : navigation retour/avant restaure l'état exact.
+  const {
+    search,
+    setSearch,
+    getFilter,
+    setFilter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    resetFilters,
+  } = useTableParams({ filterKeys: ["status"] });
+
+  // État local uniquement — pas dans l'URL
   const [selectedItems, setSelectedItems] = useState<Entity[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   // ── Data ───────────────────────────────────────────────────────────────────
   const { data, isLoading, error } = useQuery({
-    queryKey: ["entities", page, pageSize, searchTerm, statusFilter],
+    queryKey: ["entities", page, pageSize, search, getFilter("status")],
     queryFn: () =>
       client.entities.list({
         page,
         pageSize,
-        search: searchTerm,
-        status: statusFilter || undefined,
+        search: search || undefined,
+        status: getFilter("status") || undefined,
       }),
   });
 
@@ -121,11 +132,8 @@ export function useEntity() {
   const columns = useMemo(() => buildEntityColumns(handlers), []);
 
   const searchConfig = createSearchField(
-    searchTerm,
-    (v) => {
-      setSearchTerm(v);
-      setPage(1);
-    },
+    search,
+    setSearch, // onSearch — appelé uniquement sur Enter ou bouton, pas à chaque frappe ; setSearch auto-remet la page à 1
     { placeholder: "Rechercher..." },
   );
 
@@ -133,11 +141,8 @@ export function useEntity() {
     createFilterField(
       "status",
       <SingleSelect
-        value={statusFilter}
-        onValueChange={(v) => {
-          setStatusFilter(v);
-          setPage(1);
-        }}
+        value={getFilter("status")}
+        onValueChange={(v) => setFilter("status", v)} // setFilter auto-remet la page à 1
         options={[
           { value: "ACTIVE", label: "Actif" },
           { value: "INACTIVE", label: "Inactif" },
@@ -149,11 +154,7 @@ export function useEntity() {
   ];
 
   const actionsConfig = [
-    createResetButton(() => {
-      setSearchTerm("");
-      setStatusFilter("");
-      setPage(1);
-    }),
+    createResetButton(resetFilters), // remet search + filtres + page à 1 (pageSize préservé)
   ];
 
   const bulkActionsConfig =
@@ -329,10 +330,7 @@ export default function EntityListPage() {
             pageSize={pageSize}
             totalCount={total}
             onPageChange={setPage}
-            onPageSizeChange={(s) => {
-              setPageSize(s);
-              setPage(1);
-            }}
+            onPageSizeChange={setPageSize} // setPageSize auto-remet la page à 1
           />
         )}
       </div>
@@ -354,6 +352,8 @@ export default function EntityListPage() {
 
 ## Checklist
 
+- [ ] `useTableParams` pour search/filtres/pagination (URL-synced) ; state UI local (`selectedItems`, `selectedId`, dialogs) reste `useState`
+- [ ] `setSearch` / `setFilter` / `setPageSize` auto-resetent page à 1 — ne pas appeler `setPage(1)` manuellement
 - [ ] `"use client"` en tête de tous les fichiers
 - [ ] Hook centralisé (`hooks.ts`) — mutations, handlers, configs, ConfirmDialogComponent
 - [ ] Page fine — aucune mutation ni handler définis dans la page
