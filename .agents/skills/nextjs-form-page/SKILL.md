@@ -9,6 +9,7 @@ description: Create a standalone form page (not dialog) for settings, profile, o
 
 - **Form fields** — `FormTextField`, `FormTextareaField`, `FormSwitchField`, `FormCheckboxField`, `FormSelectField`, `FormDateField` de `@/components/form`
 - **Form actions** — `FormActions variant="page"` de `@/components/form`
+- **Form sections** — `FormSection` de `@/components/form`
 - **PageHeader** (`@/components/page-header`) — titre + description + bouton retour
 - **BasePage** (`@/components/layout/base-page`) — wrapper dashboard
 - **Schema** — import depuis `@repo/validators/<entity>` (JAMAIS de schema local)

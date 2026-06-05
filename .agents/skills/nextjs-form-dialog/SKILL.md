@@ -9,6 +9,7 @@ description: Create a form inside a ShadcnUI Dialog for create or edit operation
 
 - **Form fields** — `FormTextField`, `FormTextareaField`, `FormSwitchField`, `FormCheckboxField`, `FormSelectField`, `FormDateField` de `@/components/form`
 - **Form actions** — `FormActions variant="dialog"` de `@/components/form`
+- **Form sections** — `FormSection` de `@/components/form`
 - **ShadcnUI** `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle`
 - **Schema** — import depuis `@repo/validators/<entity>` (JAMAIS de schema local)
 - **API** — `client` de `@repo/api-client` ; `client.entity.create/update/delete`
