@@ -125,7 +125,7 @@ interface SearchField {
     onClick={handleSubmit}
     className="rounded-l-none border-l-0"
   >
-    <HugeiconsIcon icon={SearchIcon} className="h-4 w-4" />
+    <Icon icon={SearchIcon} className="h-4 w-4" />
   </Button>
 </div>
 ```

@@ -721,7 +721,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { TrashIcon } from "@/lib/icons";
 import {
   useConfirmDialog,
@@ -897,7 +897,7 @@ export function useProducts() {
           [
             {
               label: "Supprimer",
-              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
               onClick: handlers.onBulkDelete,
               variant: "destructive",
             },
@@ -958,7 +958,7 @@ import CellActions, {
   createAction,
 } from "@/components/cell-actions";
 import { StatusBadge } from "@/components/status-badge";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { TrashIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { Product } from "./types";
@@ -1031,7 +1031,7 @@ export function buildProductColumns(
               createEditAction(() => handlers.onEdit(id)),
               // createAction without confirmDialog — la confirmation est centralisée dans hooks.ts
               createAction(
-                <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+                <Icon icon={TrashIcon} className="h-4 w-4" />,
                 () => handlers.onDelete(id),
                 {
                   tooltip: "Supprimer",
@@ -1294,7 +1294,7 @@ import {
   createDetailsTab,
 } from "@/components/detail-tabs";
 import { EditIcon, ExternalLinkIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { VariantTable } from "./_components/variant-table";
@@ -1348,7 +1348,7 @@ export function ProductDetailSheet({
                   }}
                   title="Voir la fiche complète"
                 >
-                  <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />
+                  <Icon icon={ExternalLinkIcon} className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="outline"
@@ -1358,7 +1358,7 @@ export function ProductDetailSheet({
                     if (productId) handlers.onEdit(productId);
                   }}
                 >
-                  <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />
+                  <Icon icon={EditIcon} className="h-4 w-4" />
                   Modifier
                 </Button>
               </div>
@@ -1466,7 +1466,7 @@ import { Pagination } from "@/components/pagination";
 import { PageHeader, PageHeaderActions } from "@/components/page-header";
 import TableHeader from "@/components/table-header";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { AlertCircleIcon } from "@/lib/icons";
 import { ProductDetailSheet } from "./detail-sheet";
 import { useProducts } from "./hooks";
@@ -1520,7 +1520,7 @@ export function ProductsListPage() {
 
         {error && (
           <Alert variant="destructive">
-            <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+            <Icon icon={AlertCircleIcon} className="h-4 w-4" />
             <AlertDescription>
               Erreur : {(error as Error).message}
             </AlertDescription>
@@ -1622,7 +1622,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { AlertCircleIcon } from "@/lib/icons";
 import {
   useConfirmDialog,
@@ -1703,7 +1703,7 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
         ]}
       >
         <Alert variant="destructive">
-          <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+          <Icon icon={AlertCircleIcon} className="h-4 w-4" />
           <AlertDescription>Impossible de charger ce produit.</AlertDescription>
         </Alert>
       </BasePage>

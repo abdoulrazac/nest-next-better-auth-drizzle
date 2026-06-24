@@ -27,7 +27,7 @@
 
 ### Auth pages
 
-- Créer : `apps/frontend/src/app/auth/login/page.tsx`
+- Créer : `apps/frontend/src/app/auth/sign-in/page.tsx`
 - Créer : `apps/frontend/src/app/auth/register/page.tsx`
 - Créer : `apps/frontend/src/app/auth/forgot-password/page.tsx`
 
@@ -254,7 +254,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const PROTECTED_PREFIX = "/(dashboard)";
-const AUTH_PATHS = ["/auth/login", "/auth/register", "/auth/forgot-password"];
+const AUTH_PATHS = ["/auth/sign-in", "/auth/register", "/auth/forgot-password"];
 const SESSION_COOKIE = "better-auth.session_token";
 
 export function proxy(request: NextRequest) {
@@ -269,7 +269,7 @@ export function proxy(request: NextRequest) {
       !pathname.startsWith("/auth"));
 
   if (isDashboard && !isAuthenticated) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+    return NextResponse.redirect(new URL("/auth/sign-in", request.url));
   }
 
   // Redirect authenticated users away from auth pages
@@ -322,13 +322,13 @@ git commit -m "feat(frontend): add auth client and route proxy"
 
 **Files:**
 
-- Créer : `apps/frontend/src/app/auth/login/page.tsx`
+- Créer : `apps/frontend/src/app/auth/sign-in/page.tsx`
 - Créer : `apps/frontend/src/app/auth/register/page.tsx`
 - Créer : `apps/frontend/src/app/auth/forgot-password/page.tsx`
 
 Note: Ces pages sont des Client Components (`"use client"`) car elles utilisent react-hook-form.
 
-- [ ] **Step 1 : Créer `src/app/auth/login/page.tsx`**
+- [ ] **Step 1 : Créer `src/app/auth/sign-in/page.tsx`**
 
 ```tsx
 // apps/frontend/src/app/auth/login/page.tsx

@@ -348,7 +348,7 @@ import {
   SendIcon,
   TrashIcon,
 } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
@@ -473,7 +473,7 @@ export default function CellActions({
                 size="icon"
                 tooltipContent="Plus d'actions"
               >
-                <HugeiconsIcon icon={MoreHorizontalIcon} className="h-4 w-4" />
+                <Icon icon={MoreHorizontalIcon} className="h-4 w-4" />
               </ButtonTooltip>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -528,7 +528,7 @@ export function createViewAction(
   tooltip = "Voir les détails",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={EyeIcon} className="h-4 w-4" />,
+    icon: <Icon icon={EyeIcon} className="h-4 w-4" />,
     ...(typeof hrefOrFn === "function"
       ? { onClick: hrefOrFn }
       : { href: hrefOrFn }),
@@ -542,7 +542,7 @@ export function createEditAction(
   tooltip = "Modifier",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />,
+    icon: <Icon icon={EditIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -554,7 +554,7 @@ export function createDeleteAction(
   opts?: Partial<Pick<CellAction, "confirmDialog">>,
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+    icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
     onClick,
     tooltip: "Supprimer",
     variant: "destructive",
@@ -575,7 +575,7 @@ export function createCopyAction(
   tooltip = "Copier",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CopyIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -587,7 +587,7 @@ export function createOpenAction(
   tooltip = "Ouvrir",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={FolderOpenIcon} className="h-4 w-4" />,
+    icon: <Icon icon={FolderOpenIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -599,7 +599,7 @@ export function createNavigateAction(
   tooltip = "Voir les détails",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />,
+    icon: <Icon icon={ExternalLinkIcon} className="h-4 w-4" />,
     href,
     tooltip,
     variant: "ghost",
@@ -611,7 +611,7 @@ export function createCancelAction(
   tooltip = "Annuler",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={CancelSquareIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CancelSquareIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "destructive",
@@ -630,7 +630,7 @@ export function createSendEmailAction(
   tooltip = "Envoyer par email",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={SendIcon} className="h-4 w-4" />,
+    icon: <Icon icon={SendIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "outline",
@@ -648,7 +648,7 @@ export function createPreviewAction(
   tooltip = "Aperçu du document",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={FileSearchIcon} className="h-4 w-4" />,
+    icon: <Icon icon={FileSearchIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -660,7 +660,7 @@ export function createValidateAction(
   tooltip = "Valider",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={CheckCircleIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CheckCircleIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "outline",
@@ -672,7 +672,7 @@ export function createDuplicateAction(
   tooltip = "Dupliquer",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CopyIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -686,7 +686,7 @@ export function createToggleStatusAction(
 ): CellAction {
   const t = tooltip ?? (isActive ? "Désactiver" : "Activer");
   return {
-    icon: <HugeiconsIcon icon={CheckCircleIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CheckCircleIcon} className="h-4 w-4" />,
     onClick,
     tooltip: t,
     variant: "ghost",
@@ -743,7 +743,7 @@ export function StandardCellActions({
       ? editHref
         ? [
             {
-              icon: <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />,
+              icon: <Icon icon={EditIcon} className="h-4 w-4" />,
               href: editHref,
               tooltip: "Modifier",
               variant: "ghost" as const,
@@ -840,7 +840,7 @@ import {
   RefreshIcon,
   XIcon,
 } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import type { IconSvgElement } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -894,7 +894,7 @@ function ActionButton({ action }: { action: HeaderAction }) {
           >
             {action.icon}
             {action.label}
-            <HugeiconsIcon icon={ChevronDownIcon} className="ml-1 h-3 w-3" />
+            <Icon icon={ChevronDownIcon} className="ml-1 h-3 w-3" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -996,7 +996,7 @@ export default function PageHeader({
               asChild
             >
               <Link href={backHref}>
-                <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
+                <Icon icon={ArrowLeftIcon} className="h-4 w-4" />
                 {typeof backNavigation === "object" && backNavigation.label
                   ? backNavigation.label
                   : "Retour"}
@@ -1009,7 +1009,7 @@ export default function PageHeader({
               className="gap-1 text-muted-foreground"
               onClick={handleBack}
             >
-              <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
+              <Icon icon={ArrowLeftIcon} className="h-4 w-4" />
               {typeof backNavigation === "object" && backNavigation.label
                 ? backNavigation.label
                 : "Retour"}
@@ -1048,7 +1048,7 @@ export const PageHeaderActions = {
   create(href: string, label = "Nouveau"): HeaderAction {
     return {
       label,
-      icon: <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />,
+      icon: <Icon icon={PlusIcon} className="h-4 w-4" />,
       href,
       variant: "default",
     };
@@ -1056,7 +1056,7 @@ export const PageHeaderActions = {
   edit(href: string): HeaderAction {
     return {
       label: "Modifier",
-      icon: <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />,
+      icon: <Icon icon={EditIcon} className="h-4 w-4" />,
       href,
       variant: "outline",
     };
@@ -1072,7 +1072,7 @@ export const PageHeaderActions = {
   delete(onClick: () => void): HeaderAction {
     return {
       label: "Supprimer",
-      icon: <HugeiconsIcon icon={DeleteIcon} className="h-4 w-4" />,
+      icon: <Icon icon={DeleteIcon} className="h-4 w-4" />,
       onClick,
       variant: "destructive",
     };
@@ -1080,7 +1080,7 @@ export const PageHeaderActions = {
   export(onClick: () => void): HeaderAction {
     return {
       label: "Exporter",
-      icon: <HugeiconsIcon icon={DownloadIcon} className="h-4 w-4" />,
+      icon: <Icon icon={DownloadIcon} className="h-4 w-4" />,
       onClick,
       variant: "outline",
     };
@@ -1088,7 +1088,7 @@ export const PageHeaderActions = {
   cancel(href: string): HeaderAction {
     return {
       label: "Annuler",
-      icon: <HugeiconsIcon icon={XIcon} className="h-4 w-4" />,
+      icon: <Icon icon={XIcon} className="h-4 w-4" />,
       href,
       variant: "ghost",
     };
@@ -1096,7 +1096,7 @@ export const PageHeaderActions = {
   refresh(onClick: () => void): HeaderAction {
     return {
       label: "Actualiser",
-      icon: <HugeiconsIcon icon={RefreshIcon} className="h-4 w-4" />,
+      icon: <Icon icon={RefreshIcon} className="h-4 w-4" />,
       onClick,
       variant: "ghost",
     };
@@ -1143,7 +1143,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircleIcon, InfoIcon, TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import type { IconSvgElement } from "@hugeicons/react";
 
@@ -1210,10 +1210,7 @@ export function ConfirmDialog({
               cfg.bg,
             )}
           >
-            <HugeiconsIcon
-              icon={cfg.icon}
-              className={cn("h-6 w-6", cfg.color)}
-            />
+            <Icon icon={cfg.icon} className={cn("h-6 w-6", cfg.color)} />
           </div>
           <AlertDialogTitle className="text-center">{title}</AlertDialogTitle>
           <AlertDialogDescription className="text-center">
@@ -1359,7 +1356,7 @@ git commit -m "feat(frontend): add ConfirmDialog and useConfirmDialog hook with 
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import type { IconSvgElement } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 
@@ -1461,7 +1458,7 @@ export function StatusBadge({
           )}
         />
       )}
-      {icon && <HugeiconsIcon icon={icon} className="h-3 w-3" />}
+      {icon && <Icon icon={icon} className="h-3 w-3" />}
       {label}
     </span>
   );
@@ -1560,7 +1557,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { SearchIcon, XIcon, RefreshIcon, DeleteIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { type ReactNode, type KeyboardEvent } from "react";
 
@@ -1649,7 +1646,7 @@ export default function TableHeader({
           ))}
         </div>
         <Button variant="ghost" size="icon" onClick={bulkActions.onClose}>
-          <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
+          <Icon icon={XIcon} className="h-4 w-4" />
         </Button>
       </div>
     );
@@ -1659,7 +1656,7 @@ export default function TableHeader({
     <div className={cn("flex flex-wrap items-center", gapClass, className)}>
       {search && (
         <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <HugeiconsIcon
+          <Icon
             icon={SearchIcon}
             className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
           />
@@ -1712,7 +1709,7 @@ export function createResetButton(
 ): ActionButton {
   return {
     label: opts?.label ?? "Réinitialiser",
-    icon: <HugeiconsIcon icon={RefreshIcon} className="h-4 w-4" />,
+    icon: <Icon icon={RefreshIcon} className="h-4 w-4" />,
     onClick,
     variant: "ghost",
   };
@@ -1896,7 +1893,7 @@ export function DetailSummary({ title, items, className }: DetailSummaryProps) {
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import type { IconSvgElement } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 import { type ReactNode } from "react";
@@ -1937,9 +1934,7 @@ export function DetailTabs({
             value={tab.value}
             disabled={tab.disabled}
           >
-            {tab.icon && (
-              <HugeiconsIcon icon={tab.icon} className="mr-1 h-4 w-4" />
-            )}
+            {tab.icon && <Icon icon={tab.icon} className="mr-1 h-4 w-4" />}
             {tab.label}
           </TabsTrigger>
         ))}
@@ -2010,7 +2005,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 
 interface PaginationProps {
@@ -2078,7 +2073,7 @@ export function Pagination({
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage <= 1}
           >
-            <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4" />
+            <Icon icon={ChevronLeftIcon} className="h-4 w-4" />
           </Button>
           <span className="min-w-[4rem] text-center text-muted-foreground">
             {currentPage} / {totalPages}
@@ -2090,7 +2085,7 @@ export function Pagination({
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage >= totalPages}
           >
-            <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" />
+            <Icon icon={ChevronRightIcon} className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -2120,7 +2115,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { useState, type ReactNode } from "react";
 import { useDebounce } from "use-debounce";
@@ -2188,7 +2183,7 @@ export default function SingleSelect({
               {selected?.label ?? placeholder}
             </span>
           </span>
-          <HugeiconsIcon
+          <Icon
             icon={ChevronDownIcon}
             className="ml-2 h-4 w-4 shrink-0 text-muted-foreground"
           />
@@ -2217,7 +2212,7 @@ export default function SingleSelect({
                     setSearch("");
                   }}
                 >
-                  <HugeiconsIcon
+                  <Icon
                     icon={CheckIcon}
                     className={cn(
                       "mr-2 h-4 w-4",
@@ -2238,7 +2233,7 @@ export default function SingleSelect({
                       setOpen(false);
                     }}
                   >
-                    <HugeiconsIcon icon={PlusIcon} className="mr-2 h-4 w-4" />
+                    <Icon icon={PlusIcon} className="mr-2 h-4 w-4" />
                     {addNewLabel}
                   </CommandItem>
                 </CommandGroup>

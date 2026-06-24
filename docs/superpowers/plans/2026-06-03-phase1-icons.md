@@ -15,8 +15,8 @@
 ```ts
 // CORRECT
 import { EditIcon, TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-<HugeiconsIcon icon={EditIcon} className="h-4 w-4" />
+import { Icon } from "@/components/ui/icon";
+<Icon icon={EditIcon} className="h-4 w-4" />
 
 // INTERDIT — jamais hors de lib/icons.ts
 import { Edit } from "@hugeicons/core-free-icons";
@@ -160,8 +160,8 @@ import { IconChevronDown, IconX } from "@tabler/icons-react";
 
 // APRÈS
 import { ChevronDownIcon, XIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-<HugeiconsIcon icon={ChevronDownIcon} className="h-4 w-4" />
+import { Icon } from "@/components/ui/icon";
+<Icon icon={ChevronDownIcon} className="h-4 w-4" />
 ```
 
 - [ ] **Migrer `ui/accordion.tsx`** — `IconChevronDown`, `IconChevronUp`

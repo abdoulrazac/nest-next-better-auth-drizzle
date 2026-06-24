@@ -40,7 +40,7 @@ Ajouter dans `apps/frontend/package.json` :
 ```ts
 // CORRECT — toujours
 import { EditIcon, TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
 // INTERDIT — jamais en dehors de lib/icons.ts
 import { Edit } from "@hugeicons/core-free-icons";
@@ -401,7 +401,7 @@ Pattern `Command` + `Popover`. Debounce 300ms sur `onSearchChange`.
 
 - Groupes collapsibles avec état persisté dans `localStorage`
 - Items standalone et items avec sous-items
-- Icônes via `HugeiconsIcon`
+- Icônes via `Icon`
 - État actif via `usePathname()`
 - Support `addUrl` (bouton `+` au hover pour créer)
 

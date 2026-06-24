@@ -163,7 +163,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ChevronDownIcon, PlusIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -207,11 +207,9 @@ function NavCollapsibleItem({ item }: { item: NavCollapsible }) {
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
           <SidebarMenuButton tooltip={item.title} isActive={isActive}>
-            {item.icon && (
-              <HugeiconsIcon icon={item.icon} className="h-4 w-4" />
-            )}
+            {item.icon && <Icon icon={item.icon} className="h-4 w-4" />}
             <span>{item.title}</span>
-            <HugeiconsIcon
+            <Icon
               icon={ChevronDownIcon}
               className={`ml-auto h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
             />
@@ -227,10 +225,7 @@ function NavCollapsibleItem({ item }: { item: NavCollapsible }) {
                   <SidebarMenuSubButton asChild isActive={subActive}>
                     <Link href={sub.url}>
                       {sub.icon && (
-                        <HugeiconsIcon
-                          icon={sub.icon}
-                          className="h-3.5 w-3.5"
-                        />
+                        <Icon icon={sub.icon} className="h-3.5 w-3.5" />
                       )}
                       <span>{sub.title}</span>
                     </Link>
@@ -255,7 +250,7 @@ function NavLinkItem({ item }: { item: NavLink }) {
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
         <Link href={item.url}>
-          {item.icon && <HugeiconsIcon icon={item.icon} className="h-4 w-4" />}
+          {item.icon && <Icon icon={item.icon} className="h-4 w-4" />}
           <span>{item.title}</span>
         </Link>
       </SidebarMenuButton>
@@ -392,7 +387,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { SearchIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -427,7 +422,7 @@ export function CommandMenu() {
         onClick={() => setOpen(true)}
       >
         <span className="flex items-center gap-2">
-          <HugeiconsIcon icon={SearchIcon} className="h-3.5 w-3.5" />
+          <Icon icon={SearchIcon} className="h-3.5 w-3.5" />
           Rechercher...
         </span>
         <kbd className="pointer-events-none rounded border bg-muted px-1.5 font-mono text-xs">
@@ -450,10 +445,7 @@ export function CommandMenu() {
                         onSelect={() => navigate(sub.url)}
                       >
                         {sub.icon && (
-                          <HugeiconsIcon
-                            icon={sub.icon}
-                            className="mr-2 h-4 w-4"
-                          />
+                          <Icon icon={sub.icon} className="mr-2 h-4 w-4" />
                         )}
                         {sub.title}
                       </CommandItem>
@@ -465,10 +457,7 @@ export function CommandMenu() {
                       onSelect={() => navigate(item.url)}
                     >
                       {item.icon && (
-                        <HugeiconsIcon
-                          icon={item.icon}
-                          className="mr-2 h-4 w-4"
-                        />
+                        <Icon icon={item.icon} className="mr-2 h-4 w-4" />
                       )}
                       {item.title}
                     </CommandItem>,

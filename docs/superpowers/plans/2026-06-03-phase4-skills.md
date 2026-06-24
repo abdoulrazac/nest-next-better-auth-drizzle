@@ -54,9 +54,9 @@ NEVER import from `@hugeicons/core-free-icons` directly. Always via `@/lib/icons
 
 ```tsx
 import { EditIcon, TrashIcon, PlusIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
-<HugeiconsIcon icon={EditIcon} className="h-4 w-4" />;
+<Icon icon={EditIcon} className="h-4 w-4" />;
 ```
 ````
 
@@ -188,7 +188,7 @@ import SingleSelect from "@/components/single-select";
           [
             {
               label: "Supprimer",
-              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
               onClick: handleBulkDelete,
               variant: "destructive",
             },
@@ -535,7 +535,7 @@ import { createSearchField, createFilterField, createResetButton, createBulkActi
 import { buildEntityColumns } from "./columns";
 import type { Entity } from "./types";
 import type { TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
 export function useEntity() {
   const router = useRouter();
@@ -612,7 +612,7 @@ export function useEntity() {
   const bulkActionsConfig = selectedItems.length > 0
     ? createBulkActions(
         selectedItems.length,
-        [{ label: "Supprimer", icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />, onClick: handlers.onBulkDelete, variant: "destructive" }],
+        [{ label: "Supprimer", icon: <Icon icon={TrashIcon} className="h-4 w-4" />, onClick: handlers.onBulkDelete, variant: "destructive" }],
         { onClose: () => setSelectedItems([]) },
       )
     : undefined;
@@ -689,7 +689,7 @@ import PageHeader, { PageHeaderActions } from "@/components/page-header";
 import TableHeader from "@/components/table-header";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { EntityDetailSheet } from "./detail-sheet";
 import { useEntity } from "./hooks";
 
@@ -740,7 +740,7 @@ export default function EntityListPage() {
         />
         {error && (
           <Alert variant="destructive">
-            <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+            <Icon icon={AlertCircleIcon} className="h-4 w-4" />
             <AlertDescription>
               Erreur : {(error as Error).message}
             </AlertDescription>
@@ -1206,7 +1206,7 @@ import {
 } from "@/components/detail-tabs";
 import { Button } from "@/components/ui/button";
 import { EditIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useRouter } from "next/navigation";
 import type { EntityHandlers } from "./hooks";
 
@@ -1253,7 +1253,7 @@ export function EntityDetailSheet({
                   router.push(`/module/entities/${entityId}/edit`);
                 }}
               >
-                <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />
+                <Icon icon={EditIcon} className="h-4 w-4" />
                 Modifier
               </Button>
             </div>
@@ -1369,7 +1369,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircleIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@repo/api-client";
 import { notFound } from "next/navigation";
@@ -1420,7 +1420,7 @@ export default function EntityDetailPage({ params }: EntityDetailPageProps) {
         ]}
       >
         <Alert variant="destructive">
-          <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+          <Icon icon={AlertCircleIcon} className="h-4 w-4" />
           <AlertDescription>
             Impossible de charger cet élément.
           </AlertDescription>

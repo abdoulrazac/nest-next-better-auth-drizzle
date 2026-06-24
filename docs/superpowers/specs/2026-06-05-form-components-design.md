@@ -198,7 +198,7 @@ Wrappeur de `CalendarPopover` (`components/calendar-popover.tsx`).
 ## Contraintes et conventions
 
 - `"use client"` en tête de chaque fichier
-- Icônes via `@/lib/icons` + `HugeiconsIcon` — jamais d'import direct depuis `@hugeicons/core-free-icons`
+- Icônes via `@/lib/icons` + `Icon` — jamais d'import direct depuis `@hugeicons/core-free-icons`
 - Labels, placeholders, messages en français
 - Zod v4 : `zodResolver(schema as any) as any` dans les formulaires consommateurs (inchangé)
 - Le `index.ts` exporte tous les composants nommément (pas de `export * from`)

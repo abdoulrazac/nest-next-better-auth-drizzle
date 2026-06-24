@@ -41,7 +41,7 @@
 
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { LoadingIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -92,10 +92,7 @@ export function FormActions({
       </Button>
       <Button type="submit" disabled={isDisabled}>
         {isLoading && (
-          <HugeiconsIcon
-            icon={LoadingIcon}
-            className="mr-2 h-4 w-4 animate-spin"
-          />
+          <Icon icon={LoadingIcon} className="mr-2 h-4 w-4 animate-spin" />
         )}
         {isLoading ? submitLoadingLabel : submitLabel}
       </Button>
@@ -543,7 +540,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { CheckIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
@@ -623,7 +620,7 @@ function MultiSelect({
                         : "opacity-50 [&_svg]:invisible",
                     )}
                   >
-                    <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" />
+                    <Icon icon={CheckIcon} className="h-3 w-3" />
                   </div>
                   {option.label}
                 </CommandItem>

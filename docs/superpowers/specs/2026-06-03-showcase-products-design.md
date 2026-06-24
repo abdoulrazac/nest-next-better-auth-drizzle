@@ -247,7 +247,7 @@ Filtrage fait côté client sur le mock store (search sur nom + référence, fil
 ## 10. Contraintes
 
 - `"use client"` sur tous les fichiers features
-- Icônes uniquement via `@/lib/icons` + `HugeiconsIcon`
+- Icônes uniquement via `@/lib/icons` + `Icon`
 - Labels, toasts, messages en français
 - Aucun appel API réel — tout depuis `mock-store.ts`
 - Le mock store n'utilise pas `localStorage` — reset au rechargement de page est acceptable
