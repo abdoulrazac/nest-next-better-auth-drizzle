@@ -1,5 +1,4 @@
 // apps/backend/src/websocket/websocket.gateway.ts
-import { auth } from '@/auth/auth';
 import { env } from '@/config/env';
 import {
   OnGatewayConnection,
@@ -8,15 +7,25 @@ import {
   WebSocketGateway as Gateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard, type UserSession } from '@thallesp/nestjs-better-auth';
 import type { Server, Socket } from 'socket.io';
 import { PresenceService } from './presence.service';
 import { WebSocketService } from './websocket.service';
 import { WsHandlerRegistry } from './ws-handler.registry';
 
+declare module 'socket.io' {
+  interface Socket {
+    session?: UserSession;
+    user?: UserSession['user'] | null;
+  }
+}
+
 @Gateway(env.WS_PORT, {
   cors: { origin: env.CORS_ORIGINS, credentials: true },
   transports: ['websocket', 'polling'],
 })
+@UseGuards(AuthGuard)
 export class WebSocketGateway
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
@@ -34,39 +43,26 @@ export class WebSocketGateway
   }
 
   async handleConnection(socket: Socket): Promise<void> {
-    const token =
-      (socket.handshake.auth as Record<string, string>)?.token ??
-      socket.handshake.headers.authorization?.replace(/^Bearer\s+/i, '');
-
-    if (!token) {
+    const session = socket.session;
+    if (!session) {
       socket.disconnect(true);
       return;
     }
 
-    try {
-      const session = await auth.api.getSession({
-        headers: new Headers({ authorization: `Bearer ${token}` }),
-      });
+    const userId = session.user.id;
+    const userName = session.user.name;
 
-      if (!session) {
-        socket.disconnect(true);
-        return;
-      }
+    socket.data.userId = userId;
+    socket.data.userName = userName;
 
-      socket.data.userId = session.user.id;
-      socket.data.userName = session.user.name;
+    await socket.join(`user:${userId}`);
+    await this.presenceService.setOnline(userId);
+    this.server.emit('presence:online', { userId });
 
-      await socket.join(`user:${session.user.id}`);
-      await this.presenceService.setOnline(session.user.id);
-      this.server.emit('presence:online', { userId: session.user.id });
-
-      socket.onAny((event: string, data: unknown) => {
-        const handler = this.registry.getHandler(event);
-        if (handler) void handler(socket, data);
-      });
-    } catch {
-      socket.disconnect(true);
-    }
+    socket.onAny((event: string, data: unknown) => {
+      const handler = this.registry.getHandler(event);
+      if (handler) void handler(socket, data);
+    });
   }
 
   async handleDisconnect(socket: Socket): Promise<void> {
