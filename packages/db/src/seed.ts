@@ -19,6 +19,11 @@ import { role, user, userRole } from "./schema";
 const ADMIN_EMAIL = process.env["SEED_ADMIN_EMAIL"] ?? "admin@example.com";
 const ADMIN_NAME = process.env["SEED_ADMIN_NAME"] ?? "Admin";
 
+const EXTRA_USERS = [
+  { email: "john@example.com", name: "John Doe", role: "member" as const },
+  { email: "jane@example.com", name: "Jane Doe", role: "viewer" as const },
+];
+
 const DEFAULT_ROLES = [
   {
     name: "admin",
@@ -130,6 +135,48 @@ async function seed() {
       roleId: createdRoles["admin"],
     });
     console.log("    Assigned 'admin' role to admin user");
+  }
+
+  // --- Extra users (member + viewer) ---
+  console.log("  Creating extra users...");
+
+  for (const u of EXTRA_USERS) {
+    const existing = await db
+      .select({ id: user.id })
+      .from(user)
+      .where(eq(user.email, u.email))
+      .limit(1);
+
+    let userId: string;
+
+    if (existing.length > 0) {
+      userId = existing[0]!.id;
+      console.log(`    User '${u.email}' already exists — skipping`);
+    } else {
+      userId = crypto.randomUUID();
+      await db.insert(user).values({
+        id: userId,
+        name: u.name,
+        email: u.email,
+        emailVerified: true,
+        role: u.role,
+      });
+      console.log(`    Created user: ${u.email} (${u.role})`);
+    }
+
+    const existingUserRole = await db
+      .select({ id: userRole.id })
+      .from(userRole)
+      .where(eq(userRole.userId, userId))
+      .limit(1);
+
+    if (existingUserRole.length === 0 && createdRoles[u.role]) {
+      await db.insert(userRole).values({
+        userId,
+        roleId: createdRoles[u.role]!,
+      });
+      console.log(`    Assigned '${u.role}' role to ${u.email}`);
+    }
   }
 
   console.log("Seed complete.");

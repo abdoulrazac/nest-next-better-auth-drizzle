@@ -227,3 +227,4 @@ export type ToggleReactionResponse = z.infer<
 export type AttachmentUrlResponse = z.infer<typeof attachmentUrlResponseSchema>;
 
 export { paginatedResponseSchema };
+export type { PaginatedResponse } from "./shared.schema";

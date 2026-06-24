@@ -59,3 +59,10 @@ export const successResponseSchema = z.object({
 
 export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
 export type SuccessResponse = z.infer<typeof successResponseSchema>;
+
+export type PaginatedResponse<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+};
