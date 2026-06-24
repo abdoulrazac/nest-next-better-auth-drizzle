@@ -1,4 +1,7 @@
-FROM oven/bun:1.3.14-alpine AS base
+# ── base (Debian/glibc) — used for install + build stages ──────────────────
+# Debian avoids Bun ARM64 segfaults caused by musl/Alpine worker-thread issues
+# during Next.js static page generation. Runner stages use Alpine for size.
+FROM oven/bun:1.3.14-debian AS base
 WORKDIR /app
 
 # ── installer: copy manifests only for better layer caching ────────────────
@@ -29,6 +32,19 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 # In Docker Compose this is set to http://app:3000 (the backend service).
 ARG INTERNAL_API_URL=http://localhost:3000
 ENV INTERNAL_API_URL=$INTERNAL_API_URL
+# NEXT_PUBLIC_APP_NAME is required by @t3-oss/env-nextjs (no default) —
+# must be provided at build time so env validation doesn't throw.
+ARG NEXT_PUBLIC_APP_NAME=Enterprise App
+ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
+# Remaining NEXT_PUBLIC_ vars have schema defaults but must be in process.env
+# so that @t3-oss/env-nextjs resolves them from runtimeEnv at build time.
+ARG NEXT_PUBLIC_APP_URL=http://localhost:3002
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+# Explicitly set NODE_ENV=production so Next.js uses the production React build.
+# Without this, if a workspace .env.local sets NODE_ENV=development, the pre-render
+# workers may initialise react-server-dom-webpack with the dev React bundle,
+# causing k.H.useContext = null in the /_global-error worker on Linux ARM64.
+ENV NODE_ENV=production
 COPY . .
 RUN bunx turbo run build
 

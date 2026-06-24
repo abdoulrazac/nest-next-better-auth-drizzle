@@ -1,7 +1,7 @@
-version: "3.1"
+version: "3.2"
 
 services:
-  app:
+  backend:
     build:
       context: .
       target: runner-backend
@@ -73,7 +73,7 @@ services:
       PORT: 3000
       NODE_ENV: ${NODE_ENV:-production}
     depends_on:
-      app:
+      backend:
         condition: service_healthy
 
   web:
@@ -149,6 +149,7 @@ services:
     ports:
       # Bind to localhost only — dev mail UI should never be public
       - "127.0.0.1:8025:8025"
+      - "127.0.0.1:1025:1025"
 
   db-migrate:
     build:

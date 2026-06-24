@@ -19,6 +19,10 @@ apps/web/.next
 .env
 .env.local
 .env.*.local
+# Also exclude env files in subdirectories (Docker patterns don't recursively match)
+**/.env
+**/.env.local
+**/.env.*.local
 
 # Test artefacts
 coverage
