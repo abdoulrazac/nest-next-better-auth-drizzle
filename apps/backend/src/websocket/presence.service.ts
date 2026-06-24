@@ -1,4 +1,4 @@
-// apps/backend/src/modules/messaging/presence/presence.service.ts
+// apps/backend/src/websocket/presence.service.ts
 import { REDIS_TOKEN } from '@/redis/redis.module';
 import { Inject, Injectable } from '@nestjs/common';
 import IORedis from 'ioredis';
