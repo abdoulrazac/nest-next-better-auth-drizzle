@@ -41,10 +41,10 @@ import {
   Plus,
   Trash,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Icon } from "@/components/ui/icon";
 
 const EXPIRY_OPTIONS = [
   { label: "Jamais", value: "" },
@@ -168,7 +168,7 @@ export function ApiKeysTab() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <HugeiconsIcon icon={Key} className="h-5 w-5" />
+                <Icon icon={Key} className="h-5 w-5" />
                 Clés API
               </CardTitle>
               <Button
@@ -176,7 +176,7 @@ export function ApiKeysTab() {
                 className="gap-2"
                 onClick={() => setCreateDialogOpen(true)}
               >
-                <HugeiconsIcon icon={Plus} className="h-4 w-4" />
+                <Icon icon={Plus} className="h-4 w-4" />
                 Nouvelle clé
               </Button>
             </div>
@@ -197,7 +197,7 @@ export function ApiKeysTab() {
               />
             ) : apiKeys.length === 0 ? (
               <div className="text-center py-12 text-slate-500">
-                <HugeiconsIcon
+                <Icon
                   icon={Key}
                   className="h-12 w-12 mx-auto mb-4 text-slate-300"
                 />
@@ -269,7 +269,7 @@ export function ApiKeysTab() {
                             handleDelete(apiKey.id, apiKey.name ?? "cette clé")
                           }
                         >
-                          <HugeiconsIcon icon={Trash} className="h-3 w-3" />
+                          <Icon icon={Trash} className="h-3 w-3" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -283,7 +283,7 @@ export function ApiKeysTab() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={Globe} className="h-5 w-5" />
+              <Icon icon={Globe} className="h-5 w-5" />
               Documentation API
             </CardTitle>
           </CardHeader>
@@ -371,10 +371,7 @@ export function ApiKeysTab() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <Alert className="border-amber-200 bg-amber-50 text-amber-800">
-              <HugeiconsIcon
-                icon={AlertCircle}
-                className="h-4 w-4 text-amber-600"
-              />
+              <Icon icon={AlertCircle} className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-700">
                 Conservez cette clé en lieu sûr. Elle ne peut pas être récupérée
                 ultérieurement.
@@ -390,7 +387,7 @@ export function ApiKeysTab() {
                 className="shrink-0"
                 onClick={() => copyToClipboard(revealDialog?.key ?? "")}
               >
-                <HugeiconsIcon icon={Copy} className="h-4 w-4" />
+                <Icon icon={Copy} className="h-4 w-4" />
               </Button>
             </div>
           </div>

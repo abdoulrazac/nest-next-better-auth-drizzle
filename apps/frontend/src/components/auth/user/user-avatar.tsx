@@ -1,13 +1,13 @@
 "use client";
 
+import { Icon } from "@/components/ui/icon";
+import { UserIcon } from "@/lib/icons";
 import {
   type UsernameAuthClient,
   useAuth,
   useSession,
 } from "@better-auth-ui/react";
 import type { User } from "better-auth";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { UserIcon } from "@/lib/icons";
 import type { ReactNode } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -79,9 +79,7 @@ export function UserAvatar({
         className="text-muted-foreground!"
         delayMs={resolvedUser?.image ? 600 : undefined}
       >
-        {fallback || initials || (
-          <HugeiconsIcon icon={UserIcon} className="size-4" />
-        )}
+        {fallback || initials || <Icon icon={UserIcon} className="size-4" />}
       </AvatarFallback>
     </Avatar>
   );

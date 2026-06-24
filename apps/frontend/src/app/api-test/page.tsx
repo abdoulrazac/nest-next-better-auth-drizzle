@@ -7,7 +7,7 @@ export default async function ApiTestPage() {
 
   try {
     const response = await fetch(
-      `${process.env["NEXT_PUBLIC_API_URL"] ?? "http://localhost:3000"}/api/v1/health`,
+      `${process.env["NEXT_PUBLIC_API_URL"] ?? "http://localhost:3000"}/api/health`,
       { cache: "no-store" },
     );
     status = response.ok ? "ok" : `error ${response.status}`;

@@ -1,7 +1,7 @@
 "use client";
 
 import type { Organization } from "better-auth/client";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { BriefcaseIcon } from "@/lib/icons";
 import type { ComponentProps, ReactNode } from "react";
 
@@ -69,7 +69,7 @@ export function OrganizationLogo({
         delayMs={normalizedLogo ? 600 : undefined}
       >
         {fallback || initials || (
-          <HugeiconsIcon icon={BriefcaseIcon} className="size-4" />
+          <Icon icon={BriefcaseIcon} className="size-4" />
         )}
       </AvatarFallback>
     </Avatar>

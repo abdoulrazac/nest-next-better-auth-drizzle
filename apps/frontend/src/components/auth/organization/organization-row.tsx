@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon } from "@/components/ui/icon";
+import { SettingsIcon } from "@/lib/icons";
 import {
   type OrganizationAuthClient,
   useAuth,
@@ -7,8 +9,6 @@ import {
   useSetActiveOrganization,
 } from "@better-auth-ui/react";
 import type { Organization } from "better-auth/client";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { SettingsIcon } from "@/lib/icons";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -61,7 +61,7 @@ export function OrganizationRow({ organization }: OrganizationRowProps) {
         onClick={manageOrganization}
         aria-label={organizationLocalization.manage}
       >
-        {setActivePending ? <Spinner /> : <HugeiconsIcon icon={SettingsIcon} />}
+        {setActivePending ? <Spinner /> : <Icon icon={SettingsIcon} />}
 
         {organizationLocalization.manage}
       </Button>

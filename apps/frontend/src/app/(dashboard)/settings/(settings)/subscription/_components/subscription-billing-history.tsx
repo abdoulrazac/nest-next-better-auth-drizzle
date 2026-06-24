@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { CreditCardIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
 const PAYMENT_STATUS_BADGE: Record<string, { label: string; class: string }> = {
   PENDING: { label: "En attente", class: "bg-amber-100 text-amber-700" },
@@ -68,7 +68,7 @@ export function SubscriptionBillingHistory({
     return (
       <Card className="border-dashed">
         <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
-          <HugeiconsIcon
+          <Icon
             icon={CreditCardIcon}
             className="h-10 w-10 text-muted-foreground/50"
           />
@@ -140,7 +140,7 @@ export function SubscriptionBillingHistory({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <HugeiconsIcon icon={CreditCardIcon} className="h-5 w-5" />
+              <Icon icon={CreditCardIcon} className="h-5 w-5" />
               Historique de facturation
             </CardTitle>
           </CardHeader>

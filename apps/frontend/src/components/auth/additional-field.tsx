@@ -1,18 +1,18 @@
 "use client";
 
-import {
-  type AdditionalField as AdditionalFieldConfig,
-  resolveInputType,
-} from "@better-auth-ui/core";
-import { useAuth } from "@better-auth-ui/react";
-import { format } from "date-fns";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import {
   CalendarIcon,
   CheckIcon,
   ChevronDownIcon,
   CopyIcon,
 } from "@/lib/icons";
+import {
+  type AdditionalField as AdditionalFieldConfig,
+  resolveInputType,
+} from "@better-auth-ui/core";
+import { useAuth } from "@better-auth-ui/react";
+import { format } from "date-fns";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -115,11 +115,7 @@ function CopyButton({
       onClick={handleCopy}
       disabled={isDisabled}
     >
-      {copied ? (
-        <HugeiconsIcon icon={CheckIcon} />
-      ) : (
-        <HugeiconsIcon icon={CopyIcon} />
-      )}
+      {copied ? <Icon icon={CheckIcon} /> : <Icon icon={CopyIcon} />}
     </InputGroupButton>
   );
 }
@@ -129,7 +125,7 @@ export function AdditionalField({
   name,
   field,
   isPending,
-}: AdditionalFieldProps) {
+}: AdditionalFieldProps): React.JSX.Element {
   const inputType = resolveInputType(field);
   // Used by `inputType: "input"` with `copyable: true` so the copy button
   // reads the input's *live* value rather than a stale `defaultValue`.
@@ -546,9 +542,9 @@ function DateInput({ name, field, isPending }: AdditionalFieldProps) {
               {date ? format(date, "PPP") : <span>{field.placeholder}</span>}
 
               {isDateTime ? (
-                <HugeiconsIcon icon={ChevronDownIcon} />
+                <Icon icon={ChevronDownIcon} />
               ) : (
-                <HugeiconsIcon icon={CalendarIcon} />
+                <Icon icon={CalendarIcon} />
               )}
             </Button>
           </PopoverTrigger>

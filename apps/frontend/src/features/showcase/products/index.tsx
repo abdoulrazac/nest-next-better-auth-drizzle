@@ -8,8 +8,8 @@ import { PageHeader, PageHeaderActions } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import TableHeader from "@/components/table-header";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Icon } from "@/components/ui/icon";
 import { AlertCircleIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { ProductDetailSheet } from "./detail-sheet";
 import { useProducts } from "./hooks";
 
@@ -55,7 +55,7 @@ export function ProductsListPage() {
 
         {error && (
           <Alert variant="destructive">
-            <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+            <Icon icon={AlertCircleIcon} className="h-4 w-4" />
             <AlertDescription>
               Erreur : {(error as Error).message}
             </AlertDescription>

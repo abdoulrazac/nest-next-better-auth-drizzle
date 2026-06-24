@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import {
   CheckCircleIcon,
   InfoIcon,
@@ -19,13 +19,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
-        success: <HugeiconsIcon icon={CheckCircleIcon} className="size-4" />,
-        info: <HugeiconsIcon icon={InfoIcon} className="size-4" />,
-        warning: <HugeiconsIcon icon={AlertIcon} className="size-4" />,
-        error: <HugeiconsIcon icon={AlertSquareIcon} className="size-4" />,
-        loading: (
-          <HugeiconsIcon icon={LoadingIcon} className="size-4 animate-spin" />
-        ),
+        success: <Icon icon={CheckCircleIcon} className="size-4" />,
+        info: <Icon icon={InfoIcon} className="size-4" />,
+        warning: <Icon icon={AlertIcon} className="size-4" />,
+        error: <Icon icon={AlertSquareIcon} className="size-4" />,
+        loading: <Icon icon={LoadingIcon} className="size-4 animate-spin" />,
       }}
       style={
         {

@@ -27,7 +27,7 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com https://www.gstatic.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self'",
@@ -37,7 +37,9 @@ const securityHeaders = [
       //   because the browser upgrade-insecure-requests and the server only
       //   accepts HTTPS — keep them to avoid breaking staging/preview envs)
       "connect-src 'self' http: https: ws: wss:",
+      "frame-src https://www.google.com",
       "frame-ancestors 'none'",
+      "script-src-elem 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com",
     ].join("; "),
   },
 ];

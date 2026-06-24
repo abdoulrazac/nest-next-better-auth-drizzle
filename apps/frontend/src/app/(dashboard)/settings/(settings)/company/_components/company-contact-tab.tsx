@@ -15,10 +15,10 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import type { UpdateCompanyInput } from "@/server/api/settings/schemas/company.schema";
 import { Call02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { type Control, Controller } from "react-hook-form";
 
 interface Props {
@@ -30,7 +30,7 @@ export function CompanyContactTab({ control }: Props) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <HugeiconsIcon icon={Call02Icon} className="size-5" />
+          <Icon icon={Call02Icon} className="size-5" />
           Coordonnées
         </CardTitle>
         <CardDescription>

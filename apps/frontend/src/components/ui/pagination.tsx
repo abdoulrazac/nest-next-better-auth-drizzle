@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   MoreHorizontalIcon,
 } from "@/lib/icons";
+import { cn } from "@/lib/utils";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -78,7 +78,7 @@ function PaginationPrevious({
       className={cn("pl-2!", className)}
       {...props}
     >
-      <HugeiconsIcon icon={ChevronLeftIcon} data-icon="inline-start" />
+      <Icon icon={ChevronLeftIcon} data-icon="inline-start" />
       <span className="hidden sm:block">{text}</span>
     </PaginationLink>
   );
@@ -97,7 +97,7 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
-      <HugeiconsIcon icon={ChevronRightIcon} data-icon="inline-end" />
+      <Icon icon={ChevronRightIcon} data-icon="inline-end" />
     </PaginationLink>
   );
 }
@@ -116,7 +116,7 @@ function PaginationEllipsis({
       )}
       {...props}
     >
-      <HugeiconsIcon icon={MoreHorizontalIcon} />
+      <Icon icon={MoreHorizontalIcon} />
       <span className="sr-only">More pages</span>
     </span>
   );

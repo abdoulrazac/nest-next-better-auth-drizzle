@@ -1,5 +1,8 @@
-import { HugeiconsIcon, type HugeiconsProps } from "@hugeicons/react";
-import { type IconSvgElement } from "@hugeicons/react";
+import {
+  HugeiconsIcon,
+  type HugeiconsProps,
+  type IconSvgElement,
+} from "@hugeicons/react";
 
 export interface IconProps extends Omit<HugeiconsProps, "icon"> {
   icon: IconSvgElement;
@@ -9,7 +12,7 @@ export interface IconProps extends Omit<HugeiconsProps, "icon"> {
 }
 
 /**
- * Wrapper around HugeiconsIcon with sensible defaults.
+ * Wrapper around Icon with sensible defaults.
  *
  * Usage:
  *   import { Icon } from "@/components/ui/icon"

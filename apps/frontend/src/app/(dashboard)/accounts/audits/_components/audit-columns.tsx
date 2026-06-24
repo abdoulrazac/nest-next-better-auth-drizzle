@@ -1,20 +1,20 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import {
   AlertCircleIcon,
   Clock01Icon,
   Delete02Icon,
-  PencilEdit01Icon,
   FileExportIcon,
   Login01Icon,
   Logout01Icon,
+  PencilEdit01Icon,
   PlusSignCircleIcon,
   PrinterIcon,
   ViewIcon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -106,7 +106,7 @@ export function auditColumns({
         return (
           <div className="flex items-center gap-2">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-500">
-              <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
+              <Icon icon={Clock01Icon} className="h-3.5 w-3.5" />
             </span>
             <div className="min-w-0">
               <p className="text-sm font-medium text-slate-800">
@@ -136,7 +136,7 @@ export function auditColumns({
                 colorClass,
               )}
             >
-              <HugeiconsIcon icon={Icon} className="h-3.5 w-3.5" />
+              <Icon icon={Icon} className="h-3.5 w-3.5" />
             </span>
             <span className="text-sm font-medium">
               {ACTION_LABELS[action] ?? action}
@@ -241,7 +241,7 @@ export function auditColumns({
         return (
           <Badge variant="outline" className={cn(style?.className)}>
             {severity === "CRITICAL" && (
-              <HugeiconsIcon icon={AlertCircleIcon} className="mr-1 h-3 w-3" />
+              <Icon icon={AlertCircleIcon} className="mr-1 h-3 w-3" />
             )}
             {SEVERITY_LABELS[severity] ?? severity}
           </Badge>

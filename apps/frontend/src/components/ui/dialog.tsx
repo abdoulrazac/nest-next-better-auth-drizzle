@@ -5,7 +5,7 @@ import { Dialog as DialogPrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { XIcon } from "@/lib/icons";
 
 function Dialog({
@@ -75,7 +75,7 @@ function DialogContent({
               className="absolute top-2 right-2"
               size="icon-sm"
             >
-              <HugeiconsIcon icon={XIcon} />
+              <Icon icon={XIcon} />
               <span className="sr-only">Close</span>
             </Button>
           </DialogPrimitive.Close>

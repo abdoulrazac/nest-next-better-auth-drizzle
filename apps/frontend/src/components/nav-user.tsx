@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { LogoutIcon } from "@/lib/icons";
 
 export function NavUser() {
@@ -64,7 +64,7 @@ export function NavUser() {
           onClick={handleSignOut}
           className="text-destructive focus:text-destructive"
         >
-          <HugeiconsIcon icon={LogoutIcon} className="mr-2 h-4 w-4" />
+          <Icon icon={LogoutIcon} className="mr-2 h-4 w-4" />
           Se déconnecter
         </DropdownMenuItem>
       </DropdownMenuContent>

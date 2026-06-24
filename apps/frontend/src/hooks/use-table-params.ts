@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { useMemo } from "react";
 
 export interface TableParamsConfig {
   /** Clés URL pour les filtres discrets (ex: ["status", "category"]) */

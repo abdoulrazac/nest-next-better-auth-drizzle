@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useState, type ReactNode } from "react";
 
 export interface SingleSelectOption {
@@ -90,7 +90,7 @@ export default function SingleSelect({
               {selected?.label ?? placeholder}
             </span>
           </span>
-          <HugeiconsIcon
+          <Icon
             icon={ChevronDownIcon}
             className="ml-2 h-4 w-4 shrink-0 text-muted-foreground"
           />
@@ -119,7 +119,7 @@ export default function SingleSelect({
                     setSearch("");
                   }}
                 >
-                  <HugeiconsIcon
+                  <Icon
                     icon={CheckIcon}
                     className={cn(
                       "mr-2 h-4 w-4",
@@ -140,7 +140,7 @@ export default function SingleSelect({
                       setOpen(false);
                     }}
                   >
-                    <HugeiconsIcon icon={PlusIcon} className="mr-2 h-4 w-4" />
+                    <Icon icon={PlusIcon} className="mr-2 h-4 w-4" />
                     {addNewLabel}
                   </CommandItem>
                 </CommandGroup>

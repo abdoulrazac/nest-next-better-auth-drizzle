@@ -5,6 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Icon } from "@/components/ui/icon";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,13 +16,12 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
-import type { INavItem } from "@/lib/nav";
 import { ChevronRightIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import type { INavItem } from "@/lib/nav";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function NavCollapsibleGroup({
   item,
@@ -69,14 +69,10 @@ function NavCollapsibleGroup({
             <CollapsibleTrigger asChild>
               <SidebarMenuButton isActive={isChildActive} tooltip={item.title}>
                 {item.icon && (
-                  <HugeiconsIcon
-                    className={cn(item.color)}
-                    icon={item.icon}
-                    size={14}
-                  />
+                  <Icon className={cn(item.color)} icon={item.icon} size={14} />
                 )}
                 <span>{item.title}</span>
-                <HugeiconsIcon
+                <Icon
                   className={cn(
                     "ml-auto transition-transform duration-200",
                     isOpen && "rotate-90",
@@ -96,7 +92,7 @@ function NavCollapsibleGroup({
                     >
                       <Link href={subItem.url || "#"}>
                         {subItem.icon && (
-                          <HugeiconsIcon
+                          <Icon
                             className={cn(item.color, subItem.color)}
                             icon={subItem.icon}
                             size={14}
@@ -140,7 +136,7 @@ export function NavMain({ items }: { items: INavItem[] }) {
                     >
                       <Link href={subItem.url || "#"}>
                         {subItem.icon && (
-                          <HugeiconsIcon
+                          <Icon
                             className={cn(item.color, subItem.color)}
                             icon={subItem.icon}
                             size={14}
@@ -182,7 +178,7 @@ export function NavMain({ items }: { items: INavItem[] }) {
                 >
                   <Link href={item.url || "#"}>
                     {item.icon && (
-                      <HugeiconsIcon
+                      <Icon
                         className={cn(item.color)}
                         icon={item.icon}
                         size={14}

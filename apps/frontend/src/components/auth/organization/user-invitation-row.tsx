@@ -8,7 +8,7 @@ import {
   useRejectInvitation,
 } from "@better-auth-ui/react";
 import type { Invitation } from "better-auth/client";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { CheckIcon, ClockIcon, XIcon } from "@/lib/icons";
 
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +37,7 @@ export function UserInvitationRow({ invitation }: UserInvitationRowProps) {
   return (
     <div className="flex items-center gap-3">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-muted">
-        <HugeiconsIcon icon={ClockIcon} className="size-4.5" />
+        <Icon icon={ClockIcon} className="size-4.5" />
       </div>
 
       <div className="flex flex-col">
@@ -66,7 +66,7 @@ export function UserInvitationRow({ invitation }: UserInvitationRowProps) {
           disabled={isAccepting || isRejecting}
           onClick={() => acceptInvitation({ invitationId: invitation.id })}
         >
-          {isAccepting ? <Spinner /> : <HugeiconsIcon icon={CheckIcon} />}
+          {isAccepting ? <Spinner /> : <Icon icon={CheckIcon} />}
 
           {organizationLocalization.accept}
         </Button>
@@ -79,7 +79,7 @@ export function UserInvitationRow({ invitation }: UserInvitationRowProps) {
           onClick={() => rejectInvitation({ invitationId: invitation.id })}
           aria-label={organizationLocalization.rejectInvitation}
         >
-          {isRejecting ? <Spinner /> : <HugeiconsIcon icon={XIcon} />}
+          {isRejecting ? <Spinner /> : <Icon icon={XIcon} />}
         </Button>
       </div>
     </div>

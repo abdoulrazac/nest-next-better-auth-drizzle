@@ -6,16 +6,16 @@ import {
   confirmDialogPresets,
   useConfirmDialog,
 } from "@/components/hooks/use-confirm-dialog";
-import { Pagination } from "@/components/pagination";
 import { PageHeader } from "@/components/page-header";
+import { Pagination } from "@/components/pagination";
 import TableHeader, {
   createBulkActions,
   createResetButton,
   createSearchField,
 } from "@/components/table-header";
-import { PlusIcon, TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useTableParams } from "@/hooks/use-table-params";
+import { PlusIcon, TrashIcon } from "@/lib/icons";
 import { useMemo, useState } from "react";
 import { buildColumns } from "./columns";
 import { RoleDetailSheet } from "./detail-sheet";
@@ -83,7 +83,7 @@ export function RolesPage() {
           [
             {
               label: "Supprimer",
-              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
               onClick: () => handlers.onBulkDelete(selectedItems),
               variant: "destructive",
             },
@@ -100,7 +100,7 @@ export function RolesPage() {
         variant="list"
         primaryAction={{
           label: "Nouveau rôle",
-          icon: <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />,
+          icon: <Icon icon={PlusIcon} className="h-4 w-4" />,
           href: "/accounts/roles/new",
         }}
       />

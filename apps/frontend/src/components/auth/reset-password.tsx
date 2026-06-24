@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuth, useResetPassword } from "@better-auth-ui/react";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { EyeIcon, EyeOffIcon } from "@/lib/icons";
+import { useAuth, useResetPassword } from "@better-auth-ui/react";
 import { type SyntheticEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -161,9 +161,9 @@ export function ResetPassword({ className }: ResetPasswordProps) {
                     }}
                   >
                     {isPasswordVisible ? (
-                      <HugeiconsIcon icon={EyeOffIcon} />
+                      <Icon icon={EyeOffIcon} />
                     ) : (
-                      <HugeiconsIcon icon={EyeIcon} />
+                      <Icon icon={EyeIcon} />
                     )}
                   </InputGroupButton>
                 </InputGroupAddon>
@@ -224,9 +224,9 @@ export function ResetPassword({ className }: ResetPasswordProps) {
                       }}
                     >
                       {isConfirmPasswordVisible ? (
-                        <HugeiconsIcon icon={EyeOffIcon} />
+                        <Icon icon={EyeOffIcon} />
                       ) : (
-                        <HugeiconsIcon icon={EyeIcon} />
+                        <Icon icon={EyeIcon} />
                       )}
                     </InputGroupButton>
                   </InputGroupAddon>

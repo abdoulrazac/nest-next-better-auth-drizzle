@@ -22,7 +22,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { SidebarIcon } from "@/lib/icons";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
@@ -271,7 +271,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <HugeiconsIcon icon={SidebarIcon} />
+      <Icon icon={SidebarIcon} />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

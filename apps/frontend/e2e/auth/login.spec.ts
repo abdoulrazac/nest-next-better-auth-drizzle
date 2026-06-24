@@ -1,8 +1,8 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Login page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/auth/login");
+    await page.goto("/auth/sign-in");
   });
 
   test("shows login form", async ({ page }) => {
@@ -21,9 +21,9 @@ test.describe("Login page", () => {
     await page.getByLabel("Email").fill("notauser@example.com");
     await page.getByLabel("Password").fill("wrongpassword");
     await page.getByRole("button", { name: "Sign in" }).click();
-    await expect(
-      page.getByText(/invalid|failed|incorrect/i),
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/invalid|failed|incorrect/i)).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test("has link to register page", async ({ page }) => {

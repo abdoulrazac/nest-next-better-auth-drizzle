@@ -8,10 +8,10 @@ import {
   Calendar03Icon,
   CheckmarkBadge01Icon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { Icon } from "@/components/ui/icon";
 
 const STATUS_MAP: Record<
   string,
@@ -45,7 +45,7 @@ export function fiscalYearsColumns({
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-chart-3/15 text-chart-3">
-            <HugeiconsIcon icon={Calendar03Icon} className="h-3.5 w-3.5" />
+            <Icon icon={Calendar03Icon} className="h-3.5 w-3.5" />
           </span>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
@@ -53,7 +53,7 @@ export function fiscalYearsColumns({
                 {row.getValue("label")}
               </p>
               {row.original.isDefault && (
-                <HugeiconsIcon
+                <Icon
                   icon={CheckmarkBadge01Icon}
                   className="h-4 w-4 text-chart-3"
                 />

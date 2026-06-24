@@ -1,6 +1,6 @@
 // apps/frontend/src/features/showcase/products/mock-store.ts
 import { INITIAL_PRODUCTS, INITIAL_VARIANTS } from "./mock-data";
-import type { Product, Variant, ProductFormValues } from "./types";
+import type { Product, ProductFormValues, Variant } from "./types";
 
 // Variables mutables — reset au rechargement
 let _products: Product[] = [...INITIAL_PRODUCTS];

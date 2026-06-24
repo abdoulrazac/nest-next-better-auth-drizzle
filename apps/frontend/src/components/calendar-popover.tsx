@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { format } from "date-fns/format";
 import { fr } from "date-fns/locale/fr";
 import { useState } from "react";
+import { Icon } from "@/components/ui/icon";
 
 interface Props {
   mode?: "single";
@@ -61,10 +61,7 @@ export default function CalendarPopover({
           ) : (
             <span>{placeholder || "Choisissez une date"}</span>
           )}
-          <HugeiconsIcon
-            icon={CalendarIcon}
-            className="ml-auto h-4 w-4 opacity-50"
-          />
+          <Icon icon={CalendarIcon} className="ml-auto h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

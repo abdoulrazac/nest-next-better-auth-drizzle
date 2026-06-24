@@ -10,8 +10,6 @@ import {
   useSetActiveOrganization,
 } from "@better-auth-ui/react";
 import type { Organization } from "better-auth/client";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { ChevronsUpDownIcon, PlusIcon, SettingsIcon } from "@/lib/icons";
 import { type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -55,7 +53,7 @@ export function OrganizationSwitcher({
   hideSlug = true,
   setActive,
   trigger,
-}: OrganizationSwitcherProps) {
+}: OrganizationSwitcherProps): React.JSX.Element {
   const { authClient, navigate, basePaths, localization, viewPaths, Link } =
     useAuth();
   const { data: session, isPending: sessionPending } = useSession(authClient);
@@ -132,7 +130,7 @@ export function OrganizationSwitcher({
                 />
               )}
 
-              <HugeiconsIcon
+              <Icon
                 icon={ChevronsUpDownIcon}
                 className="size-4 shrink-0 text-muted-foreground"
               />
@@ -162,7 +160,7 @@ export function OrganizationSwitcher({
                         : `${basePaths.organization}/${organizationViewPaths.organization.settings}`
                     }
                   >
-                    <HugeiconsIcon
+                    <Icon
                       icon={SettingsIcon}
                       className="text-muted-foreground"
                     />
@@ -181,7 +179,7 @@ export function OrganizationSwitcher({
                   <Link
                     href={`${basePaths.settings}/${viewPaths.settings.account}`}
                   >
-                    <HugeiconsIcon
+                    <Icon
                       icon={SettingsIcon}
                       className="text-muted-foreground"
                     />
@@ -224,10 +222,7 @@ export function OrganizationSwitcher({
                   setCreateOpen(true);
                 }}
               >
-                <HugeiconsIcon
-                  icon={PlusIcon}
-                  className="text-muted-foreground"
-                />
+                <Icon icon={PlusIcon} className="text-muted-foreground" />
 
                 {organizationLocalization.createOrganization}
               </DropdownMenuItem>

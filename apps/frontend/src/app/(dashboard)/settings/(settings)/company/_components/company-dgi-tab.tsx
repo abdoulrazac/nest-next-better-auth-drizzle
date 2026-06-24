@@ -1,6 +1,7 @@
 // @ts-nocheck
 "use client";
 
+import SingleSelect from "@/components/single-select";
 import {
   Card,
   CardContent,
@@ -14,12 +15,11 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
-import SingleSelect from "@/components/single-select";
-import { TaxesIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { type Control, Controller } from "react-hook-form";
 import type { UpdateCompanyInput } from "@/server/api/settings/schemas/company.schema";
+import { TaxesIcon } from "@hugeicons/core-free-icons";
+import { type Control, Controller } from "react-hook-form";
 
 const PSVB_OPTIONS = [
   { value: "A", label: "A — 2%" },
@@ -37,7 +37,7 @@ export function CompanyDgiTab({ control }: Props) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <HugeiconsIcon icon={TaxesIcon} className="size-5" />
+          <Icon icon={TaxesIcon} className="size-5" />
           Paramètres fiscaux DGI
         </CardTitle>
         <CardDescription>

@@ -26,7 +26,7 @@ import {
 } from "@/server/api/settings/schemas/general.schema";
 import { api } from "@/trpc/react";
 import { SaveIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
 const currencyOptions = [
   { value: "XOF", label: "Franc CFA (XOF)" },
@@ -365,7 +365,7 @@ export function GeneralSettingsForm() {
 
         <div className="flex justify-end">
           <Button type="submit" disabled={updateMutation.isPending}>
-            <HugeiconsIcon icon={SaveIcon} className="h-4 w-4 mr-2" />
+            <Icon icon={SaveIcon} className="h-4 w-4 mr-2" />
             {updateMutation.isPending ? "Enregistrement..." : "Enregistrer"}
           </Button>
         </div>

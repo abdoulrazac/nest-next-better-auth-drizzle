@@ -2,6 +2,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { formatXOF } from "@/lib/format";
+import { CheckCircleIcon, ChevronRightIcon } from "@/lib/icons";
 import {
   ORDERED_PLANS,
   PLAN_FEATURES,
@@ -11,9 +13,7 @@ import {
   type PlanId,
 } from "@/lib/plans";
 import { cn } from "@/lib/utils";
-import { formatXOF } from "@/lib/format";
-import { CheckCircleIcon, ChevronRightIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
 interface Props {
   currentPlan: PlanId;
@@ -69,7 +69,7 @@ export function SubscriptionPlanSelector({
             <ul className="mb-4 flex-1 space-y-1">
               {PLAN_FEATURES[p].map((f) => (
                 <li key={f} className="flex items-start gap-1.5 text-xs">
-                  <HugeiconsIcon
+                  <Icon
                     icon={CheckCircleIcon}
                     className="mt-0.5 h-3 w-3 shrink-0 text-emerald-500"
                   />
@@ -86,10 +86,7 @@ export function SubscriptionPlanSelector({
             >
               {isCurrent ? "Plan actuel" : isDown ? "Rétrograder" : "Choisir"}
               {!isCurrent && (
-                <HugeiconsIcon
-                  icon={ChevronRightIcon}
-                  className="ml-1 h-3.5 w-3.5"
-                />
+                <Icon icon={ChevronRightIcon} className="ml-1 h-3.5 w-3.5" />
               )}
             </Button>
           </div>

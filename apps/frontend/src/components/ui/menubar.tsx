@@ -4,7 +4,7 @@ import * as React from "react";
 import { Menubar as MenubarPrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { CheckIcon, ChevronRightIcon } from "@/lib/icons";
 
 function Menubar({
@@ -131,7 +131,7 @@ function MenubarCheckboxItem({
     >
       <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenubarPrimitive.ItemIndicator>
-          <HugeiconsIcon icon={CheckIcon} />
+          <Icon icon={CheckIcon} />
         </MenubarPrimitive.ItemIndicator>
       </span>
       {children}
@@ -159,7 +159,7 @@ function MenubarRadioItem({
     >
       <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenubarPrimitive.ItemIndicator>
-          <HugeiconsIcon icon={CheckIcon} />
+          <Icon icon={CheckIcon} />
         </MenubarPrimitive.ItemIndicator>
       </span>
       {children}
@@ -241,7 +241,7 @@ function MenubarSubTrigger({
       {...props}
     >
       {children}
-      <HugeiconsIcon icon={ChevronRightIcon} className="ml-auto size-4" />
+      <Icon icon={ChevronRightIcon} className="ml-auto size-4" />
     </MenubarPrimitive.SubTrigger>
   );
 }

@@ -25,7 +25,7 @@ import {
 import type { SequenceOutput } from "@/server/api/settings/schemas/sequence.schema";
 import { api } from "@/trpc/react";
 import { Edit, RefreshIcon, SettingsIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
 import { ButtonTooltip } from "@/components/button-tooltip";
 import { DEFAULT_SEQUENCE_CONFIG } from "@/lib/constants";
@@ -202,7 +202,7 @@ export function NumberingForm() {
                 onClick={() => initMutation.mutate()}
                 disabled={initMutation.isPending}
               >
-                <HugeiconsIcon icon={SettingsIcon} className="h-4 w-4 mr-2" />
+                <Icon icon={SettingsIcon} className="h-4 w-4 mr-2" />
                 {initMutation.isPending
                   ? "Initialisation..."
                   : isUsingDefaults
@@ -316,10 +316,7 @@ export function NumberingForm() {
                                     }
                                   }}
                                 >
-                                  <HugeiconsIcon
-                                    icon={Edit}
-                                    className="h-4 w-4"
-                                  />
+                                  <Icon icon={Edit} className="h-4 w-4" />
                                 </ButtonTooltip>
                                 <ButtonTooltip
                                   tooltipContent={
@@ -337,7 +334,7 @@ export function NumberingForm() {
                                     }
                                   }}
                                 >
-                                  <HugeiconsIcon
+                                  <Icon
                                     icon={RefreshIcon}
                                     className="h-4 w-4"
                                   />

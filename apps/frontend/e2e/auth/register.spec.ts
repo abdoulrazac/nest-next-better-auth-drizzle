@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Register page", () => {
   test.beforeEach(async ({ page }) => {
@@ -26,6 +26,6 @@ test.describe("Register page", () => {
 
   test("has link to login page", async ({ page }) => {
     await page.getByRole("link", { name: "Sign in" }).click();
-    await expect(page).toHaveURL("/auth/login");
+    await expect(page).toHaveURL("/auth/sign-in");
   });
 });

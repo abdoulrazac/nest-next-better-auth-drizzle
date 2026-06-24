@@ -15,7 +15,7 @@ import { Kbd } from "@/components/ui/kbd";
 import { SearchIcon } from "@/lib/icons";
 import { navMenu } from "@/lib/nav";
 import { cn } from "@/lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -54,7 +54,7 @@ export function CommandMenu() {
         className="hidden md:flex w-fit items-center gap-2"
         onClick={() => setOpen(true)}
       >
-        <HugeiconsIcon icon={SearchIcon} className="mr-2 h-4 w-4" />
+        <Icon icon={SearchIcon} className="mr-2 h-4 w-4" />
         <span className="hidden sm:inline">Recherche</span>
         {isClient && <Kbd>{isMac ? "⌘ + K" : "Ctrl + K"}</Kbd>}
       </Button>
@@ -88,7 +88,7 @@ export function CommandMenu() {
                         onSelect={() => handleNavigation(item.url as string)}
                       >
                         {item.icon && (
-                          <HugeiconsIcon
+                          <Icon
                             icon={item.icon}
                             className={cn(
                               "mr-2 h-4 w-4",

@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import PageHeader from "@/components/page-header";
-import { DataTable } from "@/components/data-table";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { MutateWebhookDialog } from "./mutate-dialog";
-import { WebhookDetailSheet } from "./detail-sheet";
-import { buildColumns } from "./columns";
-import { useListWebhooks, useDeleteWebhook } from "./hooks";
+import { DataTable } from "@/components/data-table";
+import PageHeader from "@/components/page-header";
+import { Icon } from "@/components/ui/icon";
 import { PlusIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { useState } from "react";
+import { buildColumns } from "./columns";
+import { WebhookDetailSheet } from "./detail-sheet";
+import { useDeleteWebhook, useListWebhooks } from "./hooks";
+import { MutateWebhookDialog } from "./mutate-dialog";
 import type { Webhook } from "./types";
 
 export function WebhooksPage() {
@@ -36,7 +36,7 @@ export function WebhooksPage() {
         description="Configure outgoing webhooks to notify external services of events."
         primaryAction={{
           label: "Add Webhook",
-          icon: <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />,
+          icon: <Icon icon={PlusIcon} className="h-4 w-4" />,
           onClick: () => setCreateOpen(true),
         }}
       />

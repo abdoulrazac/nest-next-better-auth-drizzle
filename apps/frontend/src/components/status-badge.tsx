@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import type { IconSvgElement } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 
@@ -103,7 +103,7 @@ export function StatusBadge({
           )}
         />
       )}
-      {icon && <HugeiconsIcon icon={icon} className="h-3 w-3" />}
+      {icon && <Icon icon={icon} className="h-3 w-3" />}
       {label}
     </span>
   );

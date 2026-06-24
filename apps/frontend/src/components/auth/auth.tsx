@@ -55,7 +55,7 @@ export function Auth({
   socialLayout,
   socialPosition,
   view,
-}: AuthProps) {
+}: AuthProps): React.JSX.Element | null {
   const { basePaths, emailAndPassword, plugins, viewPaths, navigate } =
     useAuth();
 

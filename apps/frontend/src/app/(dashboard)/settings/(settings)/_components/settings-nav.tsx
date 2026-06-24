@@ -14,7 +14,7 @@ import {
   RefreshIcon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -155,7 +155,7 @@ export function SettingsNav() {
                       : "text-muted-foreground",
                   )}
                 >
-                  <HugeiconsIcon
+                  <Icon
                     icon={item.icon}
                     size={18}
                     className={cn(

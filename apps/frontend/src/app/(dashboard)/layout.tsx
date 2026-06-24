@@ -5,6 +5,9 @@ import { DashboardShell } from "@/components/dashboard-shell";
 import { getSession } from "@/lib/auth-client";
 import { getQueryClient } from "@/lib/query-client";
 
+// All dashboard pages require a live session — never statically pre-render.
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({
   children,
 }: {

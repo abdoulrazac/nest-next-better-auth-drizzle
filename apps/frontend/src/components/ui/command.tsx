@@ -1,9 +1,8 @@
 "use client";
 
-import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -11,9 +10,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Icon } from "@/components/ui/icon";
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { SearchIcon, CheckIcon } from "@/lib/icons";
+import { CheckIcon, SearchIcon } from "@/lib/icons";
+import { cn } from "@/lib/utils";
 
 function Command({
   className,
@@ -79,10 +79,7 @@ function CommandInput({
           {...props}
         />
         <InputGroupAddon>
-          <HugeiconsIcon
-            icon={SearchIcon}
-            className="size-3.5 shrink-0 opacity-50"
-          />
+          <Icon icon={SearchIcon} className="size-3.5 shrink-0 opacity-50" />
         </InputGroupAddon>
       </InputGroup>
     </div>
@@ -162,7 +159,7 @@ function CommandItem({
       {...props}
     >
       {children}
-      <HugeiconsIcon
+      <Icon
         icon={CheckIcon}
         className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100"
       />
@@ -189,11 +186,11 @@ function CommandShortcut({
 export {
   Command,
   CommandDialog,
-  CommandInput,
-  CommandList,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
-  CommandShortcut,
+  CommandList,
   CommandSeparator,
+  CommandShortcut,
 };

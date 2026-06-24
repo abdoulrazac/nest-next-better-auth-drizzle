@@ -16,9 +16,9 @@ import {
   createResetButton,
   createSearchField,
 } from "@/components/table-header";
+import { Icon } from "@/components/ui/icon";
 import { useTableParams } from "@/hooks/use-table-params";
 import { TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -194,7 +194,7 @@ export function useProducts() {
           [
             {
               label: "Supprimer",
-              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
               onClick: handlers.onBulkDelete,
               variant: "destructive",
             },

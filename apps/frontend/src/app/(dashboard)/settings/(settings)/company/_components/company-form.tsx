@@ -11,7 +11,7 @@ import {
   Save,
   TaxesIcon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -172,25 +172,25 @@ export function CompanyForm() {
         <Tabs defaultValue="legal" className="w-full">
           <TabsList className="flex w-full max-w-xl mb-4" variant="line">
             <TabsTrigger value="legal" className="gap-1.5">
-              <HugeiconsIcon icon={Building01Icon} className="size-4" />
+              <Icon icon={Building01Icon} className="size-4" />
               <span className="hidden sm:inline">Identité légale</span>
               <span className="sm:hidden">Légal</span>
             </TabsTrigger>
             <TabsTrigger value="contact" className="gap-1.5">
-              <HugeiconsIcon icon={Call02Icon} className="size-4" />
+              <Icon icon={Call02Icon} className="size-4" />
               <span className="hidden sm:inline">Coordonnées</span>
               <span className="sm:hidden">Contact</span>
             </TabsTrigger>
             <TabsTrigger value="bank" className="gap-1.5">
-              <HugeiconsIcon icon={BankIcon} className="size-4" />
+              <Icon icon={BankIcon} className="size-4" />
               Banque
             </TabsTrigger>
             <TabsTrigger value="dgi" className="gap-1.5">
-              <HugeiconsIcon icon={TaxesIcon} className="size-4" />
+              <Icon icon={TaxesIcon} className="size-4" />
               DGI
             </TabsTrigger>
             <TabsTrigger value="logo" className="gap-1.5">
-              <HugeiconsIcon icon={Image01Icon} className="size-4" />
+              <Icon icon={Image01Icon} className="size-4" />
               Logo
             </TabsTrigger>
           </TabsList>
@@ -219,7 +219,7 @@ export function CompanyForm() {
 
         <div className="mt-6 flex justify-end">
           <Button disabled={updateMutation.isPending} type="submit">
-            <HugeiconsIcon icon={Save} className="size-4" />
+            <Icon icon={Save} className="size-4" />
             {updateMutation.isPending
               ? "Enregistrement…"
               : "Enregistrer les modifications"}

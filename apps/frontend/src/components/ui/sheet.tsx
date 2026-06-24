@@ -1,12 +1,12 @@
 "use client";
 
-import * as React from "react";
 import { Dialog as SheetPrimitive } from "radix-ui";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { XIcon } from "@/lib/icons";
+import { cn } from "@/lib/utils";
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -76,7 +76,7 @@ function SheetContent({
               className="absolute top-4 right-4"
               size="icon-sm"
             >
-              <HugeiconsIcon icon={XIcon} />
+              <Icon icon={XIcon} />
               <span className="sr-only">Close</span>
             </Button>
           </SheetPrimitive.Close>
@@ -137,11 +137,11 @@ function SheetDescription({
 
 export {
   Sheet,
-  SheetTrigger,
   SheetClose,
   SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetTitle,
   SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
 };

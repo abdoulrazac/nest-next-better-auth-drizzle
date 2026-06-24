@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import {
   Select,
   SelectContent,
@@ -9,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 
 interface PaginationProps {
@@ -77,7 +77,7 @@ export function Pagination({
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage <= 1}
           >
-            <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4" />
+            <Icon icon={ChevronLeftIcon} className="h-4 w-4" />
           </Button>
           <span className="min-w-[4rem] text-center text-muted-foreground">
             {currentPage} / {totalPages}
@@ -89,7 +89,7 @@ export function Pagination({
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage >= totalPages}
           >
-            <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" />
+            <Icon icon={ChevronRightIcon} className="h-4 w-4" />
           </Button>
         </div>
       </div>

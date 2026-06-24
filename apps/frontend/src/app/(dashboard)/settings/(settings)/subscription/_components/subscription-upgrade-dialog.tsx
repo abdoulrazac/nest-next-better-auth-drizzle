@@ -4,21 +4,20 @@
 import { Button } from "@/components/ui/button";
 import { formatXOF } from "@/lib/format";
 import {
-  ORDERED_PLANS,
+  AlertCircleIcon,
+  CheckCircleIcon,
+  ExternalLinkIcon,
+  LoadingIcon,
+} from "@/lib/icons";
+import {
   PLAN_NAMES,
   PLAN_PRICES_ANNUAL,
   PLAN_PRICES_MONTHLY,
   type PlanId,
 } from "@/lib/plans";
 import { api } from "@/trpc/react";
-import {
-  AlertCircleIcon,
-  CheckCircleIcon,
-  ExternalLinkIcon,
-  LoadingIcon,
-} from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useRef, useState } from "react";
+import { Icon } from "@/components/ui/icon";
 
 interface Props {
   targetPlan: PlanId;
@@ -143,10 +142,7 @@ export function SubscriptionUpgradeDialog({
     return (
       <div className="flex flex-col items-center gap-4 py-6 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
-          <HugeiconsIcon
-            icon={CheckCircleIcon}
-            className="h-8 w-8 text-emerald-500"
-          />
+          <Icon icon={CheckCircleIcon} className="h-8 w-8 text-emerald-500" />
         </div>
         <h3 className="text-lg font-bold">Plan activé !</h3>
         <p className="max-w-xs text-sm text-muted-foreground">
@@ -160,10 +156,7 @@ export function SubscriptionUpgradeDialog({
   if (state === "TIMEOUT") {
     return (
       <div className="flex flex-col items-center gap-4 py-6 text-center">
-        <HugeiconsIcon
-          icon={AlertCircleIcon}
-          className="h-10 w-10 text-amber-500"
-        />
+        <Icon icon={AlertCircleIcon} className="h-10 w-10 text-amber-500" />
         <h3 className="text-lg font-bold">Paiement non reçu</h3>
         <p className="max-w-xs text-sm text-muted-foreground">
           Nous n'avons pas encore reçu la confirmation. Si vous avez payé, votre
@@ -178,7 +171,7 @@ export function SubscriptionUpgradeDialog({
               variant="outline"
               onClick={() => window.open(payUrl, "_blank")}
             >
-              <HugeiconsIcon icon={ExternalLinkIcon} className="mr-2 h-4 w-4" />
+              <Icon icon={ExternalLinkIcon} className="mr-2 h-4 w-4" />
               Ré-ouvrir le paiement
             </Button>
           )}
@@ -190,10 +183,7 @@ export function SubscriptionUpgradeDialog({
   if (state === "ERROR") {
     return (
       <div className="flex flex-col items-center gap-4 py-6 text-center">
-        <HugeiconsIcon
-          icon={AlertCircleIcon}
-          className="h-10 w-10 text-destructive"
-        />
+        <Icon icon={AlertCircleIcon} className="h-10 w-10 text-destructive" />
         <h3 className="text-lg font-bold">Erreur de paiement</h3>
         <p className="max-w-xs text-sm text-muted-foreground">{errorMsg}</p>
         <div className="flex gap-2">
@@ -209,7 +199,7 @@ export function SubscriptionUpgradeDialog({
   if (state === "WAITING") {
     return (
       <div className="flex flex-col items-center gap-4 py-6 text-center">
-        <HugeiconsIcon
+        <Icon
           icon={LoadingIcon}
           className="h-10 w-10 animate-spin text-primary"
         />
@@ -224,10 +214,7 @@ export function SubscriptionUpgradeDialog({
             size="sm"
             onClick={() => window.open(payUrl, "_blank")}
           >
-            <HugeiconsIcon
-              icon={ExternalLinkIcon}
-              className="mr-2 h-3.5 w-3.5"
-            />
+            <Icon icon={ExternalLinkIcon} className="mr-2 h-3.5 w-3.5" />
             Ré-ouvrir la page de paiement
           </Button>
         )}
@@ -263,7 +250,7 @@ export function SubscriptionUpgradeDialog({
       {/* Avertissement downgrade */}
       {targetPlan === "FREE" && (
         <div className="flex items-start gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
-          <HugeiconsIcon
+          <Icon
             icon={AlertCircleIcon}
             className="mt-0.5 h-4 w-4 shrink-0 text-amber-500"
           />
@@ -293,10 +280,7 @@ export function SubscriptionUpgradeDialog({
         onClick={handlePay}
       >
         {state === "LOADING" ? (
-          <HugeiconsIcon
-            icon={LoadingIcon}
-            className="mr-2 h-4 w-4 animate-spin"
-          />
+          <Icon icon={LoadingIcon} className="mr-2 h-4 w-4 animate-spin" />
         ) : null}
         {targetPlan === "FREE" ? "Résilier l'abonnement" : "Payer maintenant"}
       </Button>

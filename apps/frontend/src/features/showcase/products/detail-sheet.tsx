@@ -13,6 +13,7 @@ import {
 } from "@/components/detail-tabs";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import {
   Sheet,
   SheetContent,
@@ -21,7 +22,6 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EditIcon, ExternalLinkIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { VariantTable } from "./_components/variant-table";
@@ -82,7 +82,7 @@ export function ProductDetailSheet({
                   }}
                   title="Voir la fiche complète"
                 >
-                  <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />
+                  <Icon icon={ExternalLinkIcon} className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="outline"
@@ -92,7 +92,7 @@ export function ProductDetailSheet({
                     if (productId) handlers.onEdit(productId);
                   }}
                 >
-                  <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />
+                  <Icon icon={EditIcon} className="h-4 w-4" />
                   Modifier
                 </Button>
               </div>

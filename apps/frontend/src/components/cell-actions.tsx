@@ -23,7 +23,7 @@ import {
   TrashIcon,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 
@@ -147,7 +147,7 @@ export default function CellActions({
                 size="icon"
                 tooltipContent="Plus d'actions"
               >
-                <HugeiconsIcon icon={MoreHorizontalIcon} className="h-4 w-4" />
+                <Icon icon={MoreHorizontalIcon} className="h-4 w-4" />
               </ButtonTooltip>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -205,7 +205,7 @@ export function createViewAction(
   tooltip = "Voir les détails",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={EyeIcon} className="h-4 w-4" />,
+    icon: <Icon icon={EyeIcon} className="h-4 w-4" />,
     ...(typeof hrefOrFn === "function"
       ? { onClick: hrefOrFn }
       : { href: hrefOrFn }),
@@ -219,7 +219,7 @@ export function createEditAction(
   tooltip = "Modifier",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />,
+    icon: <Icon icon={EditIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -231,7 +231,7 @@ export function createDeleteAction(
   opts?: Partial<Pick<CellAction, "confirmDialog">>,
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+    icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
     onClick,
     tooltip: "Supprimer",
     variant: "destructive",
@@ -252,7 +252,7 @@ export function createCopyAction(
   tooltip = "Copier",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CopyIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -264,7 +264,7 @@ export function createOpenAction(
   tooltip = "Ouvrir",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={FolderOpenIcon} className="h-4 w-4" />,
+    icon: <Icon icon={FolderOpenIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -276,7 +276,7 @@ export function createNavigateAction(
   tooltip = "Voir les détails",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={ExternalLinkIcon} className="h-4 w-4" />,
+    icon: <Icon icon={ExternalLinkIcon} className="h-4 w-4" />,
     href,
     tooltip,
     variant: "ghost",
@@ -288,7 +288,7 @@ export function createCancelAction(
   tooltip = "Annuler",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={CancelSquareIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CancelSquareIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "destructive",
@@ -307,7 +307,7 @@ export function createSendEmailAction(
   tooltip = "Envoyer par email",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={SendIcon} className="h-4 w-4" />,
+    icon: <Icon icon={SendIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "outline",
@@ -325,7 +325,7 @@ export function createPreviewAction(
   tooltip = "Aperçu du document",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={FileSearchIcon} className="h-4 w-4" />,
+    icon: <Icon icon={FileSearchIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -337,7 +337,7 @@ export function createValidateAction(
   tooltip = "Valider",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={CheckCircleIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CheckCircleIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "outline",
@@ -349,7 +349,7 @@ export function createDuplicateAction(
   tooltip = "Dupliquer",
 ): CellAction {
   return {
-    icon: <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CopyIcon} className="h-4 w-4" />,
     onClick,
     tooltip,
     variant: "ghost",
@@ -363,7 +363,7 @@ export function createToggleStatusAction(
 ): CellAction {
   const t = tooltip ?? (isActive ? "Désactiver" : "Activer");
   return {
-    icon: <HugeiconsIcon icon={CheckCircleIcon} className="h-4 w-4" />,
+    icon: <Icon icon={CheckCircleIcon} className="h-4 w-4" />,
     onClick,
     tooltip: t,
     variant: "ghost",
@@ -420,7 +420,7 @@ export function StandardCellActions({
       ? editHref
         ? [
             {
-              icon: <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />,
+              icon: <Icon icon={EditIcon} className="h-4 w-4" />,
               href: editHref,
               tooltip: "Modifier",
               variant: "ghost" as const,

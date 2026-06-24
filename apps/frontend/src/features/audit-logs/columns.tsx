@@ -1,22 +1,20 @@
 "use client";
 
+import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import {
   ClockIcon,
+  EditIcon,
+  EyeIcon,
   LoginIcon,
   LogoutIcon,
   PlusIcon,
-  EditIcon,
   TrashIcon,
-  EyeIcon,
-  DocumentIcon,
-  UsersIcon,
 } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/utils";
 import type { IconSvgElement } from "@hugeicons/react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { AuditLog } from "./types";
@@ -95,7 +93,7 @@ export const auditLogColumns: ColumnDef<AuditLog>[] = [
       return (
         <div className="flex items-center gap-2">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-500 dark:bg-slate-800">
-            <HugeiconsIcon icon={ClockIcon} className="h-3.5 w-3.5" />
+            <Icon icon={ClockIcon} className="h-3.5 w-3.5" />
           </span>
           <div className="min-w-0">
             <p className="text-sm font-medium">
@@ -127,7 +125,7 @@ export const auditLogColumns: ColumnDef<AuditLog>[] = [
               meta.colorClass,
             )}
           >
-            <HugeiconsIcon icon={meta.icon} className="h-3.5 w-3.5" />
+            <Icon icon={meta.icon} className="h-3.5 w-3.5" />
           </span>
           <div className="min-w-0">
             <p className="text-sm font-medium">{meta.label}</p>

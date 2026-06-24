@@ -10,7 +10,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -154,7 +154,7 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
             return (
-              <HugeiconsIcon
+              <Icon
                 icon={ChevronLeftIcon}
                 className={cn("size-4", className)}
                 {...props}
@@ -164,7 +164,7 @@ function Calendar({
 
           if (orientation === "right") {
             return (
-              <HugeiconsIcon
+              <Icon
                 icon={ChevronRightIcon}
                 className={cn("size-4", className)}
                 {...props}
@@ -173,7 +173,7 @@ function Calendar({
           }
 
           return (
-            <HugeiconsIcon
+            <Icon
               icon={ChevronDownIcon}
               className={cn("size-4", className)}
               {...props}

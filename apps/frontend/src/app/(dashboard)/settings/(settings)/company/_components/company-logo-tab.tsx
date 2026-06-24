@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError } from "@/components/ui/field";
 import { UploadDropzone } from "@/components/ui/upload-dropzone";
-import { Image01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { type Control, Controller, type UseFormWatch } from "react-hook-form";
 import type { UpdateCompanyInput } from "@/server/api/settings/schemas/company.schema";
 import type { UploadHookControl } from "@better-upload/client";
+import { Image01Icon } from "@hugeicons/core-free-icons";
+import { type Control, Controller, type UseFormWatch } from "react-hook-form";
+import { Icon } from "@/components/ui/icon";
 
 interface Props {
   control: Control<UpdateCompanyInput>;
@@ -35,7 +35,7 @@ export function CompanyLogoTab({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <HugeiconsIcon icon={Image01Icon} className="size-5" />
+          <Icon icon={Image01Icon} className="size-5" />
           Logo de l'entreprise
         </CardTitle>
         <CardDescription>
@@ -57,7 +57,7 @@ export function CompanyLogoTab({
                 />
               ) : (
                 <div className="flex size-full flex-col items-center justify-center gap-2 text-muted-foreground">
-                  <HugeiconsIcon icon={Image01Icon} className="size-12" />
+                  <Icon icon={Image01Icon} className="size-12" />
                   <span className="text-sm">Aucun logo</span>
                 </div>
               )}

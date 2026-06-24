@@ -2,11 +2,11 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
 import { Progress } from "@/components/ui/progress";
+import { AlertCircleIcon } from "@/lib/icons";
 import { PLAN_LIMITS, type PlanId } from "@/lib/plans";
 import { cn } from "@/lib/utils";
-import { AlertCircleIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 
 interface UsageMeterProps {
   label: string;
@@ -116,7 +116,7 @@ export function SubscriptionUsage({ plan, usage, onUpgrade }: Props) {
 
         {warnings.length > 0 && (
           <div className="flex items-start gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
-            <HugeiconsIcon
+            <Icon
               icon={AlertCircleIcon}
               className="mt-0.5 h-4 w-4 shrink-0 text-amber-500"
             />

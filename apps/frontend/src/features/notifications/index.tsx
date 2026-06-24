@@ -1,27 +1,26 @@
 "use client";
 
-import * as React from "react";
-import { Icon } from "@/components/ui/icon";
-import {
-  BellIcon,
-  InfoIcon,
-  AlertIcon,
-  AlertCircleIcon,
-  CheckCircleIcon,
-  CheckIcon,
-  TrashIcon,
-} from "@/lib/icons";
+import PageHeader from "@/components/page-header";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import PageHeader from "@/components/page-header";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { cn } from "@/lib/utils";
+import { Icon } from "@/components/ui/icon";
 import {
-  useListNotifications,
-  useMarkAsRead,
-  useMarkAllAsRead,
+  AlertCircleIcon,
+  AlertIcon,
+  BellIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  InfoIcon,
+  TrashIcon,
+} from "@/lib/icons";
+import { cn } from "@/lib/utils";
+import * as React from "react";
+import {
   useDeleteNotification,
+  useListNotifications,
+  useMarkAllAsRead,
+  useMarkAsRead,
 } from "./hooks";
 import type { Notification } from "./types";
 
@@ -148,7 +147,7 @@ export function NotificationsPage() {
         secondaryActions={[
           {
             label: "Mark all as read",
-            icon: <HugeiconsIcon icon={CheckIcon} className="h-4 w-4" />,
+            icon: <Icon icon={CheckIcon} className="h-4 w-4" />,
             onClick: () => markAllAsRead.mutate(),
             disabled: markAllAsRead.isPending || unreadCount === 0,
             variant: "outline",

@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon } from "@/components/ui/icon";
+import { CheckIcon, XIcon } from "@/lib/icons";
 import {
   type OrganizationAuthClient,
   useAuth,
@@ -7,8 +9,6 @@ import {
   useCheckSlug,
 } from "@better-auth-ui/react";
 import { useDebouncer } from "@tanstack/react-pacer";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { CheckIcon, XIcon } from "@/lib/icons";
 import { useEffect } from "react";
 
 import { Field, FieldError } from "@/components/ui/field";
@@ -95,12 +95,9 @@ export function SlugField({
         {checkSlugEnabled && !!value.trim() && value.trim() !== currentSlug && (
           <InputGroupAddon align="inline-end">
             {checkSlugData?.status ? (
-              <HugeiconsIcon
-                icon={CheckIcon}
-                className="size-4 text-foreground"
-              />
+              <Icon icon={CheckIcon} className="size-4 text-foreground" />
             ) : checkSlugError ? (
-              <HugeiconsIcon icon={XIcon} className="size-4 text-destructive" />
+              <Icon icon={XIcon} className="size-4 text-destructive" />
             ) : (
               <Spinner />
             )}

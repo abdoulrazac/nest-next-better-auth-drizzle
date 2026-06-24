@@ -2,10 +2,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { RefreshIcon, SearchIcon, XIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useState, type ReactNode } from "react";
 
 // ── Types ───────────────────────────────────────────────────────────────────────
@@ -90,7 +90,7 @@ function SearchInput({ search }: { search: SearchField }) {
         onClick={handleSubmit}
         className="rounded-l-none border-l-0 shrink-0"
       >
-        <HugeiconsIcon icon={SearchIcon} className="h-4 w-4" />
+        <Icon icon={SearchIcon} className="h-4 w-4" />
       </Button>
     </div>
   );
@@ -138,7 +138,7 @@ export default function TableHeader({
           ))}
         </div>
         <Button variant="ghost" size="icon" onClick={bulkActions.onClose}>
-          <HugeiconsIcon icon={XIcon} className="h-4 w-4" />
+          <Icon icon={XIcon} className="h-4 w-4" />
         </Button>
       </div>
     );
@@ -184,7 +184,7 @@ export function createResetButton(
 ): ActionButton {
   return {
     label: opts?.label ?? "Réinitialiser",
-    icon: <HugeiconsIcon icon={RefreshIcon} className="h-4 w-4" />,
+    icon: <Icon icon={RefreshIcon} className="h-4 w-4" />,
     onClick,
     variant: "ghost",
   };

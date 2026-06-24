@@ -9,7 +9,7 @@ import {
   Scissor01Icon,
   TaxesIcon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -56,7 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 className="px-4"
               >
                 <Link href={tab.href}>
-                  <HugeiconsIcon icon={tab.icon} className="mr-1" />
+                  <Icon icon={tab.icon} className="mr-1" />
                   {tab.label}
                 </Link>
               </TabsTrigger>

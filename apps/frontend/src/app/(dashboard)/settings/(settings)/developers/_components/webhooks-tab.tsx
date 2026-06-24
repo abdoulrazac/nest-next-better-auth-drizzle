@@ -38,9 +38,9 @@ import {
   TestTube,
   Trash,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Icon } from "@/components/ui/icon";
 
 const AVAILABLE_EVENTS = [
   "client.created",
@@ -148,7 +148,7 @@ export function WebhooksTab() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <HugeiconsIcon icon={Link01Icon} className="h-5 w-5" />
+                <Icon icon={Link01Icon} className="h-5 w-5" />
                 Webhooks
               </CardTitle>
               <Button
@@ -156,7 +156,7 @@ export function WebhooksTab() {
                 className="gap-2"
                 onClick={() => setWebhookDialogOpen(true)}
               >
-                <HugeiconsIcon icon={Plus} className="h-4 w-4" />
+                <Icon icon={Plus} className="h-4 w-4" />
                 Nouveau webhook
               </Button>
             </div>
@@ -177,7 +177,7 @@ export function WebhooksTab() {
               />
             ) : webhooks.length === 0 ? (
               <div className="text-center py-12 text-slate-500">
-                <HugeiconsIcon
+                <Icon
                   icon={Globe}
                   className="h-12 w-12 mx-auto mb-4 text-slate-300"
                 />
@@ -250,10 +250,7 @@ export function WebhooksTab() {
                               testWebhookMutation.mutate({ webhookId: wh.id })
                             }
                           >
-                            <HugeiconsIcon
-                              icon={TestTube}
-                              className="h-3 w-3 mr-1"
-                            />
+                            <Icon icon={TestTube} className="h-3 w-3 mr-1" />
                             Tester
                           </Button>
                           <Button
@@ -273,7 +270,7 @@ export function WebhooksTab() {
                               }
                             }}
                           >
-                            <HugeiconsIcon icon={Trash} className="h-3 w-3" />
+                            <Icon icon={Trash} className="h-3 w-3" />
                           </Button>
                         </div>
                       </TableCell>
@@ -293,7 +290,7 @@ export function WebhooksTab() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {AVAILABLE_EVENTS.map((ev) => (
                 <div key={ev} className="flex items-center gap-2 text-sm">
-                  <HugeiconsIcon
+                  <Icon
                     icon={CheckmarkCircle02Icon}
                     className="h-4 w-4 text-green-600 shrink-0"
                   />

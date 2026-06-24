@@ -17,7 +17,7 @@ import { formatXOF } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CheckCircleIcon, ChevronRightIcon, CrownIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
 const STATUS_BADGE: Record<string, { label: string; class: string }> = {
   ACTIVE: {
@@ -66,7 +66,7 @@ export function SubscriptionPlanCard({ data, onUpgrade }: Props) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base">
-            <HugeiconsIcon
+            <Icon
               icon={CrownIcon}
               className={cn(
                 "h-5 w-5",
@@ -121,7 +121,7 @@ export function SubscriptionPlanCard({ data, onUpgrade }: Props) {
               key={f}
               className="flex items-start gap-2 text-xs text-muted-foreground"
             >
-              <HugeiconsIcon
+              <Icon
                 icon={CheckCircleIcon}
                 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500"
               />
@@ -143,10 +143,7 @@ export function SubscriptionPlanCard({ data, onUpgrade }: Props) {
               onClick={() => onUpgrade(nextPlan)}
             >
               Passer au plan {PLAN_NAMES[nextPlan]?.split("—")[0]?.trim()}
-              <HugeiconsIcon
-                icon={ChevronRightIcon}
-                className="ml-1 h-3.5 w-3.5"
-              />
+              <Icon icon={ChevronRightIcon} className="ml-1 h-3.5 w-3.5" />
             </Button>
           );
         })()}

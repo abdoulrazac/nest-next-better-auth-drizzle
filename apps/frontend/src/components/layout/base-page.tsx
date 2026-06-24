@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { Fragment } from "react";
-import { useTheme } from "next-themes";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,14 +15,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Icon } from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { LaptopIcon, MoonIcon, SunIcon } from "@/lib/icons";
-import { CommandMenu } from "./command-menu";
-import { NavUser } from "../nav-user";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 import type { ReactNode } from "react";
+import { Fragment } from "react";
+import { NavUser } from "../nav-user";
+import { CommandMenu } from "./command-menu";
 
 interface Crumb {
   title: string;
@@ -51,11 +51,11 @@ function ThemeToggle() {
           className="h-8 w-8"
           aria-label="Changer le thème"
         >
-          <HugeiconsIcon
+          <Icon
             icon={SunIcon}
             className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
           />
-          <HugeiconsIcon
+          <Icon
             icon={MoonIcon}
             className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
           />
@@ -63,15 +63,15 @@ function ThemeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          <HugeiconsIcon icon={SunIcon} className="mr-2 h-4 w-4" />
+          <Icon icon={SunIcon} className="mr-2 h-4 w-4" />
           Clair
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          <HugeiconsIcon icon={LaptopIcon} className="mr-2 h-4 w-4" />
+          <Icon icon={LaptopIcon} className="mr-2 h-4 w-4" />
           Système
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <HugeiconsIcon icon={MoonIcon} className="mr-2 h-4 w-4" />
+          <Icon icon={MoonIcon} className="mr-2 h-4 w-4" />
           Sombre
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { LaptopIcon, MoonIcon, SunIcon } from "@/lib/icons";
 import { useTheme } from "next-themes";
 import { NavUser } from "./nav-user";
@@ -26,11 +26,11 @@ export function Header() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8">
-              <HugeiconsIcon
+              <Icon
                 icon={SunIcon}
                 className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
               />
-              <HugeiconsIcon
+              <Icon
                 icon={MoonIcon}
                 className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
               />
@@ -39,15 +39,15 @@ export function Header() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => setTheme("light")}>
-              <HugeiconsIcon icon={SunIcon} className="mr-2 h-4 w-4" />
+              <Icon icon={SunIcon} className="mr-2 h-4 w-4" />
               Clair
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTheme("system")}>
-              <HugeiconsIcon icon={LaptopIcon} className="mr-2 h-4 w-4" />
+              <Icon icon={LaptopIcon} className="mr-2 h-4 w-4" />
               Système
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTheme("dark")}>
-              <HugeiconsIcon icon={MoonIcon} className="mr-2 h-4 w-4" />
+              <Icon icon={MoonIcon} className="mr-2 h-4 w-4" />
               Sombre
             </DropdownMenuItem>
           </DropdownMenuContent>

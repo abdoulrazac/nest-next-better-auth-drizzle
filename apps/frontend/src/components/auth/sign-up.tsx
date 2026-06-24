@@ -1,21 +1,8 @@
 "use client";
 
-import {
-  authMutationKeys,
-  parseAdditionalFieldValue,
-} from "@better-auth-ui/core";
-import {
-  useAuth,
-  useFetchOptions,
-  useSignUpEmail,
-} from "@better-auth-ui/react";
-import { useIsMutating } from "@tanstack/react-query";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { EyeIcon, EyeOffIcon } from "@/lib/icons";
-import { type SyntheticEvent, useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
 import {
   Field,
   FieldDescription,
@@ -31,7 +18,20 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
+import { EyeIcon, EyeOffIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
+import {
+  authMutationKeys,
+  parseAdditionalFieldValue,
+} from "@better-auth-ui/core";
+import {
+  useAuth,
+  useFetchOptions,
+  useSignUpEmail,
+} from "@better-auth-ui/react";
+import { useIsMutating } from "@tanstack/react-query";
+import { type SyntheticEvent, useState } from "react";
+import { toast } from "sonner";
 import { Label } from "../ui/label";
 import { AdditionalField } from "./additional-field";
 import { ProviderButtons, type SocialLayout } from "./provider-buttons";
@@ -327,9 +327,9 @@ export function SignUp({
                         }}
                       >
                         {isPasswordVisible ? (
-                          <HugeiconsIcon icon={EyeOffIcon} />
+                          <Icon icon={EyeOffIcon} />
                         ) : (
-                          <HugeiconsIcon icon={EyeIcon} />
+                          <Icon icon={EyeIcon} />
                         )}
                       </InputGroupButton>
                     </InputGroupAddon>
@@ -397,9 +397,9 @@ export function SignUp({
                           }
                         >
                           {isConfirmPasswordVisible ? (
-                            <HugeiconsIcon icon={EyeOffIcon} />
+                            <Icon icon={EyeOffIcon} />
                           ) : (
-                            <HugeiconsIcon icon={EyeIcon} />
+                            <Icon icon={EyeIcon} />
                           )}
                         </InputGroupButton>
                       </InputGroupAddon>

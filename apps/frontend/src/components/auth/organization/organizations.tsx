@@ -26,7 +26,9 @@ export type OrganizationsProps = {
  * empty state with create, or a card of rows with a Manage control per organization.
  * Owns `CreateOrganizationDialog` open state and the create actions.
  */
-export function Organizations({ className }: OrganizationsProps) {
+export function Organizations({
+  className,
+}: OrganizationsProps): React.JSX.Element {
   const { authClient } = useAuth();
   const { localization: organizationLocalization } =
     useAuthPlugin(organizationPlugin);

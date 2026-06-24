@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import type { IconSvgElement } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 import { type ReactNode } from "react";
@@ -42,9 +42,7 @@ export function DetailTabs({
             value={tab.value}
             disabled={tab.disabled}
           >
-            {tab.icon && (
-              <HugeiconsIcon icon={tab.icon} className="mr-1 h-4 w-4" />
-            )}
+            {tab.icon && <Icon icon={tab.icon} className="mr-1 h-4 w-4" />}
             {tab.label}
           </TabsTrigger>
         ))}

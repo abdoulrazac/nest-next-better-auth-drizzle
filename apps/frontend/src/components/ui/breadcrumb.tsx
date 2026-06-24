@@ -1,9 +1,9 @@
-import * as React from "react";
+import { Icon } from "@/components/ui/icon";
 import { Slot } from "radix-ui";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { ChevronRightIcon, MoreHorizontalIcon } from "@/lib/icons";
+import { cn } from "@/lib/utils";
 
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -83,7 +83,7 @@ function BreadcrumbSeparator({
       className={cn("[&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? <HugeiconsIcon icon={ChevronRightIcon} />}
+      {children ?? <Icon icon={ChevronRightIcon} />}
     </li>
   );
 }
@@ -103,7 +103,7 @@ function BreadcrumbEllipsis({
       )}
       {...props}
     >
-      <HugeiconsIcon icon={MoreHorizontalIcon} />
+      <Icon icon={MoreHorizontalIcon} />
       <span className="sr-only">More</span>
     </span>
   );
@@ -111,10 +111,10 @@ function BreadcrumbEllipsis({
 
 export {
   Breadcrumb,
-  BreadcrumbList,
+  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
+  BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  BreadcrumbEllipsis,
 };

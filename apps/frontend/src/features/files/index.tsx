@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FileUploadIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import PageHeader from "@/components/page-header";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable } from "@/components/data-table";
@@ -48,7 +48,7 @@ export function FilesPage() {
         description="Manage uploaded files"
         primaryAction={{
           label: "Upload File",
-          icon: <HugeiconsIcon icon={FileUploadIcon} className="h-4 w-4" />,
+          icon: <Icon icon={FileUploadIcon} className="h-4 w-4" />,
           onClick: () => setUploadOpen(true),
         }}
       />

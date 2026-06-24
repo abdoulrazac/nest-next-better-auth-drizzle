@@ -1,36 +1,36 @@
 // apps/frontend/src/features/showcase/products/detail-page.tsx
 "use client";
 
-import { notFound, useRouter } from "next/navigation";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { BasePage } from "@/components/layout/base-page";
-import { PageHeader, PageHeaderActions } from "@/components/page-header";
-import { StatusBadge } from "@/components/status-badge";
 import {
-  DetailSection,
   DetailGrid,
   DetailItem,
+  DetailSection,
   DetailSummary,
 } from "@/components/detail-section";
 import {
   DetailTabs,
-  createOverviewTab,
-  createDetailsTab,
   createActivityTab,
+  createDetailsTab,
+  createOverviewTab,
 } from "@/components/detail-tabs";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  confirmDialogPresets,
+  useConfirmDialog,
+} from "@/components/hooks/use-confirm-dialog";
+import { BasePage } from "@/components/layout/base-page";
+import { PageHeader, PageHeaderActions } from "@/components/page-header";
+import { StatusBadge } from "@/components/status-badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
+import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircleIcon } from "@/lib/icons";
-import {
-  useConfirmDialog,
-  confirmDialogPresets,
-} from "@/components/hooks/use-confirm-dialog";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { notFound, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { VariantTable } from "./_components/variant-table";
-import * as mockStore from "./mock-store";
 import { productKeys } from "./hooks";
+import * as mockStore from "./mock-store";
 
 interface ProductDetailPageProps {
   productId: string;
@@ -103,7 +103,7 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
         ]}
       >
         <Alert variant="destructive">
-          <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+          <Icon icon={AlertCircleIcon} className="h-4 w-4" />
           <AlertDescription>Impossible de charger ce produit.</AlertDescription>
         </Alert>
       </BasePage>

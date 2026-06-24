@@ -10,7 +10,7 @@ import {
   UsersIcon,
   WebhookIcon,
 } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -49,7 +49,7 @@ export function Sidebar() {
                   : "text-sidebar-foreground hover:bg-sidebar-accent/60"
               }`}
             >
-              <HugeiconsIcon icon={icon} className="h-4 w-4 shrink-0" />
+              <Icon icon={icon} className="h-4 w-4 shrink-0" />
               {label}
             </Link>
           );

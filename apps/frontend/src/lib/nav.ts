@@ -1,6 +1,7 @@
 import {
   DocumentIcon,
   HomeIcon,
+  MessagesIcon,
   SettingsIcon,
   ShieldUserIcon,
   UsersIcon,
@@ -23,6 +24,12 @@ export const navMenu: INavItem[] = [
     title: "Tableau de bord",
     url: "/",
     icon: HomeIcon,
+  },
+  {
+    title: "Messagerie",
+    url: "/chat",
+    icon: MessagesIcon,
+    color: "text-indigo-600",
   },
   {
     title: "Cas d'exemple",

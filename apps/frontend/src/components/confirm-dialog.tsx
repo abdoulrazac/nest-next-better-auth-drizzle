@@ -11,10 +11,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { AlertCircleIcon, InfoIcon, TrashIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { IconSvgElement } from "@hugeicons/react";
-import { HugeiconsIcon } from "@hugeicons/react";
 
 type ConfirmVariant = "destructive" | "warning" | "info";
 
@@ -79,10 +79,7 @@ export function ConfirmDialog({
               cfg.bg,
             )}
           >
-            <HugeiconsIcon
-              icon={cfg.icon}
-              className={cn("h-6 w-6", cfg.color)}
-            />
+            <Icon icon={cfg.icon} className={cn("h-6 w-6", cfg.color)} />
           </div>
           <div className="flex flex-col">
             <AlertDialogTitle>{title}</AlertDialogTitle>

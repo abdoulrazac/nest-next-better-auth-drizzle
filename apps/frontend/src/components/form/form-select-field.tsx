@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/popover";
 import { CheckIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useState } from "react";
 import {
   Controller,
@@ -120,7 +120,7 @@ function MultiSelect({
                         : "opacity-50 [&_svg]:invisible",
                     )}
                   >
-                    <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" />
+                    <Icon icon={CheckIcon} className="h-3 w-3" />
                   </div>
                   {option.label}
                 </CommandItem>

@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Icon } from "@/components/ui/icon";
 import {
   ArrowLeftIcon,
   ChevronDownIcon,
@@ -18,7 +19,6 @@ import {
   XIcon,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ReactNode } from "react";
@@ -70,7 +70,7 @@ function ActionButton({ action }: { action: HeaderAction }) {
           >
             {action.icon}
             {action.label}
-            <HugeiconsIcon icon={ChevronDownIcon} className="ml-1 h-3 w-3" />
+            <Icon icon={ChevronDownIcon} className="ml-1 h-3 w-3" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -174,10 +174,10 @@ export default function PageHeader({
             >
               {backHref ? (
                 <Link href={backHref}>
-                  <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
+                  <Icon icon={ArrowLeftIcon} className="h-4 w-4" />
                 </Link>
               ) : (
-                <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
+                <Icon icon={ArrowLeftIcon} className="h-4 w-4" />
               )}
             </ButtonTooltip>
           )}
@@ -213,7 +213,7 @@ export const PageHeaderActions = {
   create(href: string, label = "Nouveau"): HeaderAction {
     return {
       label,
-      icon: <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />,
+      icon: <Icon icon={PlusIcon} className="h-4 w-4" />,
       href,
       variant: "default",
     };
@@ -221,7 +221,7 @@ export const PageHeaderActions = {
   edit(href: string): HeaderAction {
     return {
       label: "Modifier",
-      icon: <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />,
+      icon: <Icon icon={EditIcon} className="h-4 w-4" />,
       href,
       variant: "outline",
     };
@@ -237,7 +237,7 @@ export const PageHeaderActions = {
   delete(onClick: () => void): HeaderAction {
     return {
       label: "Supprimer",
-      icon: <HugeiconsIcon icon={DeleteIcon} className="h-4 w-4" />,
+      icon: <Icon icon={DeleteIcon} className="h-4 w-4" />,
       onClick,
       variant: "destructive",
     };
@@ -245,7 +245,7 @@ export const PageHeaderActions = {
   export(onClick: () => void): HeaderAction {
     return {
       label: "Exporter",
-      icon: <HugeiconsIcon icon={DownloadIcon} className="h-4 w-4" />,
+      icon: <Icon icon={DownloadIcon} className="h-4 w-4" />,
       onClick,
       variant: "outline",
     };
@@ -253,7 +253,7 @@ export const PageHeaderActions = {
   cancel(href: string): HeaderAction {
     return {
       label: "Annuler",
-      icon: <HugeiconsIcon icon={XIcon} className="h-4 w-4" />,
+      icon: <Icon icon={XIcon} className="h-4 w-4" />,
       href,
       variant: "ghost",
     };
@@ -261,7 +261,7 @@ export const PageHeaderActions = {
   refresh(onClick: () => void): HeaderAction {
     return {
       label: "Actualiser",
-      icon: <HugeiconsIcon icon={RefreshIcon} className="h-4 w-4" />,
+      icon: <Icon icon={RefreshIcon} className="h-4 w-4" />,
       onClick,
       variant: "ghost",
     };

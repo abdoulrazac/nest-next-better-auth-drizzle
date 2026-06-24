@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { BankIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { type Control, Controller } from "react-hook-form";
 import type { UpdateCompanyInput } from "@/server/api/settings/schemas/company.schema";
 
@@ -29,7 +29,7 @@ export function CompanyBankTab({ control }: Props) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <HugeiconsIcon icon={BankIcon} className="size-5" />
+          <Icon icon={BankIcon} className="size-5" />
           Informations bancaires
         </CardTitle>
         <CardDescription>

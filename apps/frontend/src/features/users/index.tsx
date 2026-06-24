@@ -6,8 +6,8 @@ import {
   confirmDialogPresets,
   useConfirmDialog,
 } from "@/components/hooks/use-confirm-dialog";
-import { Pagination } from "@/components/pagination";
 import { PageHeader } from "@/components/page-header";
+import { Pagination } from "@/components/pagination";
 import SingleSelect from "@/components/single-select";
 import TableHeader, {
   createBulkActions,
@@ -15,9 +15,9 @@ import TableHeader, {
   createResetButton,
   createSearchField,
 } from "@/components/table-header";
-import { PlusIcon, TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useTableParams } from "@/hooks/use-table-params";
+import { PlusIcon, TrashIcon } from "@/lib/icons";
 import { useMemo, useState } from "react";
 import { buildColumns } from "./columns";
 import { UserDetailSheet } from "./detail-sheet";
@@ -30,7 +30,7 @@ const STATUS_OPTIONS = [
   { value: "banned", label: "Banni" },
 ];
 
-export function UsersPage() {
+export function UsersPage(): React.JSX.Element {
   const {
     search,
     setSearch,
@@ -113,7 +113,7 @@ export function UsersPage() {
           [
             {
               label: "Supprimer",
-              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
               onClick: () => handlers.onBulkDelete(selectedItems),
               variant: "destructive",
             },
@@ -130,7 +130,7 @@ export function UsersPage() {
         variant="list"
         primaryAction={{
           label: "Nouvel utilisateur",
-          icon: <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />,
+          icon: <Icon icon={PlusIcon} className="h-4 w-4" />,
           onClick: () => {
             setEditTarget(null);
             setDialogOpen(true);

@@ -7,7 +7,7 @@ import {
   Location01Icon,
   Mail01Icon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 interface CompanyData {
   name?: string | null;
   legalForm?: string | null;
@@ -39,7 +39,7 @@ export function CompanyHeaderCard({ company }: Props) {
               />
             ) : (
               <div className="flex size-full items-center justify-center">
-                <HugeiconsIcon
+                <Icon
                   icon={Building01Icon}
                   className="size-10 text-muted-foreground/50"
                 />
@@ -55,19 +55,19 @@ export function CompanyHeaderCard({ company }: Props) {
             <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
               {company?.legalForm && (
                 <span className="flex items-center gap-1">
-                  <HugeiconsIcon icon={BalanceScaleIcon} className="size-3.5" />
+                  <Icon icon={BalanceScaleIcon} className="size-3.5" />
                   {company.legalForm}
                 </span>
               )}
               {company?.city && (
                 <span className="flex items-center gap-1">
-                  <HugeiconsIcon icon={Location01Icon} className="size-3.5" />
+                  <Icon icon={Location01Icon} className="size-3.5" />
                   {company.city}, {company.country}
                 </span>
               )}
               {company?.email && (
                 <span className="flex items-center gap-1">
-                  <HugeiconsIcon icon={Mail01Icon} className="size-3.5" />
+                  <Icon icon={Mail01Icon} className="size-3.5" />
                   {company.email}
                 </span>
               )}

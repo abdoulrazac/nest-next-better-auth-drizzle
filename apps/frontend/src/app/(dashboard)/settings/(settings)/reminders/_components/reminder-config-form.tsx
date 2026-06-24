@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
 import { Save } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -222,7 +222,7 @@ export function ReminderConfigForm() {
 
       <div className="flex justify-end">
         <Button onClick={handleSubmit} disabled={upsertAll.isPending}>
-          <HugeiconsIcon icon={Save} className="mr-1" />
+          <Icon icon={Save} className="mr-1" />
           {upsertAll.isPending ? "Enregistrement..." : "Enregistrer"}
         </Button>
       </div>
