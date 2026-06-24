@@ -146,9 +146,7 @@ export function useGetPermissions() {
   return useQuery({
     queryKey: roleKeys.permissions,
     queryFn: async () => {
-      const { data, error } = (await apiClient.get({
-        url: "/v1/accounts/roles/permissions",
-      })) as { data: Record<string, string[]> | undefined; error: unknown };
+      const { data, error } = await apiClient.v1.rolesGetPermissions();
       if (error) throw new Error("Impossible de charger les permissions");
       return (data ?? {}) as Record<string, string[]>;
     },

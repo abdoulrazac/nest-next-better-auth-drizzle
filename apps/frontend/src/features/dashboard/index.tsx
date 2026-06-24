@@ -1,11 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api";
 import { PageHeader } from "@/components/page-header";
-import { StatCard } from "./stat-card";
+import { apiClient } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { ActivityFeed } from "./activity-feed";
-import { UsersIcon, RoleIcon, FileIcon, WebhookIcon } from "@/lib/icons";
+import { StatCard } from "./stat-card";
+import { FileIcon, RoleIcon, UsersIcon, WebhookIcon } from "@/lib/icons";
 
 interface AuditLogEntry {
   id: string;
@@ -16,40 +16,45 @@ interface AuditLogEntry {
   metadata?: Record<string, unknown>;
 }
 
-function useTotalCount(queryKey: string, path: string) {
+function useTotalCount(queryKey: string, fetcher: () => Promise<number>) {
   return useQuery({
     queryKey: [queryKey, "count"],
-    queryFn: async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res = (await (apiClient.get as any)(path, {
-        query: { pageSize: 1 },
-      })) as { total?: number; meta?: { total?: number } };
-      return res?.total ?? res?.meta?.total ?? 0;
-    },
-  });
-}
-
-function useAuditLogs() {
-  return useQuery({
-    queryKey: ["audit-logs", "recent"],
-    queryFn: async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res = (await (apiClient.get as any)("/v1/audit-logs", {
-        query: { pageSize: 10 },
-      })) as {
-        data?: AuditLogEntry[];
-        items?: AuditLogEntry[];
-      };
-      return res?.data ?? res?.items ?? [];
-    },
+    queryFn: async () => fetcher(),
   });
 }
 
 export function DashboardPage() {
-  const users = useTotalCount("users", "/v1/accounts/users");
-  const roles = useTotalCount("roles", "/v1/roles");
-  const files = useTotalCount("files", "/v1/files");
-  const auditLogs = useAuditLogs();
+  const users = useTotalCount("users", async () => {
+    const { data, error } = await apiClient.v1.usersFindAll({
+      query: { limit: 1 },
+    });
+    if (error) throw error;
+    return data?.total ?? 0;
+  });
+  const roles = useTotalCount("roles", async () => {
+    // roles list is not paginated — it returns the full array
+    const { data, error } = await apiClient.v1.rolesFindAll();
+    if (error) throw error;
+    return (data as unknown as { id: string }[] | undefined)?.length ?? 0;
+  });
+  const files = useTotalCount("files", async () => {
+    const { data, error } = await apiClient.v1.filesFindAll({
+      query: { limit: 1 },
+    });
+    if (error) throw error;
+    return data?.total ?? 0;
+  });
+
+  const auditLogs = useQuery({
+    queryKey: ["audit-logs", "recent"],
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.auditLogsFindAll({
+        query: { limit: 10 },
+      });
+      if (error) throw error;
+      return (data?.items ?? []) as unknown as AuditLogEntry[];
+    },
+  });
 
   return (
     <div className="space-y-6">

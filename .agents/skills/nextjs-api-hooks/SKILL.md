@@ -1,6 +1,6 @@
 ---
 name: nextjs-api-hooks
-description: Create React Query hooks for API integration using @hey-api/client-fetch and the @repo/api-client generated SDK. Covers useQuery for lists/detail and useMutation for create/update/delete with cache invalidation and toast feedback. Use when building data fetching hooks for any feature in this Next.js project.
+description: Create React Query hooks for API integration using the @hey-api/client-fetch generated SDK from @repo/api-client. Covers useQuery for lists/detail and useMutation for create/update/delete with typed request params/bodies, cache invalidation, and toast feedback. Use when building data fetching hooks for any feature in this Next.js project.
 ---
 
 # Next.js API Hooks
@@ -8,24 +8,106 @@ description: Create React Query hooks for API integration using @hey-api/client-
 ## Stack
 
 - **TanStack Query v5** (`@tanstack/react-query`)
-- **@repo/api-client** — generated SDK wrapping `@hey-api/client-fetch`
+- **@repo/api-client** — OpenAPI-generated typed SDK via `@hey-api/openapi-ts` with native `operations.nesting` (no custom wrapper script)
 - **Sonner** — toast notifications
 
-## Import Pattern
+## The Generated SDK
+
+After `pnpm --filter @repo/api-client generate` (or `pnpm generate` from repo root), the package exports a **namespaced client** — `apiClient.v1.<name>` for versioned NestJS endpoints and `apiClient.auth.<name>` for Better Auth endpoints. Import from `@/lib/api` (which re-exports `@repo/api-client`):
 
 ```ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-// Import generated SDK functions (after pnpm generate):
-import {
-  getUsers,
-  getUser,
-  updateUser,
-  createUser,
-  deleteUser,
-} from "@repo/api-client";
-// OR use apiClient directly if SDK not generated yet:
+// Namespaced pattern (preferred):
+//   apiClient.v1.usersFindAll(...)   → from UsersController @ V1
+//   apiClient.auth.createUser(...)    → Better Auth admin create-user
 import { apiClient } from "@/lib/api";
+```
+
+### Naming convention
+
+The `@hey-api/sdk` plugin with `operations.nesting` in `openapi-ts.config.ts`
+generates the `V1` and `Auth` classes natively — no custom wrapper script.
+The nesting function maps `operation.operationId` to namespace segments:
+
+| OpenAPI operationId                 | Namespaced call                         |
+| ----------------------------------- | --------------------------------------- |
+| `UsersController_findAll_v1`        | `apiClient.v1.usersFindAll(...)`        |
+| `UsersController_update_v1`         | `apiClient.v1.usersUpdate(...)`         |
+| `NotificationsController_remove_v1` | `apiClient.v1.notificationsRemove(...)` |
+| `HealthController_check`            | `apiClient.v1.healthCheck(...)`         |
+| `createUser`                        | `apiClient.auth.createUser(...)`        |
+| `removeUser`                        | `apiClient.auth.removeUser(...)`        |
+| `changePassword`                    | `apiClient.auth.changePassword(...)`    |
+| `getApiAuthCallbackById`            | `apiClient.auth.getCallbackById(...)`   |
+
+> **Never** hand-write URL strings. The generated functions bake in the correct
+> URL (including the `/api` global prefix), HTTP method, security scheme, and
+> typed `path` / `query` / `body` parameters. That is the end-to-end typesafety.
+
+## Call Shape (generated functions)
+
+Every generated function takes a single `options` object and returns
+`{ data, error, response, request }` (a Promise). It does **not** throw by
+default — throw on `error` so React Query never receives `undefined`:
+
+```ts
+import { apiClient } from "@/lib/api";
+
+// GET with query params
+const { data, error } = await apiClient.v1.usersFindAll({
+  query: { page: 1, limit: 20, search: "john" },
+});
+if (error) throw error;
+return data;
+
+// GET with path param
+const { data, error } = await apiClient.v1.usersFindOne({
+  path: { id: "..." },
+});
+
+// PATCH with path + body
+const { data, error } = await apiClient.v1.usersUpdate({
+  path: { id },
+  body: { name: "Jane", role: "admin" },
+});
+
+// POST (create) — Better Auth admin endpoint
+const { data, error } = await apiClient.auth.createUser({
+  body: { name, email, role },
+});
+
+// DELETE — Better Auth admin endpoint
+const { data, error } = await apiClient.auth.removeUser({
+  body: { userId: id },
+});
+```
+
+### Raw client fallback
+
+If no generated method exists yet, the raw `client` is exported too — but
+prefer generating the SDK so calls stay typed:
+
+```ts
+import { client } from "@/lib/api";
+const { data, error } = await client.get({
+  url: "/api/v1/accounts/users",
+  query: { page: 1, limit: 20 },
+});
+```
+
+> Note the call shape: `client.get({ url, query, body })` — a single object.
+> NOT `client.get(url, { params })`.
+> `apiClient` is the SDK class instance (has `.v1.*` / `.auth.*` methods);
+> `client` is the raw hey-api client (has `.get` / `.post` / `.setConfig`).
+
+## Response ↔ validator types
+
+The generated response types use ISO **strings** for dates (what the API
+returns). `@repo/validators/*` schemas infer **`Date`** for date fields. To keep
+the codebase convention (validators = domain types) while staying typed on the
+request side, bridge the response with `as unknown as`:
+
+```ts
+return data as unknown as UsersPaginatedResponse;
 ```
 
 ## Query Keys Convention
@@ -43,17 +125,25 @@ export const userKeys = {
 ## List Hook
 
 ```ts
-interface ListParams {
+export function useListUsers(params?: {
   page?: number;
   pageSize?: number;
   search?: string;
-  status?: string;
-}
-
-export function useListUsers(params?: ListParams) {
+}) {
   return useQuery({
     queryKey: userKeys.list(params),
-    queryFn: () => apiClient.get("/v1/accounts/users", { params }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.usersFindAll({
+        // map the UI's `pageSize` to the API's `limit`
+        query: {
+          page: params?.page,
+          limit: params?.pageSize,
+          search: params?.search,
+        },
+      });
+      if (error) throw error;
+      return data as unknown as UsersPaginatedResponse;
+    },
     staleTime: 30_000,
   });
 }
@@ -65,7 +155,13 @@ export function useListUsers(params?: ListParams) {
 export function useGetUser(id: string | null, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: userKeys.detail(id ?? ""),
-    queryFn: () => apiClient.get(`/v1/accounts/users/${id}`),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.usersFindOne({
+        path: { id: id as string },
+      });
+      if (error) throw error;
+      return data as unknown as User;
+    },
     enabled: !!id && (options?.enabled ?? true),
   });
 }
@@ -75,99 +171,58 @@ export function useGetUser(id: string | null, options?: { enabled?: boolean }) {
 
 ```ts
 export function useCreateUser() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateUserDto) =>
-      apiClient.post("/v1/accounts/users", { body: data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User created");
+    mutationFn: async (data: CreateUserInput) => {
+      const { data: res, error } = await apiClient.auth.createUser({
+        body: data,
+      });
+      if (error) throw error;
+      return res;
     },
-    onError: (err: Error) =>
-      toast.error(err.message ?? "Failed to create user"),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: userKeys.all });
+      toast.success("Utilisateur créé");
+    },
+    onError: () => toast.error("Impossible de créer l'utilisateur"),
   });
 }
 
 export function useUpdateUser() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateUserDto }) =>
-      apiClient.patch(`/v1/accounts/users/${id}`, { body: data }),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.all });
-      queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
-      toast.success("User updated");
+    mutationFn: async ({ id, data }: { id: string; data: UpdateUserInput }) => {
+      const { data: res, error } = await apiClient.v1.usersUpdate({
+        path: { id },
+        body: data,
+      });
+      if (error) throw error;
+      return res;
     },
-    onError: (err: Error) =>
-      toast.error(err.message ?? "Failed to update user"),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: userKeys.all });
+      toast.success("Utilisateur mis à jour");
+    },
+    onError: () => toast.error("Impossible de modifier l'utilisateur"),
   });
 }
 
 export function useDeleteUser() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => apiClient.delete(`/v1/accounts/users/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.all });
-      toast.success("User deleted");
+    mutationFn: async (id: string) => {
+      const { data: res, error } = await apiClient.auth.removeUser({
+        body: { userId: id },
+      });
+      if (error) throw error;
+      return res;
     },
-    onError: (err: Error) =>
-      toast.error(err.message ?? "Failed to delete user"),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: userKeys.all });
+      toast.success("Utilisateur supprimé");
+    },
+    onError: () => toast.error("Impossible de supprimer l'utilisateur"),
   });
-}
-```
-
-## Direct apiClient Usage
-
-The `apiClient` from `@/lib/api` is a pre-configured `@hey-api/client-fetch` instance:
-
-```ts
-// GET with query params
-const data = await apiClient.get("/v1/accounts/users", {
-  params: { page: 1, pageSize: 20, search: "john" },
-});
-
-// POST with body
-const user = await apiClient.post("/v1/accounts/users", {
-  body: { name: "John", email: "john@example.com" },
-});
-
-// PATCH
-await apiClient.patch(`/v1/accounts/users/${id}`, { body: { name: "Jane" } });
-
-// DELETE
-await apiClient.delete(`/v1/accounts/users/${id}`);
-```
-
-## Auth Headers
-
-The `apiClient` instance must include the auth token. Update `lib/api.ts` if needed:
-
-```ts
-import { createClient } from "@hey-api/client-fetch";
-import { authClient } from "./auth-client";
-
-export const apiClient = createClient({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000",
-  headers: () => {
-    const session = authClient.getSession();
-    return session?.data?.session?.token
-      ? { Authorization: `Bearer ${session.data.session.token}` }
-      : {};
-  },
-});
-```
-
-## Paginated Response Pattern
-
-Backend returns `{ items: T[], total: number, page: number, pageSize: number }`:
-
-```ts
-interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
-  pageSize: number;
 }
 ```
 
@@ -178,10 +233,12 @@ For `ResourceSelect` with `fetchOptions`, use a dedicated lightweight hook:
 ```ts
 export function useRoleOptions() {
   return async (search: string) => {
-    const res = await apiClient.get("/v1/roles", {
-      params: { search, pageSize: 20 },
-    });
-    return res.items.map((r) => ({ label: r.name, value: r.id }));
+    const { data, error } = await apiClient.v1.rolesFindAll({});
+    if (error) throw error;
+    const roles = (data as unknown as Role[]) ?? [];
+    return roles
+      .filter((r) => r.name.toLowerCase().includes(search.toLowerCase()))
+      .map((r) => ({ label: r.name, value: r.id }));
   };
 }
 ```
@@ -196,8 +253,16 @@ const fetchRoles = useRoleOptions()
 <ResourceSelect fetchOptions={fetchRoles} ... />
 ```
 
-> `ResourceSelect` handles debouncing internally via `useDebounce` from `@/hooks/use-debounce`.
-> No need to debounce manually in the hook.
+> `ResourceSelect` handles debouncing internally via `useDebounce` from
+> `@/hooks/use-debounce`. No need to debounce manually in the hook.
+
+## Auth Headers
+
+The `client` is configured with `baseUrl` in `@repo/api-client/src/index.ts`.
+The browser sends the Better Auth session cookie automatically (same-origin via
+the Next.js `/api/auth/*` rewrite). No manual Authorization header is needed in
+the web app. (Mobile attaches the cookie via `authClient.getCookie()` — see
+`apps/mobile/src/lib/api.ts`.)
 
 ## Notes
 
@@ -206,3 +271,4 @@ const fetchRoles = useRoleOptions()
 - Use `queryClient.setQueryData(userKeys.detail(id), updatedUser)` for optimistic updates
 - For WebSocket features, combine `useQuery` initial load + WebSocket events to update cache
 - Icons: never import from `lucide-react` — use `Icon` from `@/components/ui/icon` + `@/lib/icons`
+- After any backend API change, regenerate: `pnpm --filter @repo/api-client snapshot && pnpm --filter @repo/api-client generate`

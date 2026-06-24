@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { apiClient } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import type { Notification, NotificationsPaginatedResponse } from "./types";
 
 export const notificationKeys = {
@@ -15,11 +15,11 @@ export function useListNotifications(params?: {
   return useQuery({
     queryKey: notificationKeys.list(params),
     queryFn: async () => {
-      const res = (await apiClient.get({
-        url: "/v1/notifications",
+      const { data, error } = await apiClient.v1.notificationsFindAll({
         query: params,
-      })) as any;
-      return res as NotificationsPaginatedResponse;
+      });
+      if (error) throw error;
+      return data as unknown as NotificationsPaginatedResponse;
     },
     staleTime: 30_000,
   });
@@ -28,8 +28,13 @@ export function useListNotifications(params?: {
 export function useMarkAsRead() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient.patch({ url: `/v1/notifications/${id}/read` }) as any,
+    mutationFn: async (id: string) => {
+      const { data, error } = await apiClient.v1.notificationsMarkAsRead({
+        body: { ids: [id] },
+      });
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: notificationKeys.all }),
     onError: () => toast.error("Failed to mark as read"),
   });
@@ -38,8 +43,11 @@ export function useMarkAsRead() {
 export function useMarkAllAsRead() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () =>
-      apiClient.patch({ url: "/v1/notifications/read-all" }) as any,
+    mutationFn: async () => {
+      const { data, error } = await apiClient.v1.notificationsMarkAllAsRead();
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: notificationKeys.all });
       toast.success("All notifications marked as read");
@@ -51,8 +59,13 @@ export function useMarkAllAsRead() {
 export function useDeleteNotification() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient.delete({ url: `/v1/notifications/${id}` }) as any,
+    mutationFn: async (id: string) => {
+      const { data, error } = await apiClient.v1.notificationsRemove({
+        path: { id },
+      });
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: notificationKeys.all });
       toast.success("Notification deleted");
@@ -60,3 +73,5 @@ export function useDeleteNotification() {
     onError: () => toast.error("Failed to delete notification"),
   });
 }
+
+export type { Notification };

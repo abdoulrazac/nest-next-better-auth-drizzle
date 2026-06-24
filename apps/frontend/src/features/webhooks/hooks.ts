@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { apiClient } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import type {
   Webhook,
   WebhookDelivery,
@@ -19,11 +19,14 @@ export function useListWebhooks(params?: { page?: number; pageSize?: number }) {
   return useQuery({
     queryKey: webhookKeys.list(params),
     queryFn: async () => {
-      const res = (await apiClient.get({
-        url: "/v1/webhooks",
-        query: params,
-      })) as any;
-      return res as WebhooksPaginatedResponse;
+      const { data, error } = await apiClient.v1.webhooksFindAll({
+        query: {
+          page: params?.page,
+          limit: params?.pageSize,
+        },
+      });
+      if (error) throw error;
+      return data as unknown as WebhooksPaginatedResponse;
     },
     staleTime: 30_000,
   });
@@ -36,8 +39,11 @@ export function useGetWebhook(
   return useQuery({
     queryKey: webhookKeys.detail(id ?? ""),
     queryFn: async () => {
-      const res = (await apiClient.get({ url: `/v1/webhooks/${id}` })) as any;
-      return res as Webhook;
+      const { data, error } = await apiClient.v1.webhooksFindOne({
+        path: { id: id as string },
+      });
+      if (error) throw error;
+      return data as unknown as Webhook;
     },
     enabled: !!id && (options?.enabled ?? true),
   });
@@ -46,8 +52,18 @@ export function useGetWebhook(
 export function useCreateWebhook() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: any) =>
-      apiClient.post({ url: "/v1/webhooks", body: data }) as any,
+    mutationFn: async (data: {
+      name: string;
+      url: string;
+      events: string[];
+      secret?: string;
+    }) => {
+      const { data: res, error } = await apiClient.v1.webhooksCreate({
+        body: data,
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: webhookKeys.all });
       toast.success("Webhook created");
@@ -59,8 +75,25 @@ export function useCreateWebhook() {
 export function useUpdateWebhook() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
-      apiClient.patch({ url: `/v1/webhooks/${id}`, body: data }) as any,
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: {
+        name?: string;
+        url?: string;
+        events?: string[];
+        secret?: string;
+      };
+    }) => {
+      const { data: res, error } = await apiClient.v1.webhooksUpdate({
+        path: { id },
+        body: data,
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: webhookKeys.all });
       toast.success("Webhook updated");
@@ -72,8 +105,13 @@ export function useUpdateWebhook() {
 export function useDeleteWebhook() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient.delete({ url: `/v1/webhooks/${id}` }) as any,
+    mutationFn: async (id: string) => {
+      const { data: res, error } = await apiClient.v1.webhooksRemove({
+        path: { id },
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: webhookKeys.all });
       toast.success("Webhook deleted");
@@ -86,10 +124,11 @@ export function useGetWebhookDeliveries(webhookId: string) {
   return useQuery({
     queryKey: webhookKeys.deliveries(webhookId),
     queryFn: async () => {
-      const res = (await apiClient.get({
-        url: `/v1/webhooks/${webhookId}/deliveries`,
-      })) as any;
-      return res as WebhookDelivery[];
+      const { data, error } = await apiClient.v1.webhooksGetDeliveries({
+        path: { id: webhookId },
+      });
+      if (error) throw error;
+      return (data as unknown as WebhookDelivery[]) ?? [];
     },
     enabled: !!webhookId,
     staleTime: 10_000,

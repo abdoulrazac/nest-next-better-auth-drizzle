@@ -14,7 +14,10 @@
         "DATABASE_SSL",
         "SEED_ADMIN_EMAIL",
         "SEED_ADMIN_NAME",
-        "NEXT_PUBLIC_API_URL"
+        "NEXT_PUBLIC_API_URL",
+        "EXPO_PUBLIC_SERVER_URL",
+        "EXPO_PUBLIC_API_URL",
+        "API_URL"
       ]
     },
     "check-types": {
@@ -38,6 +41,12 @@
       "dependsOn": [],
       "inputs": ["openapi.json", "openapi-ts.config.ts"],
       "outputs": ["src/generated/**"],
+      "env": [
+        "NEXT_PUBLIC_API_URL",
+        "EXPO_PUBLIC_SERVER_URL",
+        "EXPO_PUBLIC_API_URL",
+        "API_URL"
+      ],
       "cache": true
     }
   }

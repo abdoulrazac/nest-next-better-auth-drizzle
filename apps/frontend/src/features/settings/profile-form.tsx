@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { apiClient } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 
 const profileSchema = z.object({
@@ -51,8 +50,16 @@ export function ProfileForm() {
   }, [user, reset]);
 
   const mutation = useMutation({
-    mutationFn: (values: ProfileFormValues) =>
-      apiClient.patch({ url: "/v1/settings/profile", body: values }) as any,
+    mutationFn: async (values: ProfileFormValues) => {
+      // No dedicated /settings/profile endpoint — profile fields (name, bio)
+      // are owned by Better Auth and updated via the auth client.
+      const { data, error } = await authClient.updateUser({
+        name: values.name,
+        bio: values.bio,
+      } as never);
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => toast.success("Profile updated"),
     onError: () => toast.error("Failed to update profile"),
   });

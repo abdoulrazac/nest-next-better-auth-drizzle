@@ -84,14 +84,16 @@ export function SecurityForm() {
   });
 
   const mutation = useMutation({
-    mutationFn: (values: SecurityFormValues) =>
-      apiClient.post({
-        url: "/v1/auth/change-password",
+    mutationFn: async (values: SecurityFormValues) => {
+      const { data, error } = await apiClient.auth.changePassword({
         body: {
           currentPassword: values.currentPassword,
           newPassword: values.newPassword,
         },
-      }) as any,
+      });
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       toast.success("Password changed successfully");
       reset();

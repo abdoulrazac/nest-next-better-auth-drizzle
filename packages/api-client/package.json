@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "generate": "openapi-ts",
+    "snapshot": "node scripts/snapshot.mjs",
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0"
   },

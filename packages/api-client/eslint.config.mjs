@@ -6,4 +6,20 @@ export default [
   {
     ignores: ["src/generated/**"],
   },
+  {
+    // runtime.ts reads env vars from process.env — runs in Node (generate,
+    // Next.js server) and React Native (Expo) runtimes.
+    files: [
+      "runtime.ts",
+      "scripts/snapshot.mjs",
+      "scripts/build-client-namespace.mjs",
+    ],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        fetch: "readonly",
+        console: "readonly",
+      },
+    },
+  },
 ];

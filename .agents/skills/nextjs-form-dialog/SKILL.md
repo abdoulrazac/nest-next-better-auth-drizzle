@@ -12,7 +12,7 @@ description: Create a form inside a ShadcnUI Dialog for create or edit operation
 - **Form sections** — `FormSection` de `@/components/form`
 - **ShadcnUI** `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle`
 - **Schema** — import depuis `@repo/validators/<entity>` (JAMAIS de schema local)
-- **API** — `client` de `@repo/api-client` ; `client.entity.create/update/delete`
+- **API** — `apiClient.v1.*` / `apiClient.auth.*` de `@repo/api-client` (import via `@/lib/api`)
 - **Icons** — toujours via `@/lib/icons`. Jamais `lucide-react`.
 - **React Hook Form** + **Zod** ; workaround Zod v4 : `zodResolver(schema as any) as any`
 - **TanStack Query** `useMutation`
@@ -50,13 +50,19 @@ const userFormSchema = z.object({ name: z.string() });
 ```ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { client } from "@repo/api-client";
+import { apiClient } from "@/lib/api";
 import type { CreateUserInput, UpdateUserInput } from "@repo/validators/users";
 
 export function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateUserInput) => client.users.create({ body: data }),
+    mutationFn: async (data: CreateUserInput) => {
+      const { data: res, error } = await apiClient.auth.createUser({
+        body: data,
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("Utilisateur créé");
@@ -68,8 +74,14 @@ export function useCreateUser() {
 export function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateUserInput }) =>
-      client.users.update({ path: { id }, body: data }),
+    mutationFn: async ({ id, data }: { id: string; data: UpdateUserInput }) => {
+      const { data: res, error } = await apiClient.v1.usersUpdate({
+        path: { id },
+        body: data,
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success("Utilisateur mis à jour");

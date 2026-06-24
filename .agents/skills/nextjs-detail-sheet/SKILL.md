@@ -21,7 +21,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useQuery } from "@tanstack/react-query";
-import { client } from "@repo/api-client";
+import { apiClient } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/status-badge";
 import {
@@ -36,7 +36,7 @@ import {
 } from "@/components/detail-tabs";
 import { Button } from "@/components/ui/button";
 import { EditIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useRouter } from "next/navigation";
 import type { EntityHandlers } from "./hooks";
 
@@ -57,11 +57,17 @@ export function EntityDetailSheet({
 
   const { data, isLoading } = useQuery({
     queryKey: ["entities", entityId],
-    queryFn: () => client.entities.get({ path: { id: entityId! } }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.entitiesFindOne({
+        path: { id: entityId! },
+      });
+      if (error) throw error;
+      return data;
+    },
     enabled: open && !!entityId,
   });
 
-  const entity = data?.data;
+  const entity = data;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -83,7 +89,7 @@ export function EntityDetailSheet({
                   router.push(`/module/entities/${entityId}/edit`);
                 }}
               >
-                <HugeiconsIcon icon={EditIcon} className="h-4 w-4" />
+                <Icon icon={EditIcon} className="h-4 w-4" />
                 Modifier
               </Button>
             </div>

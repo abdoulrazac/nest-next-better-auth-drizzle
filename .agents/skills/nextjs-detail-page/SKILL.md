@@ -28,9 +28,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircleIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { useQuery } from "@tanstack/react-query";
-import { client } from "@repo/api-client";
+import { apiClient } from "@/lib/api";
 import { notFound } from "next/navigation";
 
 interface EntityDetailPageProps {
@@ -42,10 +42,16 @@ export default function EntityDetailPage({ params }: EntityDetailPageProps) {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["entities", entityId],
-    queryFn: () => client.entities.get({ path: { id: entityId } }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.entitiesFindOne({
+        path: { id: entityId },
+      });
+      if (error) throw error;
+      return data;
+    },
   });
 
-  const entity = data?.data;
+  const entity = data;
 
   // ── Loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
@@ -79,7 +85,7 @@ export default function EntityDetailPage({ params }: EntityDetailPageProps) {
         ]}
       >
         <Alert variant="destructive">
-          <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+          <Icon icon={AlertCircleIcon} className="h-4 w-4" />
           <AlertDescription>
             Impossible de charger cet élément.
           </AlertDescription>

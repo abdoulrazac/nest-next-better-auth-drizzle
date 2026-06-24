@@ -13,7 +13,7 @@ description: Create a standalone form page (not dialog) for settings, profile, o
 - **PageHeader** (`@/components/page-header`) — titre + description + bouton retour
 - **BasePage** (`@/components/layout/base-page`) — wrapper dashboard
 - **Schema** — import depuis `@repo/validators/<entity>` (JAMAIS de schema local)
-- **API** — `client` de `@repo/api-client`
+- **API** — `apiClient.v1.*` / `apiClient.auth.*` de `@repo/api-client` (import via `@/lib/api`) ; hooks `useGet…` / `useUpdate…` dans `./hooks`
 - **Icons** — toujours via `@/lib/icons`. Jamais `lucide-react`.
 - **React Hook Form** + **Zod** ; workaround Zod v4 : `zodResolver(schema as any) as any`
 - **TanStack Query** `useMutation` + `useQuery`

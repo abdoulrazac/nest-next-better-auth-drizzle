@@ -17,11 +17,15 @@ export function useListAuditLogs(params?: {
   return useQuery({
     queryKey: auditKeys.list(params),
     queryFn: async () => {
-      const res = (await apiClient.get({
-        url: "/v1/audit-logs",
-        query: params,
-      })) as any;
-      return res.data as AuditLogsPaginatedResponse;
+      const { data, error } = await apiClient.v1.auditLogsFindAll({
+        query: {
+          page: params?.page,
+          limit: params?.pageSize,
+          action: params?.action,
+        },
+      });
+      if (error) throw error;
+      return data as unknown as AuditLogsPaginatedResponse;
     },
     staleTime: 60_000,
   });

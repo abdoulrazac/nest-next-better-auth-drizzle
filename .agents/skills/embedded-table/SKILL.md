@@ -38,7 +38,7 @@ hooks.ts
 import { DataTable } from "@/components/data-table/data-table";
 import { Pagination } from "@/components/pagination";
 import { useQuery } from "@tanstack/react-query";
-import { client } from "@repo/api-client";
+import { apiClient } from "@/lib/api";
 import { useState } from "react";
 import { buildEntityColumns } from "../columns";
 import type { EntityHandlers } from "../hooks";
@@ -57,12 +57,18 @@ export function EmbeddedEntityTable({
 
   const { data, isLoading } = useQuery({
     queryKey: ["entities", "byParent", parentId, page, pageSize],
-    queryFn: () => client.entities.list({ parentId, page, pageSize }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.entitiesFindAll({
+        query: { page, limit: pageSize },
+      });
+      if (error) throw error;
+      return data;
+    },
     enabled: !!parentId,
   });
 
-  const items = data?.data?.items ?? [];
-  const total = data?.data?.total ?? 0;
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
   const columns = buildEntityColumns(handlers);
 
   return (

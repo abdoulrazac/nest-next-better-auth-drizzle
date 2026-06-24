@@ -32,7 +32,7 @@ The hook owns everything. The detail sheet and any embedded table receive `handl
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { client } from "@repo/api-client";
+import { apiClient } from "@/lib/api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
@@ -54,7 +54,7 @@ import { useTableParams } from "@/hooks/use-table-params";
 import { buildEntityColumns } from "./columns";
 import type { Entity } from "./types";
 import { TrashIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import SingleSelect from "@/components/single-select";
 
 export function useEntity() {
@@ -83,21 +83,31 @@ export function useEntity() {
   // ── Data ───────────────────────────────────────────────────────────────────
   const { data, isLoading, error } = useQuery({
     queryKey: ["entities", page, pageSize, search, getFilter("status")],
-    queryFn: () =>
-      client.entities.list({
-        page,
-        pageSize,
-        search: search || undefined,
-        status: getFilter("status") || undefined,
-      }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.entitiesFindAll({
+        query: {
+          page,
+          limit: pageSize,
+          search: search || undefined,
+        },
+      });
+      if (error) throw error;
+      return data;
+    },
   });
 
-  const items: Entity[] = data?.data?.items ?? [];
-  const total: number = data?.data?.total ?? 0;
+  const items: Entity[] = data?.items ?? [];
+  const total: number = data?.total ?? 0;
 
   // ── Mutations ──────────────────────────────────────────────────────────────
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => client.entities.delete({ path: { id } }),
+    mutationFn: async (id: string) => {
+      const { data: res, error } = await apiClient.v1.entitiesRemove({
+        path: { id },
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       toast.success("Élément supprimé");
       void queryClient.invalidateQueries({ queryKey: ["entities"] });
@@ -164,7 +174,7 @@ export function useEntity() {
           [
             {
               label: "Supprimer",
-              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
               onClick: handlers.onBulkDelete,
               variant: "destructive",
             },
@@ -257,7 +267,7 @@ import PageHeader, { PageHeaderActions } from "@/components/page-header";
 import TableHeader from "@/components/table-header";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 import { EntityDetailSheet } from "./detail-sheet";
 import { useEntity } from "./hooks";
 
@@ -308,7 +318,7 @@ export default function EntityListPage() {
         />
         {error && (
           <Alert variant="destructive">
-            <HugeiconsIcon icon={AlertCircleIcon} className="h-4 w-4" />
+            <Icon icon={AlertCircleIcon} className="h-4 w-4" />
             <AlertDescription>
               Erreur : {(error as Error).message}
             </AlertDescription>

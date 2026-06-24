@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
-import type { FileRecord, FilesPaginatedResponse } from "./types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { FilesPaginatedResponse } from "./types";
 
 interface ListFilesParams {
   page?: number;
@@ -12,11 +12,14 @@ export function useListFiles(params?: ListFilesParams) {
   return useQuery({
     queryKey: ["files", params],
     queryFn: async () => {
-      const res = await (apiClient.get({
-        url: "/v1/files",
-        query: params as Record<string, unknown>,
-      }) as any);
-      return res as FilesPaginatedResponse;
+      const { data, error } = await apiClient.v1.filesFindAll({
+        query: {
+          page: params?.page,
+          limit: params?.pageSize,
+        },
+      });
+      if (error) throw error;
+      return data as unknown as FilesPaginatedResponse;
     },
   });
 }
@@ -24,8 +27,13 @@ export function useListFiles(params?: ListFilesParams) {
 export function useDeleteFile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient.delete({ url: `/v1/files/${id}` }) as any,
+    mutationFn: async (id: string) => {
+      const { data, error } = await apiClient.v1.filesRemove({
+        path: { id },
+      });
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
     },
@@ -36,17 +44,37 @@ export function useUploadFile() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000"}/v1/files`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-      if (!res.ok) throw new Error("Upload failed");
-      return res.json();
+      // Presigned-URL upload flow:
+      // 1) ask the backend for a one-time PUT URL + object key
+      const { data: presigned, error: pErr } =
+        await apiClient.v1.filesGetPresignedUrl({
+          body: {
+            originalName: file.name,
+            mimeType: file.type,
+            size: file.size,
+          },
+        });
+      if (pErr) throw pErr;
+
+      // 2) upload the raw file directly to object storage
+      const uploadRes = await fetch(presigned!.uploadUrl, {
+        method: "PUT",
+        body: file,
+      });
+      if (!uploadRes.ok) throw new Error("Upload failed");
+
+      // 3) confirm with the backend so it registers file metadata
+      const { data: confirmed, error: cErr } =
+        await apiClient.v1.filesConfirmUpload({
+          body: {
+            key: presigned!.key,
+            originalName: file.name,
+            mimeType: file.type,
+            size: file.size,
+          },
+        });
+      if (cErr) throw cErr;
+      return confirmed;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });

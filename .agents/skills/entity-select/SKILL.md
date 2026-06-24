@@ -26,7 +26,7 @@ src/features/<entity>/_components/
 
 import SingleSelect from "@/components/single-select";
 import { useQuery } from "@tanstack/react-query";
-import { client } from "@repo/api-client";
+import { apiClient } from "@/lib/api";
 import { useState } from "react";
 import { CreateEntityDialog } from "./create-entity-dialog";
 
@@ -50,23 +50,41 @@ export function EntitySelect({
 
   const { data: searchData } = useQuery({
     queryKey: ["entities", "search", query],
-    queryFn: () => client.entities.list({ search: query, pageSize: 20 }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.entitiesFindAll({
+        query: { search: query, limit: 20 },
+      });
+      if (error) throw error;
+      return data;
+    },
   });
 
   const { data: defaultData } = useQuery({
     queryKey: ["entities", defaultEntityId],
-    queryFn: () => client.entities.get({ path: { id: defaultEntityId! } }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.entitiesFindOne({
+        path: { id: defaultEntityId! },
+      });
+      if (error) throw error;
+      return data;
+    },
     enabled: !!defaultEntityId && !isEditing,
   });
 
   const { data: selectedData } = useQuery({
     queryKey: ["entities", value],
-    queryFn: () => client.entities.get({ path: { id: value } }),
+    queryFn: async () => {
+      const { data, error } = await apiClient.v1.entitiesFindOne({
+        path: { id: value! },
+      });
+      if (error) throw error;
+      return data;
+    },
     enabled: !!value && value !== defaultEntityId,
   });
 
-  const searchEntities = searchData?.data?.items ?? [];
-  const extras = [defaultData?.data, selectedData?.data].filter(
+  const searchEntities = searchData?.items ?? [];
+  const extras = [defaultData, selectedData].filter(
     (e): e is NonNullable<typeof e> =>
       !!e && !searchEntities.find((s) => s.id === e.id),
   );

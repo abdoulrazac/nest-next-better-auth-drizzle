@@ -70,10 +70,11 @@ Utiliser le skill **nest-endpoint** pour chaque endpoint (list, get, create, upd
 ### Step 7 — Regénérer l'API client
 
 ```bash
-cd packages/api-client && bun run generate
+# Depuis la racine du monorepo — snapshot le spec puis régénère le SDK
+pnpm --filter @repo/api-client snapshot && pnpm --filter @repo/api-client generate
 ```
 
-Vérifier que les hooks `client.entities.*` sont disponibles.
+Vérifier que les méthodes générées (`apiClient.v1.entityFindAll`, etc.) sont disponibles dans `src/generated/sdk.gen.ts` (classes `V1` / `Auth` via `operations.nesting`).
 
 ### Step 8 — Frontend : Hook + Pages
 

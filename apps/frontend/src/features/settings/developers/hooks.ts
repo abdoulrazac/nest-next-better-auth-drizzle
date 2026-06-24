@@ -1,12 +1,7 @@
+import { apiClient } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { apiClient } from "@/lib/api";
-import type {
-  WebhookResponse,
-  WebhooksPaginatedResponse,
-  CreateWebhookInput,
-  UpdateWebhookInput,
-} from "@repo/validators/webhooks";
+import type { WebhooksPaginatedResponse } from "@repo/validators/webhooks";
 
 export const webhookKeys = {
   all: ["webhooks"] as const,
@@ -18,8 +13,9 @@ export function useListWebhooks() {
   return useQuery({
     queryKey: webhookKeys.list(),
     queryFn: async () => {
-      const res = (await apiClient.get({ url: "/v1/webhooks" })) as any;
-      return res.data as WebhooksPaginatedResponse;
+      const { data, error } = await apiClient.v1.webhooksFindAll({});
+      if (error) throw error;
+      return data as unknown as WebhooksPaginatedResponse;
     },
     staleTime: 30_000,
   });
@@ -28,8 +24,18 @@ export function useListWebhooks() {
 export function useCreateWebhook() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateWebhookInput) =>
-      apiClient.post({ url: "/v1/webhooks", body: data }) as any,
+    mutationFn: async (data: {
+      name: string;
+      url: string;
+      events: string[];
+      secret?: string;
+    }) => {
+      const { data: res, error } = await apiClient.v1.webhooksCreate({
+        body: data,
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: webhookKeys.all });
       toast.success("Webhook créé");
@@ -41,8 +47,25 @@ export function useCreateWebhook() {
 export function useUpdateWebhook() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateWebhookInput }) =>
-      apiClient.patch({ url: `/v1/webhooks/${id}`, body: data }) as any,
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: {
+        name?: string;
+        url?: string;
+        events?: string[];
+        secret?: string;
+      };
+    }) => {
+      const { data: res, error } = await apiClient.v1.webhooksUpdate({
+        path: { id },
+        body: data,
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: webhookKeys.all });
       toast.success("Webhook mis à jour");
@@ -54,8 +77,13 @@ export function useUpdateWebhook() {
 export function useDeleteWebhook() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient.delete({ url: `/v1/webhooks/${id}` }) as any,
+    mutationFn: async (id: string) => {
+      const { data: res, error } = await apiClient.v1.webhooksRemove({
+        path: { id },
+      });
+      if (error) throw error;
+      return res;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: webhookKeys.all });
       toast.success("Webhook supprimé");
