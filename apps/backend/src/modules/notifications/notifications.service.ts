@@ -1,5 +1,6 @@
 // apps/backend/src/modules/notifications/notifications.service.ts
 import { DomainEvent, type MessageNewEvent } from '@/events/domain-events';
+import { WebSocketService } from '@/websocket/websocket.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import {
@@ -17,6 +18,7 @@ import { NotificationsRepository } from './notifications.repository';
 export class NotificationsService {
   constructor(
     private readonly notificationsRepository: NotificationsRepository,
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   async findAll(
@@ -81,5 +83,18 @@ export class NotificationsService {
         }),
       ),
     );
+
+    for (const userId of event.recipientIds) {
+      this.webSocketService.emitToUser(userId, 'notification:new', {
+        type: 'new_message',
+        title,
+        body: event.preview,
+        data: {
+          conversationId: event.conversationId,
+          messageId: event.messageId,
+          senderId: event.senderId,
+        },
+      });
+    }
   }
 }
