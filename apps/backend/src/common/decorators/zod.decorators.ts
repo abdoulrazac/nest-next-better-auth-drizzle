@@ -1,8 +1,8 @@
 // apps/backend/src/common/decorators/zod.decorators.ts
-import { Body, Query } from '@nestjs/common';
-import { ApiBody, ApiQuery } from '@nestjs/swagger';
 import type { OpenApiZodAny } from '@anatine/zod-openapi';
 import { generateSchema } from '@anatine/zod-openapi';
+import { Body, Query } from '@nestjs/common';
+import { ApiBody, ApiQuery } from '@nestjs/swagger';
 
 import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 
@@ -48,8 +48,8 @@ export const ZodBody = (schema: AnyZodSchema): ParameterDecorator => {
   return (target, propertyKey, parameterIndex) => {
     bodyParam(target, propertyKey, parameterIndex);
     applySwaggerMethodDecorator(
-      target as object,
-      propertyKey,
+      target,
+      propertyKey!,
       ApiBody({ schema: openApiSchema }),
     );
   };
@@ -66,8 +66,8 @@ export const ZodQuery = (schema: AnyZodSchema): ParameterDecorator => {
           field as { isOptional?: () => boolean } | undefined
         )?.isOptional?.();
         applySwaggerMethodDecorator(
-          target as object,
-          propertyKey,
+          target,
+          propertyKey!,
           ApiQuery({
             name,
             required: !isOptional,
@@ -77,8 +77,8 @@ export const ZodQuery = (schema: AnyZodSchema): ParameterDecorator => {
       }
     } else {
       applySwaggerMethodDecorator(
-        target as object,
-        propertyKey,
+        target,
+        propertyKey!,
         ApiQuery({ schema: toOpenApiSchema(schema) }),
       );
     }
