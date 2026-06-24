@@ -41,7 +41,7 @@ import {
   type SuccessResponse,
 } from '@repo/validators/shared';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
-import { MessagingGateway } from '../messaging.gateway';
+import { WebSocketService } from '@/websocket/websocket.service';
 import { MessagesService } from './messages.service';
 
 @ApiTags('messaging')
@@ -50,7 +50,7 @@ import { MessagesService } from './messages.service';
 export class MessagesController {
   constructor(
     private readonly messagesService: MessagesService,
-    private readonly gateway: MessagingGateway,
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   // ─── List & search ──────────────────────────────────────────────────────────
@@ -104,7 +104,7 @@ export class MessagesController {
       user.name,
       body,
     );
-    this.gateway.emitToConversation(id, 'message:new', message);
+    this.webSocketService.emitToRoom(`conv:${id}`, 'message:new', message);
     return message;
   }
 
@@ -121,7 +121,7 @@ export class MessagesController {
     @ZodBody(editMessageSchema) body: EditMessageInput,
   ): Promise<MessageResponse> {
     const message = await this.messagesService.edit(id, msgId, user.id, body);
-    this.gateway.emitToConversation(id, 'message:updated', message);
+    this.webSocketService.emitToRoom(`conv:${id}`, 'message:updated', message);
     return message;
   }
 
@@ -137,7 +137,7 @@ export class MessagesController {
     @Param('msgId', ParseUUIDPipe) msgId: string,
   ): Promise<SuccessResponse> {
     await this.messagesService.delete(id, msgId, user.id);
-    this.gateway.emitToConversation(id, 'message:deleted', {
+    this.webSocketService.emitToRoom(`conv:${id}`, 'message:deleted', {
       messageId: msgId,
     });
     return { success: true };
@@ -176,8 +176,8 @@ export class MessagesController {
       user.name,
       body,
     );
-    this.gateway.emitToConversation(
-      body.targetConversationId,
+    this.webSocketService.emitToRoom(
+      `conv:${body.targetConversationId}`,
       'message:new',
       forwardedMsg,
     );

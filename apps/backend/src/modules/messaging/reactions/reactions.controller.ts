@@ -9,7 +9,7 @@ import {
   type ToggleReactionResponse,
 } from '@repo/validators/messages';
 import { UserHasPermission } from '@thallesp/nestjs-better-auth';
-import { MessagingGateway } from '../messaging.gateway';
+import { WebSocketService } from '@/websocket/websocket.service';
 import { ReactionsService } from './reactions.service';
 
 @ApiTags('messaging')
@@ -18,7 +18,7 @@ import { ReactionsService } from './reactions.service';
 export class ReactionsController {
   constructor(
     private readonly reactionsService: ReactionsService,
-    private readonly messagingGateway: MessagingGateway,
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   @Post('conversations/:id/messages/:msgId/reactions/:emoji')
@@ -37,7 +37,7 @@ export class ReactionsController {
       user.id,
       emoji,
     );
-    this.messagingGateway.emitToConversation(id, 'message:reaction', {
+    this.webSocketService.emitToRoom(`conv:${id}`, 'message:reaction', {
       messageId: msgId,
       emoji,
       added: result.added,
@@ -62,7 +62,7 @@ export class ReactionsController {
       user.id,
       emoji,
     );
-    this.messagingGateway.emitToConversation(id, 'message:reaction', {
+    this.webSocketService.emitToRoom(`conv:${id}`, 'message:reaction', {
       messageId: msgId,
       emoji,
       added: result.added,
