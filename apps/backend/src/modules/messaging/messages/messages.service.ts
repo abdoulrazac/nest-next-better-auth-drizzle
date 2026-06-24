@@ -16,10 +16,7 @@ import type {
   MessageResponse,
   SendMessageInput,
 } from '@repo/validators/messages';
-import {
-  attachmentUrlResponseSchema,
-  messageResponseSchema,
-} from '@repo/validators/messages';
+import { attachmentUrlResponseSchema } from '@repo/validators/messages';
 import { randomUUID } from 'crypto';
 import { ConversationsRepository } from '../conversations/conversations.repository';
 import { MessagesRepository } from './messages.repository';
@@ -58,7 +55,7 @@ export class MessagesService {
       search,
     );
 
-    return messageResponseSchema.array().parse(messages);
+    return this.signAttachmentUrls(messages);
   }
 
   async send(
@@ -79,7 +76,8 @@ export class MessagesService {
       }
     }
 
-    // Resolve public URLs for all attachments
+    // Store a stable reference URL in DB; the actual download URL is signed
+    // on read (see signAttachmentUrls) so leaked URLs expire quickly.
     const attachments = input.attachments.map((att) => ({
       ...att,
       url: this.s3Service.getPublicUrl(att.key),
@@ -141,7 +139,7 @@ export class MessagesService {
 
     this.eventEmitter.emit(DomainEvent.MESSAGE_NEW, event);
 
-    return messageResponseSchema.parse(created);
+    return (await this.signAttachmentUrls([created]))[0];
   }
 
   async edit(
@@ -177,7 +175,7 @@ export class MessagesService {
       throw new NotFoundException(`Message ${messageId} not found`);
     }
 
-    return messageResponseSchema.parse(updated);
+    return (await this.signAttachmentUrls([updated]))[0];
   }
 
   async delete(
@@ -192,7 +190,7 @@ export class MessagesService {
       throw new NotFoundException(`Message ${messageId} not found`);
     }
 
-    return messageResponseSchema.parse(deleted);
+    return (await this.signAttachmentUrls([deleted]))[0];
   }
 
   async getAttachmentUrl(
@@ -232,10 +230,11 @@ export class MessagesService {
       senderId: userId,
       body: input.body,
       forwardedFromId: messageId,
-      // Re-use the same S3 objects — no duplication needed
+      // Re-use the same S3 objects — no duplication needed. The stored URL is
+      // a stable reference; reads re-sign it.
       attachments: original.attachments.map((att) => ({
         key: att.key,
-        url: att.url,
+        url: this.s3Service.getPublicUrl(att.key),
         originalName: att.originalName,
         mimeType: att.mimeType,
         size: att.size,
@@ -275,7 +274,7 @@ export class MessagesService {
 
     this.eventEmitter.emit(DomainEvent.MESSAGE_NEW, event);
 
-    return messageResponseSchema.parse(forwarded);
+    return (await this.signAttachmentUrls([forwarded]))[0];
   }
 
   async markAsRead(conversationId: string, userId: string): Promise<void> {
@@ -284,6 +283,25 @@ export class MessagesService {
   }
 
   // ─── Private helpers ────────────────────────────────────────────────────────
+
+  /**
+   * Replaces the stored public URL of every attachment with a short-lived
+   * presigned download URL. This avoids exposing permanent public S3 URLs to
+   * clients: even if a URL leaks, it expires within an hour.
+   */
+  private async signAttachmentUrls(
+    messages: MessageResponse[],
+  ): Promise<MessageResponse[]> {
+    if (messages.length === 0) return messages;
+    await Promise.all(
+      messages.flatMap((m) =>
+        m.attachments.map(async (att) => {
+          att.url = await this.s3Service.getPresignedDownloadUrl(att.key);
+        }),
+      ),
+    );
+    return messages;
+  }
 
   private async assertParticipant(
     conversationId: string,

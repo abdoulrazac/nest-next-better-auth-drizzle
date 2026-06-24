@@ -1,5 +1,9 @@
 // apps/backend/src/modules/accounts/roles/roles.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { statement } from '@/auth/permission';
 import type {
   CreateRoleInput,
@@ -23,6 +27,20 @@ const builtInStatements: Record<string, string[]> = {
   ac: ['create', 'read', 'update', 'delete'],
 };
 
+/** Set of every valid "<resource>:<action>" permission string. */
+function buildAllowedPermissions(): Set<string> {
+  const set = new Set<string>();
+  for (const [resource, actions] of Object.entries(statement)) {
+    for (const action of actions) set.add(`${resource}:${action}`);
+  }
+  for (const [resource, actions] of Object.entries(builtInStatements)) {
+    for (const action of actions) set.add(`${resource}:${action}`);
+  }
+  return set;
+}
+
+const ALLOWED_PERMISSIONS = buildAllowedPermissions();
+
 @Injectable()
 export class RolesService {
   constructor(private readonly rolesRepository: RolesRepository) {}
@@ -39,6 +57,7 @@ export class RolesService {
   }
 
   async create(data: CreateRoleInput): Promise<RoleResponse> {
+    validatePermissions(data.permissions);
     const created = await this.rolesRepository.create(data);
     return roleResponseSchema.parse(created);
   }
@@ -48,6 +67,7 @@ export class RolesService {
     data: UpdateRoleInput,
   ): Promise<RoleResponse | null> {
     await this.findById(id);
+    if (data.permissions) validatePermissions(data.permissions);
     const updated = await this.rolesRepository.update(id, data);
     if (!updated) return null;
     return roleResponseSchema.parse(updated);
@@ -82,5 +102,26 @@ export class RolesService {
       ]),
     );
     return { ...custom, ...builtInStatements };
+  }
+}
+
+/**
+ * Rejects role creation/update payloads that reference permissions we don't
+ * know about. Without this an admin with `roles.write` could mint an
+ * over-permissive role carrying arbitrary permission strings that no guard
+ * ever matches — a footgun that weakens RBAC semantics.
+ */
+function validatePermissions(permissions: string[]): void {
+  const invalid = permissions.filter((p) => !ALLOWED_PERMISSIONS.has(p));
+  if (invalid.length > 0) {
+    throw new BadRequestException({
+      message: 'Unknown permissions',
+      errors: invalid.map((p) => ({
+        field: 'permissions',
+        message: `Unknown permission '${p}'. Valid values: ${[
+          ...ALLOWED_PERMISSIONS,
+        ].join(', ')}`,
+      })),
+    });
   }
 }

@@ -52,7 +52,6 @@ async function bootstrap() {
   app
     .getHttpAdapter()
     .getInstance()
-
     .addHook(
       'onSend',
       (_request: any, reply: any, _payload: any, done: () => void) => {
@@ -85,7 +84,12 @@ async function bootstrap() {
   });
 
   const document = await buildOpenAPIDocument(app);
-  await setupApiDocs(app, document);
+  // Scalar API docs and the JSON schema leak the full attack surface
+  // (business + better-auth endpoints). Only enable them outside production;
+  // in production, require an explicit ENABLE_API_DOCS flag.
+  if (env.NODE_ENV !== 'production' || env.ENABLE_API_DOCS === true) {
+    await setupApiDocs(app, document);
+  }
 
   await app.listen(env.PORT, '0.0.0.0');
   console.log(`Application running on: http://localhost:${env.PORT}`);

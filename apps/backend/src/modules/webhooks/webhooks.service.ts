@@ -13,6 +13,7 @@ import {
   webhooksPaginatedResponseSchema,
 } from '@repo/validators/webhooks';
 import { WebhooksRepository } from './webhooks.repository';
+import { assertSafeWebhookUrl } from './webhook-ssrf.guard';
 
 @Injectable()
 export class WebhooksService {
@@ -36,6 +37,8 @@ export class WebhooksService {
     data: CreateWebhookInput,
     userId?: string,
   ): Promise<WebhookResponse> {
+    // SSRF guard: reject URLs that target internal/blocked addresses.
+    await assertSafeWebhookUrl(data.url);
     const created = await this.webhooksRepository.create({
       ...data,
       createdBy: userId,
@@ -48,6 +51,9 @@ export class WebhooksService {
     data: UpdateWebhookInput,
   ): Promise<WebhookResponse | null> {
     await this.findById(id);
+    if (data.url) {
+      await assertSafeWebhookUrl(data.url);
+    }
     const updated = await this.webhooksRepository.update(id, data);
     if (!updated) return null;
     return webhookResponseSchema.parse(updated);

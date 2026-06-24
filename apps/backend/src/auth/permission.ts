@@ -13,11 +13,11 @@ export const statement = {
   messages: ['read', 'write', 'delete'],
 } as const;
 
-export const ac = createAccessControl(statement);
+export const adminAc = createAccessControl(statement);
 export const orgAc = createAccessControl(statement);
 
 // Define system roles
-const adminRole = ac.newRole({
+const adminRole = adminAc.newRole({
   users: ['read', 'write', 'delete'],
   roles: ['read', 'write', 'delete'],
   'audit-logs': ['read'],
@@ -28,7 +28,7 @@ const adminRole = ac.newRole({
   messages: ['read', 'write', 'delete'],
 });
 
-const memberRole = ac.newRole({
+const memberRole = adminAc.newRole({
   users: ['read'],
   files: ['upload', 'read'],
   notifications: ['read', 'manage'],
@@ -36,7 +36,7 @@ const memberRole = ac.newRole({
   messages: ['read', 'write'],
 });
 
-const viewerRole = ac.newRole({
+const viewerRole = adminAc.newRole({
   users: ['read'],
   files: ['read'],
   notifications: ['read'],

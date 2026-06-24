@@ -25,10 +25,30 @@ export class HealthController {
     private readonly ws: WsHealthIndicator,
   ) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Check the health of the application' })
-  @ApiZodOkResponse(healthCheckResponseSchema)
+  /**
+   * Lightweight liveness probe — no auth, no dependency details. Safe to
+   * expose anonymously and used by Docker / Kubernetes / load balancers. The
+   * global ThrottlerGuard still rate-limits it.
+   */
+  @Get('live')
+  @ApiOperation({ summary: 'Lightweight liveness probe (no auth, no details)' })
   @AllowAnonymous()
+  liveness(@Res({ passthrough: true }) res: FastifyReply): {
+    status: 'ok';
+  } {
+    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return { status: 'ok' };
+  }
+
+  /**
+   * Full readiness check — requires authentication. Exposing DB / Redis / S3 /
+   * WebSocket liveness anonymously is an information leak (attackers can map
+   * outage windows and dependency topology). Anonymous callers get only the
+   * lightweight {@link liveness} endpoint.
+   */
+  @Get()
+  @ApiOperation({ summary: 'Full readiness check (authenticated)' })
+  @ApiZodOkResponse(healthCheckResponseSchema)
   async check(
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<HealthCheckResponse> {

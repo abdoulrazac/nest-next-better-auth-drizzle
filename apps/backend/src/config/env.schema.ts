@@ -21,10 +21,23 @@ export const envSchema = z.object({
     .min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
   BETTER_AUTH_URL: z.string().url('BETTER_AUTH_URL must be a valid URL'),
   BETTER_AUTH_API_KEY_PREFIX: z.string().default('api_k_'),
+  // Optional: explicitly enable Scalar API docs in production (default off)
+  ENABLE_API_DOCS: z
+    .enum(['true', 'false', '1', '0'])
+    .transform((v) => v === 'true' || v === '1')
+    .default(false),
   RECAPTCHA_PROVIDER: z
-    .enum(['hcaptcha', 'captchafox', 'google-recaptcha'])
-    .default('google-recaptcha'), // or "hcaptcha", "captchafox", "google-recaptcha"
-  RECAPTCHA_SECRET_KEY: z.string().default('google-recaptcha'),
+    .enum([
+      'hcaptcha',
+      'captchafox',
+      'cloudflare-turnstile',
+      'google-recaptcha',
+    ])
+    .default('google-recaptcha'), // or "hcaptcha", "captchafox", "cloudflare-turnstile"
+  // Optional. When unset, the captcha plugin is disabled — sign-up / sign-in
+  // will NOT be captcha-protected. When set, it MUST be a real provider secret
+  // (not the placeholder "google-recaptcha").
+  RECAPTCHA_SECRET_KEY: z.string().optional(),
 
   // CORS — comma-separated list of allowed origins
   // e.g. "http://localhost:3002,http://localhost:3003"
@@ -96,6 +109,16 @@ export function validateEnv(config: Record<string, unknown>): Env {
 
     if (!data.BETTER_AUTH_URL.startsWith('https://')) {
       productionErrors.push('BETTER_AUTH_URL must use HTTPS in production.');
+    }
+
+    if (
+      data.RECAPTCHA_SECRET_KEY &&
+      data.RECAPTCHA_SECRET_KEY.toLowerCase() ===
+        data.RECAPTCHA_PROVIDER.toLowerCase()
+    ) {
+      productionErrors.push(
+        'RECAPTCHA_SECRET_KEY must be a real provider secret, not the provider name placeholder. Unset it to disable captcha.',
+      );
     }
 
     const localhostOrigins = data.CORS_ORIGINS.filter((o) =>

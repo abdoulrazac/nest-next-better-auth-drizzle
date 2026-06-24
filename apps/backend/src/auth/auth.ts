@@ -9,7 +9,7 @@ import { localization } from 'better-auth-localization';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { captcha, openAPI, organization, twoFactor } from 'better-auth/plugins';
 import { admin } from 'better-auth/plugins/admin';
-import { ac, defaultRole, orgAc, roles } from './permission';
+import { adminAc, defaultRole, orgAc, roles } from './permission';
 
 const emailService = createEmailService();
 
@@ -57,7 +57,7 @@ export const auth = betterAuth({
     emailService,
     openAPI({ disableDefaultReference: true }),
     admin({
-      ac,
+      ac: adminAc,
       roles,
       defaultRole,
     }),
@@ -164,22 +164,30 @@ export const auth = betterAuth({
       },
     }),
     localization({
-      defaultLocale: 'fr-FR', // Use built-in Portuguese translations
-      fallbackLocale: 'default', // Fallback to English
+      defaultLocale: 'fr-FR',
+      fallbackLocale: 'default',
     }),
     twoFactor({
       issuer: env.APP_NAME,
-      skipVerificationOnEnable: true, // Permet d'activer sans vérifier immédiatement
+      skipVerificationOnEnable: false, // Require TOTP verification when enabling 2FA
       otpOptions: {
         sendOTP: emailService.helpers.twoFactor,
         period: 300, // 5 minutes d'expiration
       },
     }),
-    captcha({
-      provider: env.RECAPTCHA_PROVIDER, // or "hcaptcha", "captchafox", "google-recaptcha"
-      secretKey: env.RECAPTCHA_SECRET_KEY,
-    }),
     expo(),
+    // The captcha plugin is only enabled when a real provider secret is
+    // configured. Without a secret, the plugin would silently reject every
+    // captcha-protected request or fail validation; silently disabling is
+    // safer than failing open.
+    ...(env.RECAPTCHA_SECRET_KEY
+      ? [
+          captcha({
+            provider: env.RECAPTCHA_PROVIDER,
+            secretKey: env.RECAPTCHA_SECRET_KEY,
+          }),
+        ]
+      : []),
   ],
 });
 

@@ -2,6 +2,7 @@
 import type { Env } from '@/config/env.schema';
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -43,6 +44,19 @@ export class S3Service {
       ContentType: mimeType,
     });
     return getSignedUrl(this.client, command, { expiresIn: 900 });
+  }
+
+  /**
+   * Returns a short-lived presigned GET URL for downloading a private object.
+   * Use this instead of {@link getPublicUrl} for sensitive content (chat
+   * attachments, user uploads) so that URLs are not permanently accessible.
+   */
+  async getPresignedDownloadUrl(
+    key: string,
+    expiresInSeconds = 3600,
+  ): Promise<string> {
+    const command = new GetObjectCommand({ Bucket: this.bucket, Key: key });
+    return getSignedUrl(this.client, command, { expiresIn: expiresInSeconds });
   }
 
   getPublicUrl(key: string): string {
