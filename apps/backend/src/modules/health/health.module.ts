@@ -5,10 +5,16 @@ import { HealthController } from './health.controller';
 import { DbHealthIndicator } from './indicators/db-health.indicator';
 import { RedisHealthIndicator } from './indicators/redis-health.indicator';
 import { S3HealthIndicator } from './indicators/s3-health.indicator';
+import { WsHealthIndicator } from './indicators/ws-health.indicator';
 
 @Module({
   imports: [TerminusModule.forRoot()],
   controllers: [HealthController],
-  providers: [DbHealthIndicator, RedisHealthIndicator, S3HealthIndicator],
+  providers: [
+    DbHealthIndicator,
+    RedisHealthIndicator,
+    S3HealthIndicator,
+    WsHealthIndicator,
+  ],
 })
 export class HealthModule {}

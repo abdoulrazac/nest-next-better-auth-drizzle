@@ -21,4 +21,9 @@ export class WebSocketService {
   broadcast(event: string, data: unknown): void {
     this.server?.emit(event, data);
   }
+
+  getStatus(): { up: boolean; clientsCount: number } {
+    if (!this.server) return { up: false, clientsCount: 0 };
+    return { up: true, clientsCount: this.server.engine.clientsCount };
+  }
 }

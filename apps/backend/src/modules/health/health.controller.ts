@@ -12,6 +12,7 @@ import type { FastifyReply } from 'fastify';
 import { DbHealthIndicator } from './indicators/db-health.indicator';
 import { RedisHealthIndicator } from './indicators/redis-health.indicator';
 import { S3HealthIndicator } from './indicators/s3-health.indicator';
+import { WsHealthIndicator } from './indicators/ws-health.indicator';
 
 @ApiTags('health')
 @Controller({ path: 'health', version: VERSION_NEUTRAL })
@@ -21,6 +22,7 @@ export class HealthController {
     private readonly db: DbHealthIndicator,
     private readonly redis: RedisHealthIndicator,
     private readonly s3: S3HealthIndicator,
+    private readonly ws: WsHealthIndicator,
   ) {}
 
   @Get()
@@ -37,6 +39,7 @@ export class HealthController {
       () => this.db.isHealthy('database'),
       () => this.redis.isHealthy('redis'),
       () => this.s3.isHealthy('s3'),
+      () => this.ws.isHealthy('websocket'),
     ]);
     return healthCheckResponseSchema.parse(health);
   }
