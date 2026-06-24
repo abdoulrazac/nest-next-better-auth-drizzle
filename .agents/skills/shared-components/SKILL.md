@@ -11,9 +11,9 @@ NEVER import from `@hugeicons/core-free-icons` directly. Always via `@/lib/icons
 
 ```tsx
 import { EditIcon, TrashIcon, PlusIcon } from "@/lib/icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { Icon } from "@/components/ui/icon";
 
-<HugeiconsIcon icon={EditIcon} className="h-4 w-4" />;
+<Icon icon={EditIcon} className="h-4 w-4" />;
 ```
 
 ---
@@ -139,7 +139,7 @@ import SingleSelect from "@/components/single-select";
           [
             {
               label: "Supprimer",
-              icon: <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />,
+              icon: <Icon icon={TrashIcon} className="h-4 w-4" />,
               onClick: handleBulkDelete,
               variant: "destructive",
             },
